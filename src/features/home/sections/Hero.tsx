@@ -19,6 +19,7 @@ export default function Hero({
   secondary = { href: "/projects", label: "Projects" },
 }: HeroProps): React.JSX.Element {
   return (
+
     // Section: main'in flex konteynerinde kalan alanı kaplar ve dikeyde ortalar
     <section className="relative isolate flex flex-1 items-center py-12 sm:py-16">
       {/* Arkaplan gradyan */}
@@ -30,7 +31,7 @@ export default function Hero({
       {/* İçerik */}
       <div className="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
         <div className="mx-auto max-w-3xl">
-          <h1 className="whitespace-pre-line text-4xl font-bold tracking-tight sm:text-6xl">
+          <h1 className="whitespace-pre-line text-4xl font-bold tracking-tight sm:text-5xl">
             {title}
           </h1>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
