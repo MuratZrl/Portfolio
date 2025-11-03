@@ -4,7 +4,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu } from "lucide-react";
+import { Menu, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -27,6 +27,9 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/contact", label: "Contact" },
   { href: "/donate", label: "Donate" },
 ];
+
+// CV dosyası: /public/cv/MuratZorlu-CV.pdf olmalı
+const CV_PATH = "/cv/MuratZorlu-CV.pdf" as const;
 
 function DesktopNav(): React.JSX.Element {
   const pathname = usePathname();
@@ -73,14 +76,14 @@ function MobileNav(): React.JSX.Element {
         </Button>
       </SheetTrigger>
 
-      <SheetContent side="left" className="px-0">
+      <SheetContent side="left" className="px-0" title="Mobil menü">
         <div className="px-6 py-4">
           <Link href="/" className="flex items-center gap-2">
             <span className="inline-flex h-8 w-8 items-center justify-center rounded bg-primary text-primary-foreground text-sm font-bold">
-              M
+              MZ
             </span>
             <span className="text-base font-semibold tracking-tight">
-              Portfolio
+              Murat Zorlu
             </span>
           </Link>
         </div>
@@ -109,6 +112,16 @@ function MobileNav(): React.JSX.Element {
             );
           })}
         </nav>
+
+        {/* Mobil menüde de CV indir butonu: alt kısım */}
+        <div className="mt-auto px-6 py-4">
+          <Button asChild className="w-full" aria-label="CV indir">
+            <a href={CV_PATH} download>
+              <Download className="mr-2 h-4 w-4" aria-hidden />
+              CV
+            </a>
+          </Button>
+        </div>
       </SheetContent>
     </Sheet>
   );
@@ -118,6 +131,7 @@ export default function Navbar(): React.JSX.Element {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
         {/* relative konteyner: orta grup absolute merkezde */}
         <div className="relative flex h-14 items-center">
           {/* Sol grup: hamburger (mobil) + logo (her zaman) */}
@@ -128,10 +142,10 @@ export default function Navbar(): React.JSX.Element {
 
             <Link href="/" className="flex items-center gap-2">
               <span className="inline-flex h-8 w-8 items-center justify-center rounded bg-primary text-primary-foreground text-sm font-bold">
-                P
+                MZ
               </span>
               <span className="hidden sm:inline text-sm font-semibold tracking-tight">
-                Portfolio
+                Murat Zorlu
               </span>
             </Link>
           </div>
@@ -141,9 +155,23 @@ export default function Navbar(): React.JSX.Element {
             <DesktopNav />
           </div>
 
-          {/* Sağ: theme toggle */}
+          {/* Sağ: theme toggle + CV indir */}
           <div className="ml-auto flex items-center gap-2">
             <ThemeToggle />
+
+            {/* Küçük, temiz CV butonu. asChild ile <a download> */}
+            <Button
+              asChild
+              size="sm"
+              variant="outline"
+              aria-label="CV indir"
+              className="xs:inline-flex"
+            >
+              <a href={CV_PATH} download>
+                <Download className="mr-2 h-4 w-4" aria-hidden />
+                <span>CV</span>
+              </a>
+            </Button>
           </div>
         </div>
       </div>
