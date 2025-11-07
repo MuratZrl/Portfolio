@@ -1,13 +1,18 @@
 // src/app/page.tsx
+import type { Metadata } from "next";
+
+import { Page } from "@/components/layout/Page";
+
 import Hero from "@/features/home/sections/Hero";
 import ValueProps from "@/features/home/sections/ValueProps";
-import FeaturedProjects from "@/features/home/sections/FeaturedProjects";
+import FeaturedProjects from "@/features/home/sections/Projects";
 import TechStack from "@/features/home/sections/TechStack";
 import FinalCta from "@/features/home/sections/FinalCTA";
 
+import { presetSplitPattern } from "@/features/home/data"; // ← index.ts
+
 import { Gauge, ShieldCheck } from "lucide-react";
 
-import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Murat Zorlu — Home",
   description:
@@ -29,43 +34,32 @@ export const metadata: Metadata = {
 
 export default function HomePage(): React.JSX.Element {
   return (
-    <>
+    // Page sadece layout/padding işini yapıyor; başlık vermiyoruz
+    <Page>
       <Hero
-        kicker="Hello, I’m a developer"
-        title="Ship quality software without the drama"
-        subtitle="Type-safe stacks, testable architectures, and a design system that doesn’t cry itself to sleep."
+        kicker="Murat Zorlu"
+        title="Ship reliable web apps, minus the chaos"
+        subtitle="Next.js 16 · Node.js · TypeScript · Shadcn UI · MUI · Supabase"
         primary={{ href: "/about", label: "About" }}
         secondary={{ href: "/projects", label: "Projects" }}
-        tertiary={{ href: "/contact", label: "Contact" }}
-        badges={[
-          { label: "Open to work" },
-          { label: "TypeScript first" },
-          { label: "Accessible UI" },
-        ]}
-        stats={[
-          { label: "Years Experience", value: "5+" },
-          { label: "Projects Delivered", value: "30+" },
-          { label: "Satisfied Clients", value: "20+" },
-        ]}
-        showScrollCue
+        align="center"
+        className="py-16 sm:py-24"
       />
-      
-      <ValueProps/>
-      <FeaturedProjects/>
-      <TechStack/>
 
+      <ValueProps />
+      <FeaturedProjects />
+      <TechStack />
+
+      {/* Image'lı split varyant */}
       <FinalCta
-        variant="split"
-        media={{ type: "image", src: "/images/projects/analytics.png", alt: "Analytics" }}
-        highlights={["Server Actions", "Caching Strategy", "Lighthouse 95+"]}
+        {...presetSplitPattern()}
+        highlights={["Server Actions", "Caching Strategy"]}
         stats={[
-          { label: "Lighthouse", value: "97", icon: Gauge },
+          { label: "Lighthouse", value: "95", icon: Gauge },
           { label: "Accessibility", value: "AA", icon: ShieldCheck },
         ]}
         tertiary={{ href: "/projects", label: "All Projects" }}
       />
-
-      {/* Sonraki section'lar buraya eklenecek */}
-    </>
+    </Page>
   );
 }

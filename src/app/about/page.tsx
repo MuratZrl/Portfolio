@@ -3,13 +3,13 @@ import React from "react";
 import type { Metadata } from "next";
 import { Page } from "@/components/layout/Page";
 
-import AboutIntro from "@/features/about/sections/AboutIntro";
-import ExperienceTimeline from "@/features/about/sections/ExperienceTimeline";
-import Principles from "@/features/about/sections/Principles";
-import SkillsMatrix from "@/features/about/sections/SkillsMatrix";
-import Testimonials from "@/features/about/sections/Testimonials";
-import FAQ from "@/features/about/sections/FAQ";
-import CvSection from "@/features/about/sections/CvSection";
+import AboutIntro from "@/features/about/sections/AboutIntro.client";
+import ExperienceTimeline from "@/features/about/sections/Experience.client";
+import Principles from "@/features/about/sections/Principles.client";
+import SkillsMatrix from "@/features/about/sections/Skills.client";
+import Testimonials from "@/features/about/sections/Testimonials.client";
+import FAQ from "@/features/about/sections/FAQ.client";
+import CvSection from "@/features/about/sections/CV.client";
 
 export const metadata: Metadata = {
   title: "About Me",
@@ -36,7 +36,7 @@ export default function AboutPage(): React.JSX.Element {
       <ExperienceTimeline />
       <Principles />
       <SkillsMatrix />
-      <Testimonials />
+      {/* <Testimonials /> */}
       <FAQ />
       <CvSection />
     </Page>

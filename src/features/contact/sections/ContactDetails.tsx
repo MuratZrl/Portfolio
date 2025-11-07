@@ -1,5 +1,6 @@
 // src/features/contact/sections/ContactDetails.tsx
 'use client'
+
 import React from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,6 +16,7 @@ import {
   Copy,
   Check,
   HeartHandshake,
+  Briefcase, // Upwork için
 } from "lucide-react";
 
 type ContactDetailsProps = {
@@ -24,15 +26,17 @@ type ContactDetailsProps = {
   responseWindow?: string;
   githubUrl?: string;
   linkedinUrl?: string;
+  upworkUrl?: string; // NEW
 };
 
 export default function ContactDetails({
-  email = "hello@yourdomain.com",
+  email = "zorlu.murat2002@gmail.com",
   location = "Istanbul, Türkiye",
   timezoneLabel = "TRT (UTC+3)",
   responseWindow = "Mon–Fri, 10:00–18:00",
-  githubUrl = "https://github.com/youruser",
-  linkedinUrl = "https://www.linkedin.com/in/youruser/",
+  githubUrl = "https://github.com/MuratZrl",
+  linkedinUrl = "https://www.linkedin.com/in/murat-zorlu-dev/",
+  upworkUrl = "https://www.upwork.com/freelancers/~01eb1693cb0c1f6b22", // ← kendi profil URL’ini yaz
 }: ContactDetailsProps): React.JSX.Element {
   const [copied, setCopied] = React.useState<boolean>(false);
 
@@ -42,12 +46,12 @@ export default function ContactDetails({
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1500);
     } catch {
-      // swallow; no noisy toast here
+      // no toast
     }
   }
 
   return (
-    <aside className="w-full h-full space-y-6">
+    <aside className="w-full h-full space-y-4">
       {/* Direct contact card */}
       <Card>
         <CardHeader>
@@ -110,6 +114,7 @@ export default function ContactDetails({
           <CardTitle>Elsewhere</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
+          {/* GitHub */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Github className="h-4 w-4" aria-hidden />
@@ -128,6 +133,7 @@ export default function ContactDetails({
 
           <Separator />
 
+          {/* LinkedIn */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Linkedin className="h-4 w-4" aria-hidden />
@@ -140,6 +146,25 @@ export default function ContactDetails({
               className="inline-flex items-center gap-1 text-muted-foreground hover:underline"
             >
               {linkedinUrl.replace(/^https?:\/\//, "")}
+              <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+            </a>
+          </div>
+
+          <Separator />
+
+          {/* Upwork */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Briefcase className="h-4 w-4" aria-hidden />
+              <span>Upwork</span>
+            </div>
+            <a
+              href={upworkUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-muted-foreground hover:underline"
+            >
+              {upworkUrl.replace(/^https?:\/\//, "")}
               <ExternalLink className="h-3.5 w-3.5" aria-hidden />
             </a>
           </div>

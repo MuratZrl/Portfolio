@@ -16,13 +16,13 @@ import { ExternalLink, FileDown } from "lucide-react";
 type Mode = "fit-width" | "fit-page";
 
 type CvViewerProps = {
-  /** Public klasöründeki PDF yolu. Örn: /cv/MuratZorlu-CV.pdf */
+  /** PDF path under /public, e.g. /cv/MuratZorlu-CV.pdf */
   pdfSrc?: `/${string}`;
   title?: string;
   description?: string;
-  /** Varsayılan görünüm modu */
+  /** Initial viewer mode */
   initialMode?: Mode;
-  /** Maksimum yükseklik sınırı (px). Varsayılan: 1000 */
+  /** Max height clamp (px). Default: 1000 */
   maxHeightPx?: number;
   className?: string;
 };
@@ -30,34 +30,32 @@ type CvViewerProps = {
 export default function CvSection({
   pdfSrc = "/cv/MuratZorlu-CV.pdf",
   title = "CV (PDF)",
-  description = "PDF'yi sayfada görüntüleyin, indirin veya yeni sekmede açın.",
+  description = "View the PDF on page, download, or open in a new tab.",
   initialMode = "fit-width",
   maxHeightPx = 1000,
   className,
 }: CvViewerProps): React.JSX.Element {
-  const [mode, ] = React.useState<Mode>(initialMode);
-  const [height, setHeight] = React.useState<number>(calcHeight(maxHeightPx));
+  // never read window during initial render
+  const [mounted, setMounted] = React.useState<boolean>(false);
+  const INITIAL_HEIGHT = Math.min(720, maxHeightPx);
+  const [height, setHeight] = React.useState<number>(INITIAL_HEIGHT);
 
-  // Viewport değiştikçe yüksekliği güncelle
   React.useEffect(() => {
-    const onResize = (): void => setHeight(calcHeight(maxHeightPx));
-    window.addEventListener("resize", onResize, { passive: true });
-    return () => window.removeEventListener("resize", onResize);
+    setMounted(true);
+    const apply = (): void => setHeight(calcHeight(maxHeightPx));
+    apply();
+    window.addEventListener("resize", apply, { passive: true });
+    return () => window.removeEventListener("resize", apply);
   }, [maxHeightPx]);
 
   const headingId = React.useId();
   const descId = React.useId();
 
-  const iframeHash =
-    mode === "fit-page" ? "#view=FitH" : "#zoom=page-width";
-
+  const iframeHash = initialMode === "fit-page" ? "#view=FitH" : "#zoom=page-width";
   const iframeSrc = `${pdfSrc}${iframeHash}`;
 
   return (
-    <section
-      aria-labelledby={headingId}
-      className={cn("py-12 sm:py-16", className)}
-    >
+    <section aria-labelledby={headingId} className={cn("py-12 sm:py-16", className)}>
       <Card>
         <CardHeader className="pb-0">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -68,19 +66,18 @@ export default function CvSection({
               <CardDescription id={descId}>{description}</CardDescription>
             </div>
 
-            {/* Kontrol çubuğu */}
             <div className="flex items-center gap-2">
-              <Button asChild size="sm" variant="outline" aria-label="CV'yi indir">
+              <Button asChild size="sm" variant="outline" aria-label="Download CV">
                 <a href={pdfSrc} download>
                   <FileDown className="mr-2 h-4 w-4" aria-hidden />
-                  İndir
+                  Download
                 </a>
               </Button>
 
-              <Button asChild size="sm" aria-label="CV'yi yeni sekmede aç">
+              <Button asChild size="sm" aria-label="Open CV in a new tab">
                 <a href={pdfSrc} target="_blank" rel="noreferrer">
                   <ExternalLink className="mr-2 h-4 w-4" aria-hidden />
-                  Yeni sekmede aç
+                  Open in new tab
                 </a>
               </Button>
             </div>
@@ -89,27 +86,35 @@ export default function CvSection({
 
         <CardContent className="pt-4">
           <div className="overflow-hidden rounded-md border">
-            {/* Not: PDF viewer parametreleri tarayıcıya göre değişebilir.
-               '#zoom=page-width' / '#view=FitH' çoğu modern tarayıcıda çalışır. */}
-            <iframe
-              title="CV PDF görüntüleyici"
-              aria-describedby={descId}
-              src={iframeSrc}
-              className="block w-full bg-muted"
-              style={{ height }}
-            />
+            {/* SSR-safe: render placeholder on server and first client render.
+               After mount, swap to real iframe with computed height. */}
+            {mounted ? (
+              <iframe
+                title="CV PDF viewer"
+                aria-describedby={descId}
+                src={iframeSrc}
+                className="block w-full bg-muted"
+                style={{ height }}
+                loading="lazy"
+              />
+            ) : (
+              <div
+                className="block w-full bg-muted"
+                style={{ height: INITIAL_HEIGHT }}
+                aria-hidden
+              />
+            )}
           </div>
 
-          {/* PDF engellenirse veya yüklenemezse alternatif linkler zaten üstte var. */}
           <noscript>
             <p className="mt-3 text-sm text-muted-foreground">
-              JavaScript devre dışı.{" "}
+              JavaScript is disabled.{" "}
               <a className="underline" href={pdfSrc} target="_blank" rel="noreferrer">
-                CV&apos;yi yeni sekmede aç
+                Open CV in a new tab
               </a>{" "}
-              veya{" "}
+              or{" "}
               <a className="underline" href={pdfSrc} download>
-                indir
+                download it
               </a>
               .
             </p>
@@ -120,11 +125,9 @@ export default function CvSection({
   );
 }
 
-/* --------------------------------- Bits ---------------------------------- */
+/* --------------------------------- Utils ---------------------------------- */
 
 function calcHeight(maxHeightPx: number): number {
-  // Mobilde ~70vh, daha geniş ekranlarda ~80vh; üst limit ile sınırla
-  if (typeof window === "undefined") return Math.min(720, maxHeightPx);
   const vh = window.innerHeight;
   const base = vh < 640 ? Math.round(vh * 0.7) : Math.round(vh * 0.8);
   return Math.min(base, maxHeightPx);

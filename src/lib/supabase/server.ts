@@ -1,3 +1,4 @@
+// src/lib/supabase/server.ts
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 type Json =
@@ -45,14 +46,8 @@ export interface Database {
   };
 }
 
-export function createServerClient(): SupabaseClient<Database> {
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY; // only on server
-  if (!url || !key) {
-    throw new Error("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY");
-  }
-  return createClient<Database>(url, key, {
-    auth: { persistSession: false, autoRefreshToken: false },
-    global: { headers: { "X-Client-Info": "portfolio-contact" } },
-  });
+export function createServerClient(): SupabaseClient {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!; // yalnızca server
+  return createClient(url, serviceKey, { auth: { persistSession: false } });
 }

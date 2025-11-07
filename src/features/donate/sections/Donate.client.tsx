@@ -1,7 +1,10 @@
+// src/features/donate/sections/Donate.client.tsx
 "use client";
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
+
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -22,11 +25,13 @@ import {
   ShieldCheck,
   Info,
   ExternalLink,
-  Share2,
   Download,
   FileText,
 } from "lucide-react";
-import { DONATION_ACCOUNTS, type Account } from "@/config/donation";
+
+import { DONATION_ACCOUNTS } from "@/features/donate/data/accounts";
+import type { Account, FiatAccount, CryptoAccount } from "@/features/donate/types/types";
+import { isFiat, tabValue, formatIban, buildInfoText } from "@/features/donate/utils/format";
 
 /* -------------------------------- Types -------------------------------- */
 
@@ -34,57 +39,14 @@ type DonateProps = {
   className?: string;
 };
 
-// Narrow types from imported Account union
-type FiatAccount = Extract<Account, { type: "fiat" }>;
-type CryptoAccount = Extract<Account, { type: "crypto" }>;
-
-/* -------------------------------- Utils -------------------------------- */
-
-function isFiat(a: Account): a is FiatAccount {
-  return a.type === "fiat";
-}
-function isCrypto(a: Account): a is CryptoAccount {
-  return a.type === "crypto";
-}
-function tabValue(a: Account): string {
-  return isFiat(a) ? a.currency : a.symbol;
-}
-function formatIban(raw: string): string {
-  const s = raw.replace(/\s+/g, "");
-  return s.replace(/(.{4})/g, "$1 ").trim();
-}
-function buildInfoText(a: Account): string {
-  if (isFiat(a)) {
-    const parts: string[] = [
-      `Currency: ${a.currency}`,
-      `Bank: ${a.bank}`,
-      `Account holder: ${a.accountHolder}`,
-      `IBAN: ${formatIban(a.iban)}`,
-    ];
-    if (a.swift) parts.push(`SWIFT/BIC: ${a.swift}`);
-    if (a.branch) parts.push(`Branch: ${a.branch}`);
-    if (a.note) parts.push(`Note: ${a.note}`);
-    return parts.join("\n");
-  }
-  const cryptoParts: string[] = [
-    `Asset: ${a.symbol}`,
-    `Network: ${a.network}`,
-    `Address: ${a.address}`,
-  ];
-  if (a.note) cryptoParts.push(`Note: ${a.note}`);
-  if (a.uri) cryptoParts.push(`URI: ${a.uri}`);
-  return cryptoParts.join("\n");
-}
-
 /* ---------------------------- Root Component --------------------------- */
 
 export default function Donate({ className }: DonateProps): React.JSX.Element {
-  const accounts = DONATION_ACCOUNTS;
+  const accounts: readonly Account[] = DONATION_ACCOUNTS;
   const firstTab = accounts.length > 0 ? tabValue(accounts[0]) : "TRY";
 
   return (
     <section className={cn("space-y-8", className)}>
-      {/* Yalnızca meta rozet; başlık/açıklama yok */}
       <MetaHeader />
 
       <Tabs defaultValue={firstTab} className="w-full">
@@ -122,7 +84,6 @@ export default function Donate({ className }: DonateProps): React.JSX.Element {
 /* -------------------------------- Parts -------------------------------- */
 
 function MetaHeader(): React.JSX.Element {
-  // H1 yok, sadece doğrulama rozeti. Page header ayrı geliyor.
   return (
     <header>
       <div className="inline-flex items-center gap-2 rounded-md border bg-background/60 px-2.5 py-1 text-xs backdrop-blur supports-[backdrop-filter]:bg-background/40">
@@ -165,21 +126,6 @@ function FiatAccountCard({ account }: { account: FiatAccount }): React.JSX.Eleme
         window.setTimeout(() => setCopiedAll(false), 1200);
       }
     });
-  }
-
-  async function shareDetails(): Promise<void> {
-    const title = `${account.currency} Donation Details`;
-    const text = infoBlock;
-    if (navigator.share) {
-      try {
-        await navigator.share({ title, text });
-        announce("Shared");
-      } catch {
-        // ignore
-      }
-    } else {
-      copy(text);
-    }
   }
 
   function downloadTxt(): void {
@@ -307,33 +253,12 @@ function FiatAccountCard({ account }: { account: FiatAccount }): React.JSX.Eleme
 
         <NoteBuilder baseNote={account.note ?? "Donation"} />
 
-        {account.qrSrc ? (
-          <div className="rounded-lg border p-4">
-            <div className="mb-2 text-sm font-medium">QR</div>
-            <div className="rounded-md border bg-muted/30 p-3">
-              <img
-                src={account.qrSrc}
-                alt={`${account.currency} IBAN QR`}
-                className="mx-auto h-40 w-40 object-contain"
-              />
-            </div>
-            <p className="mt-2 text-xs text-muted-foreground">
-              Scan with your banking app to auto-fill the IBAN. Availability depends on your bank.
-            </p>
-          </div>
-        ) : null}
-
         <Separator />
 
         <div className="flex flex-wrap items-center gap-3">
           <Button type="button" onClick={() => copy(infoBlock)} variant="default">
             {copiedAll ? <Check className="mr-2 h-4 w-4" /> : <Copy className="mr-2 h-4 w-4" />}
             {copiedAll ? "Copied" : "Copy all details"}
-          </Button>
-
-          <Button type="button" variant="secondary" onClick={shareDetails}>
-            <Share2 className="mr-2 h-4 w-4" />
-            Share
           </Button>
 
           <Button type="button" variant="outline" onClick={downloadTxt}>
@@ -374,6 +299,10 @@ function CryptoAccountCard({ account }: { account: CryptoAccount }): React.JSX.E
   const [copiedAll, setCopiedAll] = React.useState<boolean>(false);
   const [statusMsg, setStatusMsg] = React.useState<string>("");
 
+  // QR (SVG) via /api/qr
+  const qrText = account.uri ?? account.address;
+  const qrSrc = `/api/qr?text=${encodeURIComponent(qrText)}`;
+
   const infoBlock = React.useMemo(() => buildInfoText(account), [account]);
 
   function announce(msg: string): void {
@@ -387,21 +316,6 @@ function CryptoAccountCard({ account }: { account: CryptoAccount }): React.JSX.E
       announce("Copied");
       window.setTimeout(() => setCopiedAll(false), 1200);
     });
-  }
-
-  async function shareDetails(): Promise<void> {
-    const title = `${account.symbol} Tip Details`;
-    const text = infoBlock;
-    if (navigator.share) {
-      try {
-        await navigator.share({ title, text });
-        announce("Shared");
-      } catch {
-        // ignore
-      }
-    } else {
-      copy(text);
-    }
   }
 
   function downloadTxt(): void {
@@ -424,8 +338,8 @@ function CryptoAccountCard({ account }: { account: CryptoAccount }): React.JSX.E
       <CardHeader className="space-y-1">
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant="secondary">{account.symbol}</Badge>
-          <CardTitle className="text-base sm:text-lg">Bitcoin</CardTitle>
-          <span className="ml-auto text-[11px] text-muted-foreground">
+          <CardTitle className="text-base sm:text-lg">{account.symbol}</CardTitle>
+          <span className="ml-auto text:[11px] text-muted-foreground">
             Network: <span className="font-medium">{account.network}</span>
           </span>
         </div>
@@ -459,7 +373,7 @@ function CryptoAccountCard({ account }: { account: CryptoAccount }): React.JSX.E
           />
 
           {account.uri ? (
-            <p className="mt-2 text:[11px] text-muted-foreground">
+            <p className="mt-2 text-[11px] text-muted-foreground">
               BIP21:{" "}
               <a href={account.uri} className="underline underline-offset-4">
                 {account.uri}
@@ -468,21 +382,25 @@ function CryptoAccountCard({ account }: { account: CryptoAccount }): React.JSX.E
           ) : null}
         </div>
 
-        {account.qrSrc ? (
-          <div className="rounded-lg border p-4">
-            <div className="mb-2 text-sm font-medium">QR</div>
-            <div className="rounded-md border bg-muted/30 p-3">
-              <img
-                src={account.qrSrc}
+        {/* QR via API route (SVG) */}
+        <div className="rounded-lg border p-4">
+          <div className="mb-2 text-sm font-medium">QR</div>
+          <div className="rounded-md border bg-muted/30 p-3">
+            <div className="mx-auto h-40 w-40">
+              <Image
+                src={qrSrc}
                 alt={`${account.symbol} address QR`}
-                className="mx-auto h-40 w-40 object-contain"
-              />
+                width={160}
+                height={160}
+                className="mx-auto object-contain"
+                unoptimized
+                />
             </div>
-            <p className="mt-2 text-xs text-muted-foreground">
-              Send only on the Bitcoin network. Wrong network means funds are lost.
-            </p>
           </div>
-        ) : null}
+          <p className="mt-2 text-xs text-muted-foreground">
+            Send only on the {account.network} network. Wrong network means funds are lost.
+          </p>
+        </div>
 
         <Separator />
 
@@ -490,11 +408,6 @@ function CryptoAccountCard({ account }: { account: CryptoAccount }): React.JSX.E
           <Button type="button" onClick={() => copy(infoBlock)} variant="default">
             {copiedAll ? <Check className="mr-2 h-4 w-4" /> : <Copy className="mr-2 h-4 w-4" />}
             {copiedAll ? "Copied" : "Copy all details"}
-          </Button>
-
-          <Button type="button" variant="secondary" onClick={shareDetails}>
-            <Share2 className="mr-2 h-4 w-4" />
-            Share
           </Button>
 
           <Button type="button" variant="outline" onClick={downloadTxt}>
@@ -514,7 +427,7 @@ function CryptoAccountCard({ account }: { account: CryptoAccount }): React.JSX.E
         </div>
 
         <div className="rounded-lg border bg-background/60 p-3 text-xs text-muted-foreground">
-          Crypto tips are voluntary support, not a payment for goods or services in Türkiye. Send only BTC to this address.
+          Crypto tips are voluntary support, not a payment for goods or services in Türkiye. Send only {account.symbol} on the {account.network} network.
         </div>
       </CardContent>
     </Card>
@@ -550,7 +463,12 @@ function Field({
           {copied ? "Copied" : "Copy"}
         </Button>
       </div>
-      <Input readOnly value={value} onFocus={(e) => e.currentTarget.select()} className="font-mono text-sm" />
+      <Input
+        readOnly
+        value={value}
+        onFocus={(e) => e.currentTarget.select()}
+        className="font-mono text-sm"
+      />
     </div>
   );
 }

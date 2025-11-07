@@ -5,62 +5,23 @@ import React from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
+  Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import {
-  CalendarDays,
-  MapPin,
-  Building2,
-  Briefcase,
-  GraduationCap,
-  ExternalLink,
-  Timer,
-  Filter as FilterIcon,
-  X,
-  Info,
+  CalendarDays, MapPin, Building2, Briefcase, GraduationCap,
+  ExternalLink, Timer, Filter as FilterIcon, X, Info,
 } from "lucide-react";
 
+import type { ExperienceItem, Kind, Period, MonthStr, ExtLink } from "@/features/about/types";
+import { EXPERIENCE_ITEMS } from "@/features/about/data/experience";
+
 /* ------------------------------------------------------------------------ */
-/* Types                                                                    */
+/* Local types                                                              */
 /* ------------------------------------------------------------------------ */
-
-type MonthStr =
-  | "01" | "02" | "03" | "04" | "05" | "06"
-  | "07" | "08" | "09" | "10" | "11" | "12";
-
-type Period = {
-  /** YYYY-MM */
-  start: `${number}-${MonthStr}`;
-  /** YYYY-MM, if omitted it is treated as ongoing */
-  end?: `${number}-${MonthStr}`;
-};
-
-type ExtLink = { label: string; href: string };
-
-type Kind = "work" | "freelance" | "education";
-
-type ExperienceItem = {
-  id: string;
-  kind: Kind;
-  org: string;
-  role: string;
-  location?: string;
-  period: Period;
-  summary?: string;
-  achievements?: readonly string[];
-  responsibilities?: readonly string[];
-  tags?: readonly string[];
-  links?: readonly ExtLink[];
-};
 
 type FilterState = {
   query: string;
@@ -84,116 +45,13 @@ type ExperienceTimelineProps = {
 };
 
 /* ------------------------------------------------------------------------ */
-/* Defaults                                                                 */
-/* ------------------------------------------------------------------------ */
-
-const DEFAULT_ITEMS: readonly ExperienceItem[] = [
-  {
-    id: "exp-1",
-    kind: "work",
-    org: "Freelance",
-    role: "Fullstack Web Developer",
-    location: "Istanbul",
-    period: { start: "2023-09" },
-    summary:
-      "Product-focused web apps with Next.js + TypeScript. Performance, accessibility, and maintainability first.",
-    achievements: [
-      "Simplified data layer with RSC + Server Actions",
-      "Lighthouse 95+ via budgets and continuous measurements",
-      "A11y issues blocked in CI",
-    ],
-    responsibilities: [
-      "Architecture decisions and code standards",
-      "Edge-first delivery and cache strategies",
-      "Observability: Web Vitals, Sentry, profiling",
-    ],
-    tags: ["Next.js", "TypeScript", "Shadcn UI", "PostgreSQL"],
-    links: [{ label: "Projects", href: "/projects" }],
-  },
-  {
-    id: "exp-2",
-    kind: "freelance",
-    org: "SaaS Landing Accelerator",
-    role: "Frontend",
-    location: "Remote",
-    period: { start: "2024-04", end: "2024-12" },
-    summary:
-      "Landing page template: preload/prefetch, optimized images, clean SEO architecture.",
-    achievements: ["CLS < 0.05, LCP ~1.4s", "Component library and theme system"],
-    responsibilities: [
-      "Design tokens and thematic variants",
-      "Meta/structured data, Open Graph optimization",
-    ],
-    tags: ["SEO", "Edge", "Tailwind"],
-    links: [{ label: "Live Demo", href: "/projects/landing-accelerator" }],
-  },
-  {
-    id: "exp-3",
-    kind: "work",
-    org: "CraftHub",
-    role: "Senior Frontend Engineer",
-    location: "Remote",
-    period: { start: "2022-01", end: "2023-08" },
-    summary:
-      "Internal tools platform. Ownership of monorepo, bundling, and shared UI kit.",
-    achievements: [
-      "CI time reduced by 45% with Turborepo",
-      "Visual regression testing via Storybook + Chromatic",
-    ],
-    responsibilities: [
-      "RFC processes and documentation",
-      "DX improvements and automation",
-    ],
-    tags: ["React", "Turborepo", "Storybook", "Vitest"],
-    links: [{ label: "Design System Notes", href: "/projects/design-system" }],
-  },
-  {
-    id: "exp-4",
-    kind: "freelance",
-    org: "DataViz Studio",
-    role: "Frontend & Data",
-    location: "Remote",
-    period: { start: "2021-04", end: "2021-12" },
-    summary:
-      "Interactive data visualization dashboards. Lazy rAF animations and progressive data loading.",
-    achievements: ["TTI 30% faster", "Scalability with SSR + ISR"],
-    tags: ["D3", "Performance", "ISR"],
-    links: [{ label: "Short Case", href: "/projects/dataviz" }],
-  },
-  {
-    id: "edu-1",
-    kind: "education",
-    org: "Engineering (BSc)",
-    role: "Computer Engineering",
-    location: "Turkey",
-    period: { start: "2016-09", end: "2020-06" },
-    summary:
-      "Algorithms, databases, networking fundamentals. Boring, yes, but that’s where the base was built.",
-    achievements: ["Capstone: web-based analysis tool"],
-    tags: ["CS", "Algorithms", "DB"],
-  },
-  {
-    id: "edu-2",
-    kind: "education",
-    org: "Open Source Contributions",
-    role: "Continuous Learning",
-    location: "GitHub",
-    period: { start: "2020-02" },
-    summary:
-      "PRs to UI libraries and tooling. Documentation and type improvements.",
-    tags: ["OSS", "Types"],
-    links: [{ label: "GitHub", href: "/projects#oss" }],
-  },
-] as const;
-
-/* ------------------------------------------------------------------------ */
 /* Component                                                                */
 /* ------------------------------------------------------------------------ */
 
 export default function ExperienceTimeline({
   heading = "Experience & Education",
   subheading = "Product-focused processes, measurable outcomes.",
-  items = DEFAULT_ITEMS,
+  items = EXPERIENCE_ITEMS,
   className,
   defaultFilter,
   isLoading = false,
@@ -203,70 +61,58 @@ export default function ExperienceTimeline({
 
   const [filter, setFilter] = React.useState<FilterState>(() => ({
     query: defaultFilter?.query ?? "",
-    kinds:
-      defaultFilter?.kinds != null
-        ? new Set(defaultFilter.kinds)
-        : null,
-    tags:
-      defaultFilter?.tags != null
-        ? new Set(defaultFilter.tags)
-        : null,
+    kinds: defaultFilter?.kinds != null ? new Set(defaultFilter.kinds) : null,
+    tags: defaultFilter?.tags != null ? new Set(defaultFilter.tags) : null,
     sort: defaultFilter?.sort ?? "newest",
     groupByYear: defaultFilter?.groupByYear ?? true,
   }));
 
+  // Sort items by period. comparePeriod returns newest-first by default.
   const normalized = React.useMemo(() => {
     const sorted = [...items].sort((a, b) => {
-      const aKey = (filter.sort === "newest" ? -1 : 1) * comparePeriod(a.period, b.period);
-      return aKey;
+      const base = comparePeriod(a.period, b.period); // newest-first
+      return filter.sort === "newest" ? base : -base;
     });
     return sorted;
   }, [items, filter.sort]);
 
   const allTags = React.useMemo(() => {
     const set = new Set<string>();
-    for (const it of items) {
-      for (const t of it.tags ?? []) set.add(t);
-    }
+    for (const it of items) for (const t of it.tags ?? []) set.add(t);
     return [...set].sort((a, b) => a.localeCompare(b, "en"));
   }, [items]);
 
   const filtered = React.useMemo(() => {
     const q = filter.query.trim().toLocaleLowerCase("en");
     return normalized.filter((it) => {
-      // kind filter
       if (filter.kinds && !filter.kinds.has(it.kind)) return false;
-      // tag filter
       if (filter.tags && (it.tags ?? []).every((t) => !filter.tags!.has(t))) return false;
-      // text query over role, org, summary, tags
       if (q.length > 0) {
         const hay = [
-          it.role,
-          it.org,
-          it.summary ?? "",
+          it.role, it.org, it.summary ?? "",
           ...(it.achievements ?? []),
           ...(it.tags ?? []),
-        ]
-          .join(" ")
-          .toLocaleLowerCase("en");
+        ].join(" ").toLocaleLowerCase("en");
         if (!hay.includes(q)) return false;
       }
       return true;
     });
   }, [normalized, filter.kinds, filter.tags, filter.query]);
 
+  // Group by year with prefixed keys to preserve insertion order in objects.
   const grouped = React.useMemo(() => {
     if (!filter.groupByYear) return { __all__: filtered } as const;
     const map = new Map<string, ExperienceItem[]>();
     for (const it of filtered) {
       const year = it.period.start.split("-")[0]!;
-      const arr = map.get(year) ?? [];
+      const key = `y-${year}`;
+      const arr = map.get(key) ?? [];
       arr.push(it);
-      map.set(year, arr);
+      map.set(key, arr);
     }
-    // Keep years sorted
+    const toYear = (k: string) => Number(k.slice(2)); // "y-2024" -> 2024
     const sortedEntries = [...map.entries()].sort(([a], [b]) =>
-      filter.sort === "newest" ? Number(b) - Number(a) : Number(a) - Number(b)
+      filter.sort === "newest" ? toYear(b) - toYear(a) : toYear(a) - toYear(b)
     );
     return Object.fromEntries(sortedEntries) as Record<string, ExperienceItem[]>;
   }, [filtered, filter.groupByYear, filter.sort]);
@@ -280,16 +126,10 @@ export default function ExperienceTimeline({
         <p className="text-sm text-muted-foreground">{subheading}</p>
       </div>
 
-      {/* Controls */}
-      <ControlsBar
-        filter={filter}
-        setFilter={setFilter}
-        allTags={allTags}
-      />
+      <ControlsBar filter={filter} setFilter={setFilter} allTags={allTags} />
 
       <Separator className="my-6" />
 
-      {/* Loading / Empty / List */}
       {isLoading ? (
         <SkeletonList />
       ) : totalCount(grouped) === 0 ? (
@@ -301,11 +141,8 @@ export default function ExperienceTimeline({
           onTagClick={(t) =>
             setFilter((f) => {
               const next = new Set([...(f.tags ?? [])]);
-              if (next.has(t)) {
-                next.delete(t);
-              } else {
-                next.add(t);
-              }
+              if (next.has(t)) next.delete(t);
+              else next.add(t);
               return { ...f, tags: next.size === 0 ? null : next };
             })
           }
@@ -320,15 +157,17 @@ export default function ExperienceTimeline({
 /* ------------------------------------------------------------------------ */
 
 function ControlsBar({
-  filter,
-  setFilter,
-  allTags,
+  filter, setFilter, allTags,
 }: {
   filter: FilterState;
   setFilter: React.Dispatch<React.SetStateAction<FilterState>>;
   allTags: readonly string[];
 }): React.JSX.Element {
-  const kinds: readonly { k: Kind; label: string; icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }> }[] = [
+  const kinds: readonly {
+    k: Kind;
+    label: string;
+    icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
+  }[] = [
     { k: "work", label: "Work", icon: Building2 },
     { k: "freelance", label: "Freelance", icon: Briefcase },
     { k: "education", label: "Education", icon: GraduationCap },
@@ -352,10 +191,9 @@ function ControlsBar({
                   type="button"
                   variant={active ? "default" : "secondary"}
                   size="sm"
-                  className={cn("gap-2")}
+                  className="gap-2"
                   onClick={() =>
                     setFilter((f) => {
-                      // null -> all considered selected; clicking makes only this one selected
                       if (f.kinds == null) return { ...f, kinds: new Set<Kind>([k]) };
                       const next = new Set(f.kinds);
                       if (next.has(k)) next.delete(k);
@@ -415,7 +253,6 @@ function ControlsBar({
           ) : null}
         </div>
 
-        {/* Show active tag filters */}
         <ActiveTagFilters
           tags={filter.tags}
           clearOne={(t) =>
@@ -430,7 +267,6 @@ function ControlsBar({
         />
       </div>
 
-      {/* Tag suggestions */}
       {allTags.length > 0 ? (
         <div className="flex flex-wrap gap-2">
           {allTags.map((t) => {
@@ -465,9 +301,7 @@ function ControlsBar({
 }
 
 function ActiveTagFilters({
-  tags,
-  clearOne,
-  clearAll,
+  tags, clearOne, clearAll,
 }: {
   tags: ReadonlySet<string> | null;
   clearOne: (t: string) => void;
@@ -480,10 +314,7 @@ function ActiveTagFilters({
     <div className="flex flex-wrap items-center gap-2">
       <span className="text-xs text-muted-foreground">Active tags:</span>
       {arr.map((t) => (
-        <span
-          key={t}
-          className="inline-flex items-center gap-1 rounded-md border bg-muted px-2 py-0.5 text-xs"
-        >
+        <span key={t} className="inline-flex items-center gap-1 rounded-md border bg-muted px-2 py-0.5 text-xs">
           #{t}
           <button
             type="button"
@@ -507,9 +338,7 @@ function ActiveTagFilters({
 /* ------------------------------------------------------------------------ */
 
 function TimelineList({
-  grouped,
-  onTagClick,
-  tagFilteringEnabled,
+  grouped, onTagClick, tagFilteringEnabled,
 }: {
   grouped: Record<string, readonly ExperienceItem[]> | { __all__: readonly ExperienceItem[] };
   onTagClick: (tag: string) => void;
@@ -519,16 +348,10 @@ function TimelineList({
 
   return (
     <ol className="relative space-y-8">
-      {/* Vertical line */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-4 top-0 h-full w-px bg-border sm:left-28"
-      />
+      <div aria-hidden className="pointer-events-none absolute left-4 top-0 h-full w-px bg-border sm:left-28" />
       {groups.map(([key, items]) => (
         <li key={key} className="relative">
-          {key !== "__all__" ? (
-            <YearHeader year={key} count={items.length} />
-          ) : null}
+          {key !== "__all__" ? <YearHeader year={key.startsWith("y-") ? key.slice(2) : key} count={items.length} /> : null}
           <div className="mt-4 space-y-8">
             {items.map((item, idx) => (
               <TimelineRow
@@ -558,28 +381,18 @@ function YearHeader({ year, count }: { year: string; count: number }): React.JSX
 /* ---------------------------------- Row ---------------------------------- */
 
 function TimelineRow({
-  item,
-  last,
-  onTagClick,
-  tagFilteringEnabled,
+  item, last, onTagClick, tagFilteringEnabled,
 }: {
   item: ExperienceItem;
   last: boolean;
   onTagClick: (tag: string) => void;
   tagFilteringEnabled: boolean;
 }): React.JSX.Element {
-  const icon =
-    item.kind === "education"
-      ? GraduationCap
-      : item.kind === "freelance"
-      ? Briefcase
-      : Building2;
-
+  const icon = item.kind === "education" ? GraduationCap : item.kind === "freelance" ? Briefcase : Building2;
   const duration = durationHumanTR(item.period);
 
   return (
     <div className="grid gap-4 sm:grid-cols-[9rem_1fr]">
-      {/* Left column: date and dot */}
       <div className="relative pl-10 sm:pl-0">
         <Dot kind={item.kind} />
         <div className="flex flex-col text-xs text-muted-foreground">
@@ -601,16 +414,11 @@ function TimelineRow({
           </span>
         </div>
 
-        {/* Left connector to pass through the dot on mobile */}
         {!last ? (
-          <div
-            aria-hidden
-            className="pointer-events-none absolute left-4 top-9 hidden h-[calc(100%_-_2.25rem)] w-px bg-border sm:left-auto sm:hidden"
-          />
+          <div aria-hidden className="pointer-events-none absolute left-4 top-9 hidden h-[calc(100%_-_2.25rem)] w-px bg-border sm:left-auto sm:hidden" />
         ) : null}
       </div>
 
-      {/* Right column: content card */}
       <Card className="overflow-hidden">
         <CardHeader className="pb-0">
           <div className="mb-2 flex flex-wrap items-start justify-between gap-3">
@@ -626,9 +434,7 @@ function TimelineRow({
         </CardHeader>
 
         <CardContent className="pt-4">
-          {item.summary ? (
-            <p className="text-sm text-muted-foreground">{item.summary}</p>
-          ) : null}
+          {item.summary ? <p className="text-sm text-muted-foreground">{item.summary}</p> : null}
 
           {item.achievements?.length ? (
             <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
@@ -688,26 +494,13 @@ function TimelineRow({
 /* --------------------------------- Bits ---------------------------------- */
 
 function Dot({ kind }: { kind: Kind }): React.JSX.Element {
-  const ring =
-    kind === "education"
-      ? "ring-blue-500"
-      : kind === "freelance"
-      ? "ring-amber-500"
-      : "ring-primary";
-  const fill =
-    kind === "education"
-      ? "bg-blue-500/90"
-      : kind === "freelance"
-      ? "bg-amber-500/90"
-      : "bg-primary";
+  const ring = kind === "education" ? "ring-blue-500" : kind === "freelance" ? "ring-amber-500" : "ring-primary";
+  const fill = kind === "education" ? "bg-blue-500/90" : kind === "freelance" ? "bg-amber-500/90" : "bg-primary";
 
   return (
     <span
       aria-hidden
-      className={cn(
-        "absolute left-0 top-1.5 inline-flex size-3.5 -translate-x-1/2 items-center justify-center rounded-full ring-2",
-        ring
-      )}
+      className={cn("absolute left-0 top-1.5 inline-flex size-3.5 -translate-x-1/2 items-center justify-center rounded-full ring-2", ring)}
     >
       <span className={cn("block size-2 rounded-full", fill)} />
     </span>
@@ -716,29 +509,33 @@ function Dot({ kind }: { kind: Kind }): React.JSX.Element {
 
 function labelForKind(k: Kind): string {
   switch (k) {
-    case "work":
-      return "Work";
-    case "freelance":
-      return "Freelance";
-    case "education":
-      return "Education";
+    case "work": return "Work";
+    case "freelance": return "Freelance";
+    case "education": return "Education";
   }
 }
 
 function LinkPill({ href, label }: ExtLink): React.JSX.Element {
   const isInternal = href.startsWith("/");
-  const Comp: React.ElementType<{ className?: string; href?: string; target?: string; rel?: string; "aria-label"?: string }> =
-    isInternal ? Link : "a";
+
+  const classes = cn(
+    "inline-flex items-center gap-2 rounded-md border px-2.5 py-1 text-xs transition-colors hover:bg-muted"
+  );
+
+  if (isInternal) {
+    return (
+      <Link href={href} className={classes} aria-label={label}>
+        <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+        <span>{label}</span>
+      </Link>
+    );
+  }
 
   return (
-    <Comp
-      {...(isInternal ? { href } : { href, target: "_blank", rel: "noreferrer" })}
-      className="inline-flex items-center gap-2 rounded-md border px-2.5 py-1 text-xs transition-colors hover:bg-muted"
-      aria-label={label}
-    >
+    <a href={href} target="_blank" rel="noreferrer" className={classes} aria-label={label}>
       <ExternalLink className="h-3.5 w-3.5" aria-hidden />
       <span>{label}</span>
-    </Comp>
+    </a>
   );
 }
 
@@ -827,16 +624,14 @@ function monthNameTR(m: MonthStr): string {
 }
 
 function comparePeriod(a: Period, b: Period): number {
-  // Sort by start date desc (newest first) when multiplier -1, asc when +1 handled outside
-  // Here we only provide the absolute comparison.
   const aNum = toMonthIndex(a.start);
   const bNum = toMonthIndex(b.start);
   if (aNum === bNum) {
     const aEnd = a.end ? toMonthIndex(a.end) : Number.POSITIVE_INFINITY;
     const bEnd = b.end ? toMonthIndex(b.end) : Number.POSITIVE_INFINITY;
-    return bEnd - aEnd; // longer duration first
+    return bEnd - aEnd; // longer first if same start month
   }
-  return bNum - aNum;
+  return bNum - aNum; // newer first
 }
 
 function toMonthIndex(s: `${number}-${MonthStr}`): number {

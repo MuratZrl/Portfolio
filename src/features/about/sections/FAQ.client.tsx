@@ -21,14 +21,10 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Search, Link2, X, HelpCircle } from "lucide-react";
 
-/* ---------------------------------- Types --------------------------------- */
+import type { QA } from "@/features/about/types";
+import { FAQ_ITEMS } from "@/features/about/data/FAQ";
 
-type QA = {
-  question: string;
-  answer: string;
-  category: "General" | "Process" | "Quality" | "Technical" | "Delivery";
-  id?: string; // if not provided, a slug will be generated from the question
-};
+/* -------------------------------- Component ------------------------------- */
 
 type FaqProps = {
   heading?: string;
@@ -38,53 +34,10 @@ type FaqProps = {
   className?: string;
 };
 
-/* -------------------------------- Defaults -------------------------------- */
-
-const DEFAULT_QA: readonly QA[] = [
-  {
-    question: "How does the project process work?",
-    answer:
-      "Discovery → Skeleton → Development → Validation → Release. After each phase, we do a brief review and iterate in small steps.",
-    category: "Process",
-  },
-  {
-    question: "What are your performance targets?",
-    answer:
-      "Lighthouse 90+ and LCP around 1.5s. I apply image optimization, preload/prefetch, and cache-aware data flows.",
-    category: "Quality",
-  },
-  {
-    question: "What’s the scope of accessibility (A11y)?",
-    answer:
-      "WCAG checks, keyboard navigation, visible focus rings, sufficient contrast. Automated with Axe where possible.",
-    category: "Quality",
-  },
-  {
-    question: "What’s your approach to Next.js architecture?",
-    answer:
-      "RSC and Server Actions first. Simple data layer, low dependency count, and component composition.",
-    category: "Technical",
-  },
-  {
-    question: "How do revisions and delivery work?",
-    answer:
-      "We agree on acceptance criteria. A QA pass before delivery, then a small revision window. I also add documentation.",
-    category: "Delivery",
-  },
-  {
-    question: "How do you guarantee code quality?",
-    answer:
-      "ESLint + Prettier, unit and e2e tests (Vitest/Playwright). Builds that don’t meet CI quality thresholds don’t ship.",
-    category: "Quality",
-  },
-] as const;
-
-/* -------------------------------- Component ------------------------------- */
-
 export default function Faq({
   heading = "FAQ",
   subheading = "Frequently asked questions with clear answers.",
-  items = DEFAULT_QA,
+  items = FAQ_ITEMS,           // 🔽 burada data dosyasını kullanıyoruz
   defaultCategory = "All",
   className,
 }: FaqProps): React.JSX.Element {
@@ -97,22 +50,21 @@ export default function Faq({
     return Array.from(set) as (QA["category"] | "All")[];
   }, [items]);
 
-  // Item to auto-open from hash
-  const [openItem, setOpenItem] = React.useState<string | undefined>(() =>
-    getHashId()
-  );
+  // Start closed on both SSR and first client render.
+  const [openItem, setOpenItem] = React.useState<string | undefined>(undefined);
 
   // Search & category filter
   const [query, setQuery] = React.useState<string>("");
   const [activeCategory, setActiveCategory] =
     React.useState<QA["category"] | "All">(defaultCategory);
 
-  // React to hash changes
-  React.useEffect(() => {
-    const onHashChange = (): void => setOpenItem(getHashId());
-    window.addEventListener("hashchange", onHashChange, { passive: true });
-    return () => window.removeEventListener("hashchange", onHashChange);
-  }, []);
+   // Read hash AFTER mount, then keep listening.
+   React.useEffect(() => {
+     const apply = (): void => setOpenItem(getHashId());
+     apply(); // open from current hash on mount
+     window.addEventListener("hashchange", apply, { passive: true });
+     return () => window.removeEventListener("hashchange", apply);
+   }, []);
 
   // Filtered data
   const prepared = React.useMemo(() => {

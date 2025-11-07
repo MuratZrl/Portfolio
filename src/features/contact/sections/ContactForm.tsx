@@ -38,9 +38,29 @@ export default function ContactForm(): React.JSX.Element {
       message: "",
       company: "",
     },
-    mode: "onTouched",
+    // Hata metinlerini hemen göstermemek için mount'ta validasyon yok.
+    // isValid'in canlı güncellenmesi için onChange uygun.
+    mode: "onChange",
     reValidateMode: "onChange",
+    criteriaMode: "all",
+    shouldFocusError: true,
   });
+
+  const {
+    errors,
+    touchedFields,
+    submitCount,
+    isSubmitting,
+    isValid,
+    isDirty,
+  } = form.formState;
+
+  // Hata metnini ne zaman gösterelim?
+  const showError = (k: keyof ContactInput) =>
+    Boolean(touchedFields[k] || submitCount > 0) && Boolean(errors[k]);
+
+  // Butonlar ne zaman aktif olsun?
+  const canSubmit = isValid && isDirty && !isSubmitting;
 
   const [status, setStatus] = React.useState<SubmitStatus>("idle");
   const [errorMsg, setErrorMsg] = React.useState<string>("");
@@ -54,7 +74,7 @@ export default function ContactForm(): React.JSX.Element {
   function focusFirstError(): void {
     const order: Array<keyof ContactInput> = ["name", "email", "subject", "message"];
     for (const key of order) {
-      if (form.formState.errors[key]) {
+      if (errors[key]) {
         form.setFocus(key);
         break;
       }
@@ -66,7 +86,7 @@ export default function ContactForm(): React.JSX.Element {
     current: SubjectValue,
     onChange: (v: SubjectValue) => void
   ): void {
-    const idx = SUBJECT_OPTIONS.findIndex(o => o.value === current);
+    const idx = SUBJECT_OPTIONS.findIndex((o) => o.value === current);
     if (idx < 0) return;
     if (e.key === "ArrowRight") {
       e.preventDefault();
@@ -108,14 +128,33 @@ export default function ContactForm(): React.JSX.Element {
       });
 
       if (!res.ok) {
-        let message = "Something went wrong.";
+        const fallback = "Something went wrong.";
         try {
-          const payload: { message?: string } = await res.json();
-          message = payload.message ?? message;
-        } catch {}
-        setStatus("error");
-        setErrorMsg(message);
-        return;
+          const payload: {
+            message?: string;
+            fieldErrors?: Partial<Record<keyof ContactInput, string>>;
+          } = await res.json();
+
+          if (res.status === 422 && payload.fieldErrors) {
+            (Object.entries(payload.fieldErrors) as Array<[keyof ContactInput, string]>).forEach(
+              ([key, msg]) => {
+                if (msg) form.setError(key, { type: "server", message: msg });
+              }
+            );
+            setStatus("error");
+            setErrorMsg("Please fix the highlighted fields.");
+            focusFirstError();
+            return;
+          }
+
+          setStatus("error");
+          setErrorMsg(payload.message ?? fallback);
+          return;
+        } catch {
+          setStatus("error");
+          setErrorMsg(fallback);
+          return;
+        }
       }
 
       setStatus("success");
@@ -147,8 +186,18 @@ export default function ContactForm(): React.JSX.Element {
             onSubmit={form.handleSubmit(onSubmit, onInvalid)}
             className="flex flex-1 flex-col gap-5"
             noValidate
-            aria-busy={form.formState.isSubmitting}
+            aria-busy={isSubmitting}
           >
+            {/* HONEYPOT (gizli) */}
+            <input
+              type="text"
+              {...form.register("company")}
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              className="absolute h-0 w-0 p-0 m-0 opacity-0 pointer-events-none"
+            />
+
             {/* TOP FIELDS */}
             <div className="grid gap-5 sm:grid-cols-2">
               <FormField
@@ -156,7 +205,7 @@ export default function ContactForm(): React.JSX.Element {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="contact-name">Name</FormLabel>
+                    <FormLabel htmlFor="contact-name">Full Name</FormLabel>
                     <FormControl>
                       <Input
                         id="contact-name"
@@ -164,9 +213,10 @@ export default function ContactForm(): React.JSX.Element {
                         autoComplete="name"
                         inputMode="text"
                         {...field}
+                        aria-invalid={showError("name")}
                       />
                     </FormControl>
-                    <FormMessage />
+                    {showError("name") && <FormMessage />}
                   </FormItem>
                 )}
               />
@@ -185,9 +235,10 @@ export default function ContactForm(): React.JSX.Element {
                         autoComplete="email"
                         inputMode="email"
                         {...field}
+                        aria-invalid={showError("email")}
                       />
                     </FormControl>
-                    <FormMessage />
+                    {showError("email") && <FormMessage />}
                   </FormItem>
                 )}
               />
@@ -229,7 +280,7 @@ export default function ContactForm(): React.JSX.Element {
                       })}
                     </div>
                   </FormControl>
-                  <FormMessage />
+                  {showError("subject") && <FormMessage />}
                 </FormItem>
               )}
             />
@@ -246,7 +297,9 @@ export default function ContactForm(): React.JSX.Element {
                       id="message-counter"
                       className={cn(
                         "text-xs tabular-nums",
-                        messageLen > 2000 ? "text-red-600 dark:text-red-400" : "text-muted-foreground"
+                        messageLen > 2000
+                          ? "text-red-600 dark:text-red-400"
+                          : "text-muted-foreground"
                       )}
                       aria-live="polite"
                     >
@@ -265,9 +318,10 @@ export default function ContactForm(): React.JSX.Element {
                         field.onChange(e);
                         setMessageLen(e.currentTarget.value.length);
                       }}
+                      aria-invalid={showError("message")}
                     />
                   </FormControl>
-                  <FormMessage />
+                  {showError("message") && <FormMessage />}
                 </FormItem>
               )}
             />
@@ -294,13 +348,14 @@ export default function ContactForm(): React.JSX.Element {
 
             {/* ACTIONS pinned to bottom */}
             <div className="mt-auto flex items-center gap-3 pt-1">
-              <Button type="submit" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? "Sending..." : "Send"}
+              <Button type="submit" disabled={!canSubmit} aria-disabled={!canSubmit}>
+                {isSubmitting ? "Sending..." : "Send"}
               </Button>
               <Button
                 type="button"
                 variant="outline"
-                disabled={form.formState.isSubmitting}
+                disabled={!canSubmit}
+                aria-disabled={!canSubmit}
                 onClick={() => {
                   const payload: ContactInput = {
                     name: form.getValues("name"),

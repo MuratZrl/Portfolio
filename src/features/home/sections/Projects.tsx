@@ -1,8 +1,12 @@
-// src/features/home/sections/FeaturedProjects.tsx
+// src/features/home/sections/Projects.tsx
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+
 import { cn } from "@/lib/utils";
+
 import {
   Card,
   CardHeader,
@@ -13,26 +17,35 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Github, Gauge, Star } from "lucide-react";
+import { ExternalLink, Github, Gauge, Star, Lock } from "lucide-react";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 
-import { getFeaturedProjects } from "@/data/projects";
-import type { Project } from "@/data/projects";
+import { getFeaturedProjects, type Project } from "@/constants/projects";
+import { placeholder } from "@/lib/media";
 
 type FeaturedProjectsProps = {
   heading?: string;
   subheading?: string;
-  projects?: readonly Project[]; // optionally override from the caller
+  projects?: readonly Project[];
   className?: string;
+  /** Optional preview cap. Whatever you pass, hard cap stays 3. */
+  maxVisible?: number;
 };
+
+const HARD_CAP = 3;
 
 export default function FeaturedProjects({
   heading = "Featured projects",
   subheading = "Built for real workloads, tested and reliable.",
   projects,
   className,
+  maxVisible = HARD_CAP,
 }: FeaturedProjectsProps): React.JSX.Element {
-  // pull from the single source of truth if not provided
-  const list = projects ?? getFeaturedProjects(6);
+  // Listeyi her koşulda en fazla 3’e kırp
+  const list = (projects ?? getFeaturedProjects(6)).slice(
+    0,
+    Math.min(maxVisible, HARD_CAP)
+  );
 
   return (
     <section
@@ -54,6 +67,7 @@ export default function FeaturedProjects({
         </Button>
       </div>
 
+      {/* 3 sütun tavan: md=2, lg=3 */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {list.map((p) => (
           <ProjectCard key={p.slug} project={p} />
@@ -66,28 +80,33 @@ export default function FeaturedProjects({
 /* --------------------------------- Card --------------------------------- */
 
 function ProjectCard({ project }: { project: Project }): React.JSX.Element {
-  const hasImage = Boolean(project.image?.src);
+  const [broken, setBroken] = React.useState(false);
+
+  const desired = project.image?.src ?? null;
+  const imgSrc = broken || !desired ? placeholder(1280, 720, project.title) : desired;
+  const imgAlt = project.image?.alt ?? `${project.title} placeholder`;
+  const isRemote = typeof imgSrc === "string" && imgSrc.startsWith("http");
+
   const demo = project.links?.demo;
   const repo = project.links?.repo;
 
   const isInternalDemo = Boolean(demo?.href?.startsWith("/"));
+  const repoIsPrivate = Boolean(repo?.isPrivate);
 
   return (
     <Card className="group h-full overflow-hidden transition-shadow hover:shadow-md focus-within:shadow-md">
+
       {/* Media */}
       <div className="relative aspect-video w-full bg-muted">
-        {hasImage ? (
-          <Image
-            src={project.image!.src}
-            alt={project.image!.alt}
-            fill
-            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-            className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-            priority={false}
-          />
-        ) : (
-          <div className="absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_0%,hsl(var(--primary)/0.15),transparent_60%)]" />
-        )}
+        <Image
+          src={imgSrc}
+          alt={imgAlt}
+          fill
+          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+          className="object-cover"
+          unoptimized={isRemote}
+          onError={() => setBroken(true)}  // ← 404’te placeholder’a geç
+        />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background/80 to-transparent" />
       </div>
 
@@ -153,17 +172,32 @@ function ProjectCard({ project }: { project: Project }): React.JSX.Element {
           ) : null}
 
           {repo ? (
-            <Button asChild size="sm" variant="outline">
-              <a
-                href={repo.href}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={repo.ariaLabel ?? `Open ${project.title} repository`}
-              >
-                <Github className="mr-2 h-4 w-4" aria-hidden />
-                {repo.label}
-              </a>
-            </Button>
+            // Private repo ise disabled + tooltip
+            repoIsPrivate ? (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button size="sm" variant="outline" disabled>
+                      <Lock className="mr-2 h-4 w-4" aria-hidden />
+                      {repo.label}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Repository is private</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ) : (
+              <Button asChild size="sm" variant="outline">
+                <a
+                  href={repo.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={repo.ariaLabel ?? `Open ${project.title} repository`}
+                >
+                  <Github className="mr-2 h-4 w-4" aria-hidden />
+                  {repo.label}
+                </a>
+              </Button>
+            )
           ) : null}
         </div>
 

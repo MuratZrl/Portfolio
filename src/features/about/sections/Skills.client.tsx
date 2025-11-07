@@ -1,144 +1,39 @@
-// src/features/about/sections/SkillsMatrix.tsx
+// src/features/about/sections/Skills.client.tsx
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card";
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-} from "@/components/ui/tabs";
-import {
-  Layout,
-  Database,
-  Wrench,
-  ShieldCheck,
-  Languages,
-  ExternalLink,
-} from "lucide-react";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Languages, ExternalLink } from "lucide-react";
 
-type Skill = {
-  name: string;
-  level: number; // 0..100
-  hint?: string;
-};
-
-type GroupId = "frontend" | "backend" | "tooling" | "quality";
-
-type Group = {
-  id: GroupId;
-  title: string;
-  icon: React.ReactNode;
-  skills: readonly Skill[];
-  note?: string;
-};
-
-type Lang = {
-  name: string;
-  level: "Native" | "C2" | "C1" | "B2" | "B1" | "A2" | "A1";
-};
-
-type Cert = {
-  title: string;
-  org: string;
-  year?: string;
-  href?: string;
-};
+import type { Skill, Group } from "@/features/about/types";
+import { SKILL_GROUPS, LANGUAGE_LIST, CERT_LIST } from "@/features/about/data/skills";
+import { renderIcon, clamp0to100 } from "@/features/about/utils/skills";
 
 type SkillsMatrixProps = {
   heading?: string;
   subheading?: string;
   groups?: readonly Group[];
-  languages?: readonly Lang[];
-  certs?: readonly Cert[];
+  languages?: readonly { name: string; level: string }[];
+  certs?: readonly { title: string; org: string; year?: string; href?: string }[];
   className?: string;
 };
-
-const DEFAULT_GROUPS: readonly Group[] = [
-  {
-    id: "frontend",
-    title: "Frontend",
-    icon: <Layout className="h-4 w-4" aria-hidden />,
-    skills: [
-      { name: "Next.js (RSC + SA)", level: 90, hint: "RSC, Server Actions, Route Handlers" },
-      { name: "TypeScript", level: 90, hint: "strict, generics, utility types" },
-      { name: "Shadcn UI", level: 85, hint: "primitives + composition" },
-      { name: "Tailwind CSS", level: 85, hint: "design tokens, fluid spacing" },
-    ],
-    note: "Product-focused component design with accessibility and performance first.",
-  },
-  {
-    id: "backend",
-    title: "Backend",
-    icon: <Database className="h-4 w-4" aria-hidden />,
-    skills: [
-      { name: "Server Actions", level: 80, hint: "mutations + cache-aware" },
-      { name: "PostgreSQL", level: 75, hint: "indexes, plan analysis, JSONB" },
-      { name: "Prisma", level: 75, hint: "schema-first, migrations" },
-      { name: "Auth", level: 70, hint: "session/JWT, roles/permissions" },
-    ],
-    note: "Keep it simple. Fewer dependencies, higher productivity.",
-  },
-  {
-    id: "tooling",
-    title: "Tooling",
-    icon: <Wrench className="h-4 w-4" aria-hidden />,
-    skills: [
-      { name: "ESLint", level: 85, hint: "rules, perf, CI enforcement" },
-      { name: "Prettier", level: 90, hint: "readability standard" },
-      { name: "Turborepo", level: 70, hint: "remote cache + pipelines" },
-      { name: "Vite", level: 70, hint: "fast dev, close to test runner" },
-    ],
-  },
-  {
-    id: "quality",
-    title: "Quality",
-    icon: <ShieldCheck className="h-4 w-4" aria-hidden />,
-    skills: [
-      { name: "Playwright", level: 70, hint: "e2e, traces, CI" },
-      { name: "Vitest", level: 75, hint: "unit, mocks, coverage" },
-      { name: "Lighthouse", level: 85, hint: "perf budgets, PWA" },
-      { name: "Axe (A11y)", level: 80, hint: "WCAG checks" },
-    ],
-    note: "Allow failures in CI so issues fall before they hit prod.",
-  },
-] as const;
-
-const DEFAULT_LANGS: readonly Lang[] = [
-  { name: "Turkish", level: "Native" },
-  { name: "English", level: "B2" },
-  { name: "Espanol", level: "B1" },
-] as const;
-
-const DEFAULT_CERTS: readonly Cert[] = [
-  { title: "Web Accessibility (A11y) Principles", org: "Independent Study", year: "2024" },
-  { title: "Modern Next.js Architecture", org: "Personal R&D", year: "2025" },
-] as const;
 
 export default function SkillsMatrix({
   heading = "Skills & Tools",
   subheading = "Technologies used in practice and quality tooling.",
-  groups = DEFAULT_GROUPS,
-  languages = DEFAULT_LANGS,
-  certs = DEFAULT_CERTS,
+  groups = SKILL_GROUPS,
+  languages = LANGUAGE_LIST,
+  certs = CERT_LIST,
   className,
 }: SkillsMatrixProps): React.JSX.Element {
   const headingId = React.useId();
   const firstTab = groups[0]?.id ?? "frontend";
 
   return (
-    <section
-      aria-labelledby={headingId}
-      className={cn(/* burada sayfa padding’i yok, global layout veriyor */ className)}
-    >
+    <section aria-labelledby={headingId} className={cn(className)}>
+      
       <div className="mb-8 flex flex-col gap-2">
         <h2 id={headingId} className="text-xl font-semibold tracking-tight sm:text-2xl">
           {heading}
@@ -146,26 +41,20 @@ export default function SkillsMatrix({
         <p className="text-sm text-muted-foreground">{subheading}</p>
       </div>
 
-      {/* EŞİT YÜKSEKLİK SİHİRİ: items-stretch + iki kolonu h-full esnet */}
       <div className="grid items-stretch gap-8 lg:grid-cols-3">
-        {/* Left: Tabs alanı 2 kolon kaplar ve yükseklik doldurur */}
         <div className="lg:col-span-2 h-full">
           <Tabs defaultValue={firstTab} className="h-full flex flex-col">
             <TabsList className="flex w-full flex-wrap justify-start">
               {groups.map((g) => (
                 <TabsTrigger key={g.id} value={g.id} className="gap-2">
-                  {g.icon}
+                  {renderIcon(g.icon)}
                   <span>{g.title}</span>
                 </TabsTrigger>
               ))}
             </TabsList>
 
             {groups.map((g) => (
-              <TabsContent
-                key={g.id}
-                value={g.id}
-                className="mt-6 flex-1"
-              >
+              <TabsContent key={g.id} value={g.id} className="mt-6 flex-1">
                 <Card className="h-full flex flex-col">
                   <CardHeader className="pb-0">
                     <CardTitle className="text-base sm:text-lg">{g.title}</CardTitle>
@@ -185,8 +74,8 @@ export default function SkillsMatrix({
           </Tabs>
         </div>
 
-        {/* Right: iki kart; ikincisi kalan yüksekliği doldurur */}
         <div className="h-full grid grid-rows-[auto,1fr] gap-6">
+
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-base">
@@ -210,7 +99,7 @@ export default function SkillsMatrix({
           <Card className="h-full flex flex-col">
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-base">
-                <ShieldCheck className="h-4 w-4" aria-hidden />
+                {renderIcon("shield")}
                 Certificates
               </CardTitle>
               <CardDescription>Official or independent validations.</CardDescription>
@@ -242,8 +131,11 @@ export default function SkillsMatrix({
               </ul>
             </CardContent>
           </Card>
+
         </div>
+        
       </div>
+      
     </section>
   );
 }
@@ -252,27 +144,25 @@ export default function SkillsMatrix({
 
 function SkillRow({ skill }: { skill: Skill }): React.JSX.Element {
   const clamped = clamp0to100(skill.level);
+
   return (
     <div>
+      {/* Üst satır: isim + yüzde */}
       <div className="mb-1 flex items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2">
           <Badge variant="outline">{skill.name}</Badge>
-          {skill.hint ? (
-            <span className="hidden truncate text-xs text-muted-foreground sm:inline">
-              {skill.hint}
-            </span>
-          ) : null}
         </div>
         <span className="tabular-nums text-xs text-muted-foreground">{clamped}%</span>
       </div>
+
+      {/* İpucu: ayrı satır, tam görünür, taşarsa alt satıra insin */}
+      {skill.hint ? (
+        <p className="mb-2 text-xs text-muted-foreground whitespace-normal break-words">
+          {skill.hint}
+        </p>
+      ) : null}
+
       <Progress value={clamped} aria-label={`Level for ${skill.name} is ${clamped} percent`} />
     </div>
   );
-}
-
-function clamp0to100(n: number): number {
-  if (Number.isNaN(n)) return 0;
-  if (n < 0) return 0;
-  if (n > 100) return 100;
-  return Math.round(n);
 }

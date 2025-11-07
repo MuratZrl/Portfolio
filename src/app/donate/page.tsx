@@ -1,7 +1,8 @@
+// src/app/donate/page.tsx
 import React from "react";
 import type { Metadata } from "next";
 import { Page } from "@/components/layout/Page";
-import Donate from "@/features/donate/sections/Donate";
+import Donate from "@/features/donate/sections/Donate.client";
 
 export const metadata: Metadata = {
   title: "Donate",

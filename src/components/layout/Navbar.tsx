@@ -108,7 +108,7 @@ function MobileNav(): React.JSX.Element {
                 >
                   {label}
                 </Link>
-              </SheetClose>
+              </SheetClose> 
             );
           })}
         </nav>

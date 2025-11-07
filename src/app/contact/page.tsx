@@ -14,9 +14,9 @@ export default function ContactPage(): React.JSX.Element {
   return (
     <Page
       title="Contact"
-      description="Want to build something useful, fast, and not embarrassing? Send a message."
+      description="Get in touch for project inquiries, collaborations, or hiring. I typically review and respond to every message within 1–2 business days."
     >
-      <section className="w-full grid items-stretch gap-6 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(320px,420px)]">
+      <section className="w-full grid items-stretch gap-4 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(320px, 360px)]">
         <ContactForm />
         <ContactDetails />
       </section>

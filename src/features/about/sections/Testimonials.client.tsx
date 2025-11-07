@@ -1,4 +1,6 @@
-// src/features/about/sections/Testimonials.tsx
+// src/features/about/sections/Testimonials.client.tsx
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -6,100 +8,36 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Quote, Star, ExternalLink } from "lucide-react";
 
-/* --------------------------------- Types --------------------------------- */
+import type { Testimonial, CompanyLogo } from "@/features/about/types";
 
-type TestimonialLink = {
-  href: string;         // external or internal link
-  label?: string;       // button/text label
-  ariaLabel?: string;
-};
+import { TESTIMONIALS } from "@/features/about/data/testimonials";
+import { makeGridClasses, initials, type Columns } from "@/features/about/utils/testimonials";
 
-type CompanyLogo = {
-  src: string;          // /public/... path or full URL
-  alt: string;
-  width?: number;       // default 80
-  height?: number;      // default 24
-};
-
-type Testimonial = {
-  id: string;
-  name: string;
-  role?: string;
-  company?: string;
-  companyLogo?: CompanyLogo;
-  avatar?: { src: string; alt?: string };
-  quote: string;
-  rating?: 1 | 2 | 3 | 4 | 5;
-  link?: TestimonialLink; // reference source (LinkedIn, case study, blog, etc.)
-};
+/* -------------------------------- Props -------------------------------- */
 
 type TestimonialsProps = {
   heading?: string;
   subheading?: string;
   items?: readonly Testimonial[];
   className?: string;
-  columns?: { sm?: 1 | 2; md?: 1 | 2 | 3; lg?: 1 | 2 | 3 };
+  columns?: Columns;
   showLogos?: boolean;
   showRatings?: boolean;
 };
-
-/* ------------------------------ Defaults --------------------------------- */
-
-const DEFAULT_ITEMS: readonly Testimonial[] = [
-  {
-    id: "t1",
-    name: "A. Yılmaz",
-    role: "Product Owner",
-    company: "Acme",
-    companyLogo: { src: "/images/logos/acme.svg", alt: "Acme" },
-    avatar: { src: "/images/avatars/ayilmaz.jpg", alt: "A. Yılmaz" },
-    quote:
-      "Kept the scope lean and delivered clearly. It’s the first time I’ve seen performance and accessibility metrics tracked this transparently.",
-    rating: 5,
-    link: { href: "https://www.linkedin.com/", label: "Source", ariaLabel: "LinkedIn reference" },
-  },
-  {
-    id: "t2",
-    name: "B. Demir",
-    role: "Tech Lead",
-    company: "Zenware",
-    companyLogo: { src: "/images/logos/zenware.svg", alt: "Zenware" },
-    avatar: { src: "/images/avatars/bdemir.jpg", alt: "B. Demir" },
-    quote:
-      "The component architecture reduced maintenance costs long term. PRs were small and reviews were fast.",
-    rating: 5,
-  },
-  {
-    id: "t3",
-    name: "C. Kaya",
-    role: "Marketing",
-    company: "Northwind",
-    avatar: { src: "/images/avatars/ckaya.jpg", alt: "C. Kaya" },
-    quote:
-      "We hit our SEO and LCP targets. The edge-first strategy made release smooth.",
-    rating: 4,
-  },
-] as const;
 
 /* --------------------------------- View ---------------------------------- */
 
 export default function Testimonials({
   heading = "Testimonials",
   subheading = "Short notes from people I’ve worked with.",
-  items = DEFAULT_ITEMS,
+  items = TESTIMONIALS,
   className,
   columns = { sm: 2, md: 3, lg: 3 },
   showLogos = true,
   showRatings = true,
 }: TestimonialsProps): React.JSX.Element {
   const headingId = React.useId();
-
-  const gridClasses = cn(
-    "grid gap-6",
-    columns.sm === 1 ? "sm:grid-cols-1" : "sm:grid-cols-2",
-    columns.md === 1 ? "md:grid-cols-1" : columns.md === 2 ? "md:grid-cols-2" : "md:grid-cols-3",
-    columns.lg === 1 ? "lg:grid-cols-1" : columns.lg === 2 ? "lg:grid-cols-2" : "lg:grid-cols-3",
-  );
+  const gridClasses = makeGridClasses(columns);
 
   return (
     <section aria-labelledby={headingId} className={cn("py-12 sm:py-16", className)}>
@@ -136,6 +74,7 @@ function TestimonialCard({
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10">
+              {/* AvatarImage is fine with undefined src; fallback will show */}
               <AvatarImage src={t.avatar?.src} alt={t.avatar?.alt ?? t.name} />
               <AvatarFallback>{initials(t.name)}</AvatarFallback>
             </Avatar>
@@ -182,10 +121,8 @@ function TestimonialCard({
 
 function CompanyMark({ logo }: { logo: CompanyLogo }): React.JSX.Element {
   const w = logo.width ?? 80;
-  const h = logo.height ?? 24;
   return (
     <div className="relative h-6 w-20 shrink-0 opacity-80">
-      {/* If raster, object-contain keeps it tidy; SVG stays sharp anyway */}
       <Image
         src={logo.src}
         alt={logo.alt}
@@ -194,6 +131,9 @@ function CompanyMark({ logo }: { logo: CompanyLogo }): React.JSX.Element {
         className="object-contain"
         priority={false}
       />
+      {/* If you prefer fixed dims instead of fill:
+          <Image src={logo.src} alt={logo.alt} width={w} height={h} />
+       */}
     </div>
   );
 }
@@ -207,10 +147,7 @@ function Stars({
 }): React.JSX.Element {
   return (
     <div
-      className={cn(
-        "inline-flex items-center gap-0.5 text-yellow-500",
-        className
-      )}
+      className={cn("inline-flex items-center gap-0.5 text-yellow-500", className)}
       aria-label={`Rating: ${value} / 5`}
     >
       {Array.from({ length: 5 }, (_, i) => {
@@ -225,12 +162,4 @@ function Stars({
       })}
     </div>
   );
-}
-
-/* -------------------------------- Utils ---------------------------------- */
-
-function initials(fullName: string): string {
-  const parts = fullName.trim().split(/\s+/).filter(Boolean);
-  const take = parts.length >= 2 ? [parts[0], parts[parts.length - 1]] : parts;
-  return take.map((p) => p[0]?.toUpperCase() ?? "").join("");
 }

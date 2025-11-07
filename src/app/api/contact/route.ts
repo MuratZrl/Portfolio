@@ -1,22 +1,33 @@
-import { NextResponse } from "next/server";
+// src/app/api/contact/route.ts
+import { NextResponse, type NextRequest } from "next/server";
 import { ContactSchema } from "@/features/contact/schema";
 import { createServerClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs"; // service role için Node runtime
 
-// Basit rate limit (in-memory)
+/* ------------------------------ Rate limiting ----------------------------- */
+
 type Bucket = { count: number; resetAt: number };
 const RATE = { windowMs: 60_000, max: 5 };
-const rlStore: Map<string, Bucket> = (globalThis).__contactRL ?? new Map();
-(globalThis as any).__contactRL = rlStore;
 
-function getClientIp(req: Request): string {
+declare global {
+  var __contactRL: Map<string, Bucket> | undefined;
+}
+
+const rlStore: Map<string, Bucket> =
+  (globalThis as unknown as { __contactRL?: Map<string, Bucket> }).__contactRL ??
+  new Map<string, Bucket>();
+
+(globalThis as unknown as { __contactRL: Map<string, Bucket> }).__contactRL = rlStore;
+
+function getIp(req: NextRequest): string {
   const fwd = req.headers.get("x-forwarded-for");
   if (fwd) return fwd.split(",")[0]?.trim() ?? "unknown";
   return req.headers.get("x-real-ip") ?? "unknown";
 }
-function rateLimitOk(req: Request): boolean {
-  const ip = getClientIp(req);
+
+function rateLimitOk(req: NextRequest): boolean {
+  const ip = getIp(req);
   const now = Date.now();
   const b = rlStore.get(ip);
   if (!b || now > b.resetAt) {
@@ -30,79 +41,91 @@ function rateLimitOk(req: Request): boolean {
   return false;
 }
 
-const WEBHOOK_URL = process.env.CONTACT_WEBHOOK_URL; // optional
+/* --------------------------------- Types --------------------------------- */
 
-export async function POST(req: Request): Promise<NextResponse> {
+type FieldKey = "name" | "email" | "subject" | "message";
+type FieldErrors = Partial<Record<FieldKey, string>>;
+
+type OkPayload = { ok: true };
+type ErrorPayload =
+  | { message: "Invalid JSON" | "Too many requests" | "Spam detected" | "Database error" }
+  | { message: "Invalid payload"; issues: unknown }
+  | { message: "Validation error"; fieldErrors: FieldErrors };
+
+/* --------------------------------- Route --------------------------------- */
+
+export async function POST(req: NextRequest): Promise<NextResponse<OkPayload | ErrorPayload>> {
+  // rate limit
+  if (!rateLimitOk(req)) {
+    return NextResponse.json({ message: "Too many requests" }, { status: 429 });
+  }
+
+  // json parse
+  let json: unknown;
   try {
-    if (!rateLimitOk(req)) {
-      return NextResponse.json({ message: "Too many requests" }, { status: 429 });
-    }
+    json = await req.json();
+  } catch {
+    return NextResponse.json({ message: "Invalid JSON" }, { status: 400 });
+  }
 
-    const json = await req.json();
-    const parsed = ContactSchema.safeParse(json);
-    if (!parsed.success) {
-      return NextResponse.json(
-        { message: "Invalid payload", issues: parsed.error.flatten() },
-        { status: 400 }
-      );
-    }
+  // zod validate
+  const parsed = ContactSchema.safeParse(json);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { message: "Invalid payload", issues: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
 
-    const { company, name, email, subject, message } = parsed.data;
+  const { company, name, email, subject, message } = parsed.data;
 
-    // Honeypot
-    if (company && company.trim().length > 0) {
-      return NextResponse.json({ message: "Spam detected" }, { status: 400 });
-    }
+  // Honeypot
+  if (company && company.trim().length > 0) {
+    return NextResponse.json({ message: "Spam detected" }, { status: 400 });
+  }
 
-    const ip = getClientIp(req);
-    const ua = req.headers.get("user-agent") ?? null;
+  // Normalize (DB'deki email/message check'lerine takılmamak için)
+  const payload = {
+    name: name.trim(),
+    email: email.trim().toLowerCase(),
+    subject,
+    message: message.trim(),
+  };
 
-    const supabase = createServerClient();
-    const { error } = await supabase
-      .from("contact_messages")
-      .insert({
-        name,
-        email,
-        subject,
-        message,
-        ip: ip !== "unknown" ? ip : null,
-        user_agent: ua,
-        is_spam: false,
-        meta: null,
-      });
+  // Insert
+  const supabase = createServerClient(); // server-side, service role key ile
+  const { error } = await supabase.from("contacts").insert(payload);
 
-    if (error) {
-      console.error("[contact] supabase insert error:", error);
-      return NextResponse.json({ message: "Database error" }, { status: 502 });
-    }
+  if (error) {
+    const blob = `${error.message ?? ""} ${error.details ?? ""}`;
 
-    // Opsiyonel: webhook bildirimi (Discord/Slack vb.)
-    if (WEBHOOK_URL) {
-      // İnsan gibi kısa bir text
-      const text = [
-        `📩 New contact message`,
-        `• Name: ${name}`,
-        `• Email: ${email}`,
-        `• Subject: ${subject}`,
-        ``,
-        message.length > 500 ? message.slice(0, 500) + " …" : message,
-      ].join("\n");
-
-      // Discord/Slack tek satır JSON text’i yutar
-      try {
-        await fetch(WEBHOOK_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text }),
-        });
-      } catch (e) {
-        console.warn("[contact] webhook failed:", e);
+    if (error.code === "23514") {
+      const fieldErrors: FieldErrors = {};
+      if (blob.includes("contacts_email_check")) {
+        fieldErrors.email = "Please enter a valid email address.";
+      }
+      if (blob.includes("contacts_message_check")) {
+        fieldErrors.message = "Message must be 2000 characters or fewer.";
+      }
+      if (blob.includes("contacts_subject_check")) {
+        fieldErrors.subject = "Invalid subject value.";
+      }
+      if (Object.keys(fieldErrors).length > 0) {
+        return NextResponse.json(
+          { message: "Validation error", fieldErrors },
+          { status: 422 }
+        );
       }
     }
 
-    return NextResponse.json({ ok: true }, { status: 200 });
-  } catch (err) {
-    console.error("[contact] server error:", err);
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+    console.error("[contact] insert error:", {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+    });
+    return NextResponse.json({ message: "Database error" }, { status: 502 });
   }
+
+  return NextResponse.json({ ok: true }, { status: 200 });
 }

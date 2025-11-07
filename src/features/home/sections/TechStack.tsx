@@ -1,65 +1,13 @@
 // src/features/home/sections/TechStack.tsx
 import React from "react";
+
 import { cn } from "@/lib/utils";
+
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 
-type Skill = {
-  name: string;
-  level: number; // 0..100
-  hint?: string;
-};
-
-type Group = {
-  title: string;
-  skills: readonly Skill[];
-};
-
-type TechStackProps = {
-  heading?: string;
-  subheading?: string;
-  groups?: readonly Group[];
-  className?: string;
-};
-
-const DEFAULT_GROUPS: readonly Group[] = [
-  {
-    title: "Frontend",
-    skills: [
-      { name: "Next.js", level: 90, hint: "RSC, Server Actions, Route Handlers" },
-      { name: "TypeScript", level: 90, hint: "strict, generics, utility types" },
-      { name: "Shadcn UI", level: 85, hint: "primitives, composable API" },
-      { name: "Tailwind CSS", level: 85, hint: "utility-first, design tokens" },
-    ],
-  },
-  {
-    title: "Backend",
-    skills: [
-      { name: "Server Actions", level: 80 },
-      { name: "PostgreSQL", level: 75, hint: "indexes, JSONB, CTE" },
-      { name: "Prisma", level: 75, hint: "schema-first, migrations" },
-      { name: "Auth (session/JWT)", level: 70 },
-    ],
-  },
-  {
-    title: "Tooling",
-    skills: [
-      { name: "ESLint", level: 85, hint: "rules, perf, CI fail-fast" },
-      { name: "Prettier", level: 90 },
-      { name: "Turborepo", level: 70, hint: "caching, pipelines" },
-      { name: "Vite", level: 70 },
-    ],
-  },
-  {
-    title: "Testing & Quality",
-    skills: [
-      { name: "Playwright", level: 70, hint: "e2e, trace viewer" },
-      { name: "Vitest", level: 75, hint: "unit, mock, coverage" },
-      { name: "Lighthouse", level: 85, hint: "PWA, perf budgets" },
-      { name: "Axe (A11y)", level: 80 },
-    ],
-  },
-] as const;
+import { DEFAULT_GROUPS } from "@/features/home/data";
+import type { TechStackProps, Skill, Group } from "@/features/home/types/tech-stack";
 
 export default function TechStack({
   heading = "Tech Stack",
