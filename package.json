@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "types:ensure": "node -e \"require('fs').mkdirSync('src/types',{recursive:true})\"",
-    "types:sb": "npm run types:ensure && supabase gen types typescript --project-id fcthnamaorhuuzxylnnq --schema public,storage,graphql_public > src\\types\\supabase.ts",
-    "predev": "npm run types:sb",
+    "types:sb": "npm run types:ensure && supabase gen types typescript --project-id fcthnamaorhuuzxylnnq --schema public,storage,graphql_public > src/types/supabase.ts",
     "dev": "next dev",
     "build": "next build",
-    "prebuild": "npm run types:sb"
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
