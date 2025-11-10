@@ -1,4 +1,4 @@
-// src/features/about/sections/Faq.tsx
+// src/features/about/sections/Faq.client.tsx
 "use client";
 
 import React from "react";
@@ -31,14 +31,17 @@ type FaqProps = {
   subheading?: string;
   items?: readonly QA[];
   defaultCategory?: QA["category"] | "All";
+  /** Maximum number of items to show on screen */
+  maxVisible?: number;
   className?: string;
 };
 
 export default function Faq({
   heading = "FAQ",
   subheading = "Frequently asked questions with clear answers.",
-  items = FAQ_ITEMS,           // 🔽 burada data dosyasını kullanıyoruz
+  items = FAQ_ITEMS,
   defaultCategory = "All",
+  maxVisible = 5,
   className,
 }: FaqProps): React.JSX.Element {
   const headingId = React.useId();
@@ -58,13 +61,13 @@ export default function Faq({
   const [activeCategory, setActiveCategory] =
     React.useState<QA["category"] | "All">(defaultCategory);
 
-   // Read hash AFTER mount, then keep listening.
-   React.useEffect(() => {
-     const apply = (): void => setOpenItem(getHashId());
-     apply(); // open from current hash on mount
-     window.addEventListener("hashchange", apply, { passive: true });
-     return () => window.removeEventListener("hashchange", apply);
-   }, []);
+  // Read hash AFTER mount, then keep listening.
+  React.useEffect(() => {
+    const apply = (): void => setOpenItem(getHashId());
+    apply();
+    window.addEventListener("hashchange", apply, { passive: true });
+    return () => window.removeEventListener("hashchange", apply);
+  }, []);
 
   // Filtered data
   const prepared = React.useMemo(() => {
@@ -80,7 +83,28 @@ export default function Faq({
     });
   }, [items, query, activeCategory]);
 
-  const resultCount = prepared.length;
+  // Keep true total for the counter, but only render up to maxVisible.
+  const totalCount = prepared.length;
+
+  // Make sure the anchored item (via hash) stays visible even if it's beyond maxVisible.
+  const visibleRows = React.useMemo(() => {
+    const base = prepared.slice(0, Math.max(0, maxVisible));
+    if (!openItem) return base;
+    const anchoredIdx = prepared.findIndex(r => r.id === openItem);
+    if (anchoredIdx === -1) return base;
+    const anchored = prepared[anchoredIdx];
+    const alreadyIn = base.some(r => r.id === anchored.id);
+    if (alreadyIn) return base;
+    if (base.length === 0) return [anchored];
+    const deduped = base.filter(r => r.id !== anchored.id);
+    if (deduped.length >= maxVisible) {
+      deduped.pop();
+    }
+    deduped.push(anchored);
+    return deduped;
+  }, [prepared, maxVisible, openItem]);
+
+  const resultCount = totalCount;
 
   return (
     <section aria-labelledby={headingId} className={cn("py-12 sm:py-16", className)}>
@@ -149,7 +173,7 @@ export default function Faq({
 
       {/* List */}
       <TooltipProvider delayDuration={120}>
-        {resultCount > 0 ? (
+        {visibleRows.length > 0 ? (
           <Accordion
             type="single"
             collapsible
@@ -157,9 +181,9 @@ export default function Faq({
             onValueChange={(v) => setOpenItem(v)}
             className="w-full"
           >
-            {prepared.map((item) => {
+            {visibleRows.map((item) => {
               const slug = item.id!;
-              const value = slug; // accordion value
+              const value = slug;
               const qId = `faq-q-${slug}`;
               const aId = `faq-a-${slug}`;
 
@@ -229,7 +253,6 @@ function getHashId(): string | undefined {
 
 function setHash(slug: string): void {
   if (typeof window === "undefined") return;
-  // Update hash without polluting history
   history.replaceState(null, "", `#${slug}`);
 }
 
@@ -239,7 +262,7 @@ async function copyLink(slug: string): Promise<void> {
   try {
     await navigator.clipboard.writeText(url);
   } catch {
-    // clipboard permissions might be restricted in some browsers
+    // clipboard permissions might be restricted
   }
 }
 
@@ -266,7 +289,6 @@ function highlight(text: string, query: string): React.ReactNode {
   const idx = normalize(text).indexOf(q);
   if (idx === -1) return text;
 
-  // Simple single-match highlight; can be enhanced later
   const before = text.slice(0, idx);
   const match = text.slice(idx, idx + query.length);
   const after = text.slice(idx + query.length);
