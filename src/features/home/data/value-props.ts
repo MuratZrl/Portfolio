@@ -5,7 +5,7 @@ import type { ValueItem } from "@/features/home/types/value-props";
 export const DEFAULT_ITEMS = [
   {
     title: "Speed & Performance",
-    description: "Next.js 15 + Edge optimization. Target LCP < 1.5s.",
+    description: "Next.js 16 + Edge optimization. Target LCP < 1.5s.",
     icon: Gauge,
     highlights: ["SSR/SG & smart cache", "Image optimization", "Preload & prefetch"],
     stat: { label: "Average LCP", value: "< 1.5s" },

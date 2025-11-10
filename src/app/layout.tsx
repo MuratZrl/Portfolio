@@ -12,9 +12,9 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://murat-zorlu-dev.vercel.app"),
   title: "Portfolio",
-  description:
-    "Minimal portfolio website. Pages: Home, About, Projects, Donation.",
+  description: "Minimal portfolio website. Pages: Home, About, Projects, Donation.",
 };
 
 export default function RootLayout({

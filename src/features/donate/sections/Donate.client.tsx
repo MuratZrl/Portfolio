@@ -335,6 +335,7 @@ function CryptoAccountCard({ account }: { account: CryptoAccount }): React.JSX.E
 
   return (
     <Card className="w-full overflow-hidden">
+      
       <CardHeader className="space-y-1">
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant="secondary">{account.symbol}</Badge>
