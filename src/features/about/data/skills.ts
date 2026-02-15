@@ -74,9 +74,12 @@ export const SKILL_GROUPS: readonly Group[] = [
 export const LANGUAGE_LIST: readonly Lang[] = [
   { name: "Turkish", level: "Native" },
   { name: "English", level: "B2" },
+  { name: "German", level: "A2" },
   { name: "Spanish", level: "B1" },
 ] as const;
 
 export const CERT_LIST: readonly Cert[] = [
   { title: "Web Accessibility (A11y) Principles", org: "Independent Study", year: "2024" },
+  { title: "React & Next.js Advanced Patterns", org: "Udemy", year: "2024" },
+  { title: "TypeScript Masterclass", org: "Udemy", year: "2023" },
 ] as const;

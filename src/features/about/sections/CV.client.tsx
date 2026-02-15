@@ -3,42 +3,26 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ExternalLink, FileDown } from "lucide-react";
-
-type Mode = "fit-width" | "fit-page";
+import { ExternalLink, FileDown, FileText } from "lucide-react";
 
 type CvViewerProps = {
-  /** PDF path under /public, e.g. /cv/MuratZorlu-CV.pdf */
   pdfSrc?: `/${string}`;
   title?: string;
   description?: string;
-  /** Initial viewer mode */
-  initialMode?: Mode;
-  /** Max height clamp (px). Default: 1000 */
   maxHeightPx?: number;
   className?: string;
 };
 
 export default function CvSection({
   pdfSrc = "/cv/MuratZorlu-CV.pdf",
-  title = "CV (PDF)",
-  description = "View the PDF on page, download, or open in a new tab.",
-  initialMode = "fit-width",
+  title = "CV",
+  description = "View inline, download, or open in a new tab.",
   maxHeightPx = 1000,
   className,
 }: CvViewerProps): React.JSX.Element {
-  // never read window during initial render
-  const [mounted, setMounted] = React.useState<boolean>(false);
+  const [mounted, setMounted] = React.useState(false);
   const INITIAL_HEIGHT = Math.min(720, maxHeightPx);
-  const [height, setHeight] = React.useState<number>(INITIAL_HEIGHT);
+  const [height, setHeight] = React.useState(INITIAL_HEIGHT);
 
   React.useEffect(() => {
     setMounted(true);
@@ -50,77 +34,104 @@ export default function CvSection({
 
   const headingId = React.useId();
   const descId = React.useId();
-
-  const iframeHash = initialMode === "fit-page" ? "#view=FitH" : "#zoom=page-width";
-  const iframeSrc = `${pdfSrc}${iframeHash}`;
+  const iframeSrc = `${pdfSrc}#zoom=page-width`;
 
   return (
     <section aria-labelledby={headingId} className={cn("py-12 sm:py-16", className)}>
-      <Card>
-        <CardHeader className="pb-0">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <div className="mb-8 flex flex-col gap-2">
+        <h2 id={headingId} className="text-xl font-semibold tracking-tight sm:text-2xl">
+          {title}
+        </h2>
+        <p id={descId} className="text-sm text-muted-foreground">{description}</p>
+      </div>
+
+      <div className={cn(
+        "rounded-2xl border p-5 sm:p-6",
+        "border-border/50 bg-card/80 backdrop-blur-sm",
+      )}>
+        {/* Action bar */}
+        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="flex items-center gap-3">
+            <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <FileText className="h-4 w-4" aria-hidden />
+            </div>
             <div>
-              <CardTitle id={headingId} className="text-xl sm:text-2xl">
-                {title}
-              </CardTitle>
-              <CardDescription id={descId}>{description}</CardDescription>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Button asChild size="sm" variant="outline" aria-label="Download CV">
-                <a href={pdfSrc} download>
-                  <FileDown className="mr-2 h-4 w-4" aria-hidden />
-                  Download
-                </a>
-              </Button>
-
-              <Button asChild size="sm" aria-label="Open CV in a new tab">
-                <a href={pdfSrc} target="_blank" rel="noreferrer">
-                  <ExternalLink className="mr-2 h-4 w-4" aria-hidden />
-                  Open in new tab
-                </a>
-              </Button>
+              <div className="text-sm font-semibold">MuratZorlu-CV.pdf</div>
+              <div className="text-xs text-muted-foreground">PDF document</div>
             </div>
           </div>
-        </CardHeader>
 
-        <CardContent className="pt-4">
-          <div className="overflow-hidden rounded-md border">
-            {/* SSR-safe: render placeholder on server and first client render.
-               After mount, swap to real iframe with computed height. */}
-            {mounted ? (
-              <iframe
-                title="CV PDF viewer"
-                aria-describedby={descId}
-                src={iframeSrc}
-                className="block w-full bg-muted"
-                style={{ height }}
-                loading="lazy"
-              />
-            ) : (
-              <div
-                className="block w-full bg-muted"
-                style={{ height: INITIAL_HEIGHT }}
-                aria-hidden
-              />
-            )}
+          <div className="flex items-center gap-2 sm:ml-auto">
+            <a
+              href={pdfSrc}
+              download
+              aria-label="Download CV"
+              className={cn(
+                "inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-medium",
+                "bg-muted text-muted-foreground transition-colors duration-200",
+                "hover:bg-muted/80 hover:text-foreground",
+              )}
+            >
+              <FileDown className="h-3.5 w-3.5" aria-hidden />
+              Download
+            </a>
+
+            <a
+              href={pdfSrc}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Open CV in a new tab"
+              className={cn(
+                "inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-medium",
+                "bg-primary text-primary-foreground transition-colors duration-200",
+                "hover:bg-primary/90",
+              )}
+            >
+              <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+              Open
+            </a>
           </div>
+        </div>
 
-          <noscript>
-            <p className="mt-3 text-sm text-muted-foreground">
-              JavaScript is disabled.{" "}
-              <a className="underline" href={pdfSrc} target="_blank" rel="noreferrer">
-                Open CV in a new tab
-              </a>{" "}
-              or{" "}
-              <a className="underline" href={pdfSrc} download>
-                download it
-              </a>
-              .
-            </p>
-          </noscript>
-        </CardContent>
-      </Card>
+        {/* PDF viewer */}
+        <div className="overflow-hidden rounded-xl border border-border/50">
+          {mounted ? (
+            <iframe
+              title="CV PDF viewer"
+              aria-describedby={descId}
+              src={iframeSrc}
+              className="block w-full bg-muted"
+              style={{ height }}
+              loading="lazy"
+            />
+          ) : (
+            <div
+              className="grid w-full place-items-center bg-muted text-muted-foreground"
+              style={{ height: INITIAL_HEIGHT }}
+              aria-hidden
+            >
+              <div className="flex flex-col items-center gap-2">
+                <FileText className="h-8 w-8 opacity-40" aria-hidden />
+                <span className="text-xs">Loading viewer...</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <noscript>
+          <p className="mt-4 text-sm text-muted-foreground">
+            JavaScript is disabled.{" "}
+            <a className="text-primary underline" href={pdfSrc} target="_blank" rel="noreferrer">
+              Open CV in a new tab
+            </a>{" "}
+            or{" "}
+            <a className="text-primary underline" href={pdfSrc} download>
+              download it
+            </a>
+            .
+          </p>
+        </noscript>
+      </div>
     </section>
   );
 }

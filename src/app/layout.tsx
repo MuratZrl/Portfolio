@@ -5,6 +5,9 @@ import "./globals.css";
 import React from "react";
 import type { Metadata } from "next";
 
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
+
 import { Container } from "@/components/layout/Container";
 
 import { ThemeProvider } from "@/theme/theme-provider";
@@ -23,8 +26,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }): React.JSX.Element {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="min-h-svh flex flex-col">
+    <html lang="en" suppressHydrationWarning className={`${GeistSans.variable} ${GeistMono.variable}`}>
+      <body className="min-h-svh flex flex-col font-sans antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
 
           <Navbar />

@@ -5,536 +5,323 @@ import React from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import {
-  Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import {
   CalendarDays, MapPin, Building2, Briefcase, GraduationCap,
-  ExternalLink, Timer, Filter as FilterIcon, X, Info,
+  ExternalLink, Timer,
 } from "lucide-react";
 
 import type { ExperienceItem, Kind, Period, MonthStr, ExtLink } from "@/features/about/types";
 import { EXPERIENCE_ITEMS } from "@/features/about/data/experience";
 
-/* ------------------------------------------------------------------------ */
-/* Local types                                                              */
-/* ------------------------------------------------------------------------ */
+/* ────────────────────────────── Kind config ─────────────────────────────── */
 
-type FilterState = {
-  query: string;
-  kinds: ReadonlySet<Kind> | null; // null -> all
-  tags: ReadonlySet<string> | null; // null -> all
-  sort: "newest" | "oldest";
-  groupByYear: boolean;
+const KIND_CONFIG: Record<Kind, {
+  label: string;
+  icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
+  dot: string;
+  badge: string;
+}> = {
+  work: {
+    label: "Work",
+    icon: Building2,
+    dot: "bg-primary border-primary/30",
+    badge: "bg-primary/10 text-primary",
+  },
+  freelance: {
+    label: "Freelance",
+    icon: Briefcase,
+    dot: "bg-amber-500 border-amber-500/30",
+    badge: "bg-amber-500/10 text-amber-500",
+  },
+  education: {
+    label: "Education",
+    icon: GraduationCap,
+    dot: "bg-blue-500 border-blue-500/30",
+    badge: "bg-blue-500/10 text-blue-500",
+  },
 };
+
+/* ────────────────────────────── Component ───────────────────────────────── */
 
 type ExperienceTimelineProps = {
   heading?: string;
   subheading?: string;
   items?: readonly ExperienceItem[];
   className?: string;
-  /** Initial filter state. If not provided, everything is enabled. */
-  defaultFilter?: Partial<FilterState>;
-  /** Simulate external loading state. */
-  isLoading?: boolean;
-  /** Should clicking tag badges filter the list */
-  tagFilteringEnabled?: boolean;
 };
-
-/* ------------------------------------------------------------------------ */
-/* Component                                                                */
-/* ------------------------------------------------------------------------ */
 
 export default function ExperienceTimeline({
   heading = "Experience & Education",
   subheading = "Product-focused processes, measurable outcomes.",
   items = EXPERIENCE_ITEMS,
   className,
-  defaultFilter,
-  isLoading = false,
-  tagFilteringEnabled = true,
 }: ExperienceTimelineProps): React.JSX.Element {
   const headingId = React.useId();
+  const [activeKind, setActiveKind] = React.useState<Kind | "all">("all");
 
-  const [filter, setFilter] = React.useState<FilterState>(() => ({
-    query: defaultFilter?.query ?? "",
-    kinds: defaultFilter?.kinds != null ? new Set(defaultFilter.kinds) : null,
-    tags: defaultFilter?.tags != null ? new Set(defaultFilter.tags) : null,
-    sort: defaultFilter?.sort ?? "newest",
-    groupByYear: defaultFilter?.groupByYear ?? true,
-  }));
+  const sorted = React.useMemo(() => {
+    const arr = [...items].sort((a, b) => comparePeriod(a.period, b.period));
+    if (activeKind === "all") return arr;
+    return arr.filter((it) => it.kind === activeKind);
+  }, [items, activeKind]);
 
-  // Sort items by period. comparePeriod returns newest-first by default.
-  const normalized = React.useMemo(() => {
-    const sorted = [...items].sort((a, b) => {
-      const base = comparePeriod(a.period, b.period); // newest-first
-      return filter.sort === "newest" ? base : -base;
-    });
-    return sorted;
-  }, [items, filter.sort]);
-
-  const allTags = React.useMemo(() => {
-    const set = new Set<string>();
-    for (const it of items) for (const t of it.tags ?? []) set.add(t);
-    return [...set].sort((a, b) => a.localeCompare(b, "en"));
-  }, [items]);
-
-  const filtered = React.useMemo(() => {
-    const q = filter.query.trim().toLocaleLowerCase("en");
-    return normalized.filter((it) => {
-      if (filter.kinds && !filter.kinds.has(it.kind)) return false;
-      if (filter.tags && (it.tags ?? []).every((t) => !filter.tags!.has(t))) return false;
-      if (q.length > 0) {
-        const hay = [
-          it.role, it.org, it.summary ?? "",
-          ...(it.achievements ?? []),
-          ...(it.tags ?? []),
-        ].join(" ").toLocaleLowerCase("en");
-        if (!hay.includes(q)) return false;
-      }
-      return true;
-    });
-  }, [normalized, filter.kinds, filter.tags, filter.query]);
-
-  // Group by year with prefixed keys to preserve insertion order in objects.
-  const grouped = React.useMemo(() => {
-    if (!filter.groupByYear) return { __all__: filtered } as const;
-    const map = new Map<string, ExperienceItem[]>();
-    for (const it of filtered) {
-      const year = it.period.start.split("-")[0]!;
-      const key = `y-${year}`;
-      const arr = map.get(key) ?? [];
-      arr.push(it);
-      map.set(key, arr);
-    }
-    const toYear = (k: string) => Number(k.slice(2)); // "y-2024" -> 2024
-    const sortedEntries = [...map.entries()].sort(([a], [b]) =>
-      filter.sort === "newest" ? toYear(b) - toYear(a) : toYear(a) - toYear(b)
-    );
-    return Object.fromEntries(sortedEntries) as Record<string, ExperienceItem[]>;
-  }, [filtered, filter.groupByYear, filter.sort]);
+  const kinds: Kind[] = ["work", "freelance", "education"];
 
   return (
     <section aria-labelledby={headingId} className={cn("py-12 sm:py-16", className)}>
-      <div className="mb-6 flex flex-col gap-2">
+      <div className="mb-8 flex flex-col gap-2">
         <h2 id={headingId} className="text-xl font-semibold tracking-tight sm:text-2xl">
           {heading}
         </h2>
         <p className="text-sm text-muted-foreground">{subheading}</p>
       </div>
 
-      <ControlsBar filter={filter} setFilter={setFilter} allTags={allTags} />
+      {/* Filter pills */}
+      <div className="mb-8 flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => setActiveKind("all")}
+          aria-pressed={activeKind === "all"}
+          className={cn(
+            "rounded-full px-4 py-2 text-xs font-medium transition-all duration-200",
+            activeKind === "all"
+              ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+              : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground",
+          )}
+        >
+          All
+        </button>
+        {kinds.map((k) => {
+          const cfg = KIND_CONFIG[k];
+          const Icon = cfg.icon;
+          return (
+            <button
+              key={k}
+              type="button"
+              onClick={() => setActiveKind(k)}
+              aria-pressed={activeKind === k}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-medium transition-all duration-200",
+                activeKind === k
+                  ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground",
+              )}
+            >
+              <Icon className="h-3.5 w-3.5" aria-hidden />
+              {cfg.label}
+            </button>
+          );
+        })}
+      </div>
 
-      <Separator className="my-6" />
+      {/* Timeline */}
+      {sorted.length > 0 ? (
+        <div className="relative">
+          {/* Vertical line */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute left-[15px] top-2 bottom-2 w-px bg-gradient-to-b from-primary/30 via-border to-transparent"
+          />
 
-      {isLoading ? (
-        <SkeletonList />
-      ) : totalCount(grouped) === 0 ? (
-        <EmptyState clearFilters={() => setFilter((f) => ({ ...f, query: "", kinds: null, tags: null }))} />
+          <div className="space-y-6">
+            {sorted.map((item, i) => (
+              <TimelineCard key={item.id} item={item} index={i} />
+            ))}
+          </div>
+        </div>
       ) : (
-        <TimelineList
-          grouped={grouped}
-          tagFilteringEnabled={tagFilteringEnabled}
-          onTagClick={(t) =>
-            setFilter((f) => {
-              const next = new Set([...(f.tags ?? [])]);
-              if (next.has(t)) next.delete(t);
-              else next.add(t);
-              return { ...f, tags: next.size === 0 ? null : next };
-            })
-          }
-        />
+        <div className={cn(
+          "flex flex-col items-center justify-center rounded-2xl border py-16 text-center",
+          "border-border/50 bg-card/80",
+        )}>
+          <p className="text-sm text-muted-foreground">No items match this filter.</p>
+          <button
+            type="button"
+            onClick={() => setActiveKind("all")}
+            className="mt-3 rounded-full bg-primary px-4 py-2 text-xs font-medium text-primary-foreground hover:bg-primary/90"
+          >
+            Show all
+          </button>
+        </div>
       )}
     </section>
   );
 }
 
-/* ------------------------------------------------------------------------ */
-/* Controls                                                                 */
-/* ------------------------------------------------------------------------ */
+/* ─────────────────────────── Timeline Card ──────────────────────────────── */
 
-function ControlsBar({
-  filter, setFilter, allTags,
-}: {
-  filter: FilterState;
-  setFilter: React.Dispatch<React.SetStateAction<FilterState>>;
-  allTags: readonly string[];
-}): React.JSX.Element {
-  const kinds: readonly {
-    k: Kind;
-    label: string;
-    icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
-  }[] = [
-    { k: "work", label: "Work", icon: Building2 },
-    { k: "freelance", label: "Freelance", icon: Briefcase },
-    { k: "education", label: "Education", icon: GraduationCap },
-  ];
-
-  return (
-    <div className="flex flex-col gap-3 sm:gap-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <FilterIcon className="h-4 w-4" aria-hidden />
-          <span>Filters</span>
-        </div>
-
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-          <div className="flex items-center gap-2">
-            {kinds.map(({ k, label, icon: Ico }) => {
-              const active = filter.kinds == null || filter.kinds.has(k);
-              return (
-                <Button
-                  key={k}
-                  type="button"
-                  variant={active ? "default" : "secondary"}
-                  size="sm"
-                  className="gap-2"
-                  onClick={() =>
-                    setFilter((f) => {
-                      if (f.kinds == null) return { ...f, kinds: new Set<Kind>([k]) };
-                      const next = new Set(f.kinds);
-                      if (next.has(k)) next.delete(k);
-                      else next.add(k);
-                      return { ...f, kinds: next.size === 0 ? null : next };
-                    })
-                  }
-                  aria-pressed={active}
-                >
-                  <Ico className="h-4 w-4" aria-hidden />
-                  {label}
-                </Button>
-              );
-            })}
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              onClick={() => setFilter((f) => ({ ...f, sort: f.sort === "newest" ? "oldest" : "newest" }))}
-              aria-label="Toggle sort order"
-            >
-              {filter.sort === "newest" ? "Newest → Oldest" : "Oldest → Newest"}
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              onClick={() => setFilter((f) => ({ ...f, groupByYear: !f.groupByYear }))}
-              aria-label="Toggle group by year"
-            >
-              {filter.groupByYear ? "Group by year: On" : "Group by year: Off"}
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative sm:w-96">
-          <Input
-            value={filter.query}
-            onChange={(e) => setFilter((f) => ({ ...f, query: e.currentTarget.value }))}
-            placeholder="Search: role, org, tag…"
-            aria-label="Search timeline"
-          />
-          {filter.query.length > 0 ? (
-            <button
-              type="button"
-              aria-label="Clear search"
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:bg-muted"
-              onClick={() => setFilter((f) => ({ ...f, query: "" }))}
-            >
-              <X className="h-4 w-4" aria-hidden />
-            </button>
-          ) : null}
-        </div>
-
-        <ActiveTagFilters
-          tags={filter.tags}
-          clearOne={(t) =>
-            setFilter((f) => {
-              if (!f.tags) return f;
-              const next = new Set(f.tags);
-              next.delete(t);
-              return { ...f, tags: next.size === 0 ? null : next };
-            })
-          }
-          clearAll={() => setFilter((f) => ({ ...f, tags: null }))}
-        />
-      </div>
-
-      {allTags.length > 0 ? (
-        <div className="flex flex-wrap gap-2">
-          {allTags.map((t) => {
-            const active = filter.tags?.has(t) ?? false;
-            return (
-              <button
-                key={t}
-                type="button"
-                className={cn(
-                  "inline-flex items-center gap-2 rounded-md border px-2.5 py-1 text-xs transition-colors",
-                  active ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-                )}
-                onClick={() =>
-                  setFilter((f) => {
-                    const next = new Set([...(f.tags ?? [])]);
-                    if (next.has(t)) next.delete(t);
-                    else next.add(t);
-                    return { ...f, tags: next.size === 0 ? null : next };
-                  })
-                }
-                aria-pressed={active}
-              >
-                #{t}
-                {active ? <X className="h-3.5 w-3.5" aria-hidden /> : null}
-              </button>
-            );
-          })}
-        </div>
-      ) : null}
-    </div>
-  );
-}
-
-function ActiveTagFilters({
-  tags, clearOne, clearAll,
-}: {
-  tags: ReadonlySet<string> | null;
-  clearOne: (t: string) => void;
-  clearAll: () => void;
-}): React.JSX.Element | null {
-  if (!tags || tags.size === 0) return null;
-  const arr = [...tags].sort((a, b) => a.localeCompare(b, "en"));
-
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      <span className="text-xs text-muted-foreground">Active tags:</span>
-      {arr.map((t) => (
-        <span key={t} className="inline-flex items-center gap-1 rounded-md border bg-muted px-2 py-0.5 text-xs">
-          #{t}
-          <button
-            type="button"
-            aria-label={`Remove ${t} filter`}
-            onClick={() => clearOne(t)}
-            className="rounded p-0.5 hover:bg-background"
-          >
-            <X className="h-3 w-3" aria-hidden />
-          </button>
-        </span>
-      ))}
-      <Button type="button" size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={clearAll}>
-        Clear all
-      </Button>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------------ */
-/* Timeline List                                                            */
-/* ------------------------------------------------------------------------ */
-
-function TimelineList({
-  grouped, onTagClick, tagFilteringEnabled,
-}: {
-  grouped: Record<string, readonly ExperienceItem[]> | { __all__: readonly ExperienceItem[] };
-  onTagClick: (tag: string) => void;
-  tagFilteringEnabled: boolean;
-}): React.JSX.Element {
-  const groups = Object.entries(grouped);
-
-  return (
-    <ol className="relative space-y-8">
-      <div aria-hidden className="pointer-events-none absolute left-4 top-0 h-full w-px bg-border sm:left-28" />
-      {groups.map(([key, items]) => (
-        <li key={key} className="relative">
-          {key !== "__all__" ? <YearHeader year={key.startsWith("y-") ? key.slice(2) : key} count={items.length} /> : null}
-          <div className="mt-4 space-y-8">
-            {items.map((item, idx) => (
-              <TimelineRow
-                key={item.id}
-                item={item}
-                last={idx === items.length - 1}
-                onTagClick={onTagClick}
-                tagFilteringEnabled={tagFilteringEnabled}
-              />
-            ))}
-          </div>
-        </li>
-      ))}
-    </ol>
-  );
-}
-
-function YearHeader({ year, count }: { year: string; count: number }): React.JSX.Element {
-  return (
-    <div className="sticky top-16 z-10 -ml-1 inline-flex items-center gap-3 rounded-md bg-background/70 px-2 py-1 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <span className="text-sm font-medium">{year}</span>
-      <Badge variant="secondary" className="text-[10px]">{count}</Badge>
-    </div>
-  );
-}
-
-/* ---------------------------------- Row ---------------------------------- */
-
-function TimelineRow({
-  item, last, onTagClick, tagFilteringEnabled,
+function TimelineCard({
+  item,
+  index,
 }: {
   item: ExperienceItem;
-  last: boolean;
-  onTagClick: (tag: string) => void;
-  tagFilteringEnabled: boolean;
+  index: number;
 }): React.JSX.Element {
-  const icon = item.kind === "education" ? GraduationCap : item.kind === "freelance" ? Briefcase : Building2;
-  const duration = durationHumanTR(item.period);
+  const [visible, setVisible] = React.useState(false);
+  const ref = React.useRef<HTMLDivElement>(null);
+  const cfg = KIND_CONFIG[item.kind];
+  const Icon = cfg.icon;
+  const duration = durationHuman(item.period);
+
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <div className="grid gap-4 sm:grid-cols-[9rem_1fr]">
-      <div className="relative pl-10 sm:pl-0">
-        <Dot kind={item.kind} />
-        <div className="flex flex-col text-xs text-muted-foreground">
-          <span className="inline-flex items-center gap-2">
+    <div
+      ref={ref}
+      className={cn(
+        "relative grid gap-4 pl-10 transition-[opacity,transform] duration-500 ease-out",
+        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4",
+      )}
+      style={{ transitionDelay: visible ? `${index * 120}ms` : "0ms" }}
+    >
+      {/* Timeline dot */}
+      <span
+        aria-hidden
+        className={cn(
+          "absolute left-0 top-5 z-10 flex size-[31px] items-center justify-center rounded-full border-[3px] bg-background",
+          cfg.dot,
+        )}
+      >
+        <Icon className="h-3.5 w-3.5 text-inherit" aria-hidden />
+      </span>
+
+      {/* Card */}
+      <div className={cn(
+        "group rounded-2xl border p-5 sm:p-6",
+        "border-border/50 bg-card/80",
+        "transition-[border-color,box-shadow] duration-200",
+        "hover:border-primary/20 hover:shadow-md hover:shadow-primary/5",
+      )}>
+        {/* Header */}
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h3 className="text-base font-semibold sm:text-lg">{item.role}</h3>
+            <p className="mt-0.5 text-sm text-muted-foreground">{item.org}</p>
+          </div>
+          <span className={cn(
+            "inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium",
+            cfg.badge,
+          )}>
+            <Icon className="h-3.5 w-3.5" aria-hidden />
+            {cfg.label}
+          </span>
+        </div>
+
+        {/* Meta row */}
+        <div className="mb-4 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5">
             <CalendarDays className="h-3.5 w-3.5" aria-hidden />
             <PeriodText period={item.period} />
           </span>
-
           {item.location ? (
-            <span className="mt-1 inline-flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5">
               <MapPin className="h-3.5 w-3.5" aria-hidden />
               {item.location}
             </span>
           ) : null}
-
-          <span className="mt-1 inline-flex items-center gap-2">
+          <span className="inline-flex items-center gap-1.5">
             <Timer className="h-3.5 w-3.5" aria-hidden />
             {duration}
           </span>
         </div>
 
-        {!last ? (
-          <div aria-hidden className="pointer-events-none absolute left-4 top-9 hidden h-[calc(100%_-_2.25rem)] w-px bg-border sm:left-auto sm:hidden" />
+        {/* Summary */}
+        {item.summary ? (
+          <p className="mb-4 text-sm leading-relaxed text-muted-foreground">{item.summary}</p>
         ) : null}
-      </div>
 
-      <Card className="overflow-hidden">
-        <CardHeader className="pb-0">
-          <div className="mb-2 flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <CardTitle className="text-base sm:text-lg">{item.role}</CardTitle>
-              <CardDescription className="mt-0.5">{item.org}</CardDescription>
-            </div>
-            <span className="inline-flex items-center gap-2 rounded-md border px-2.5 py-1 text-xs text-muted-foreground">
-              {React.createElement(icon, { className: "h-3.5 w-3.5", "aria-hidden": true })}
-              {labelForKind(item.kind)}
-            </span>
-          </div>
-        </CardHeader>
-
-        <CardContent className="pt-4">
-          {item.summary ? <p className="text-sm text-muted-foreground">{item.summary}</p> : null}
-
-          {item.achievements?.length ? (
-            <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
+        {/* Achievements */}
+        {item.achievements?.length ? (
+          <div className="mb-4">
+            <p className="mb-2 text-xs font-semibold text-foreground/70">Key Achievements</p>
+            <ul className="space-y-2 text-sm text-muted-foreground">
               {item.achievements.map((a) => (
                 <li key={a} className="flex items-start gap-2">
-                  <span className="mt-1 inline-block size-1.5 rounded-full bg-primary/60" />
+                  <span className="mt-1.5 inline-block size-1.5 shrink-0 rounded-full bg-primary" />
                   <span>{a}</span>
                 </li>
               ))}
             </ul>
-          ) : null}
-
-          {item.responsibilities?.length ? (
-            <div className="mt-4">
-              <p className="mb-2 text-xs font-medium text-muted-foreground">Responsibilities</p>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                {item.responsibilities.map((a) => (
-                  <li key={a} className="flex items-start gap-2">
-                    <span className="mt-1 inline-block size-1.5 rounded-full bg-muted-foreground/40" />
-                    <span>{a}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-
-          {item.tags?.length ? (
-            <div className="mt-4 flex flex-wrap gap-2">
-              {item.tags.map((t) => (
-                <Badge
-                  key={t}
-                  variant="secondary"
-                  className={cn("cursor-default", tagFilteringEnabled ? "cursor-pointer hover:bg-muted" : "")}
-                  onClick={tagFilteringEnabled ? () => onTagClick(t) : undefined}
-                >
-                  #{t}
-                </Badge>
-              ))}
-            </div>
-          ) : null}
-        </CardContent>
-
-        {(item.links?.length ?? 0) > 0 ? (
-          <CardFooter className="mt-auto">
-            <div className="flex flex-wrap gap-2">
-              {item.links!.map((l) => (
-                <LinkPill key={l.href} href={l.href} label={l.label} />
-              ))}
-            </div>
-          </CardFooter>
+          </div>
         ) : null}
-      </Card>
+
+        {/* Responsibilities */}
+        {item.responsibilities?.length ? (
+          <div className="mb-4">
+            <p className="mb-2 text-xs font-semibold text-foreground/70">Responsibilities</p>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              {item.responsibilities.map((r) => (
+                <li key={r} className="flex items-start gap-2">
+                  <span className="mt-1.5 inline-block size-1.5 shrink-0 rounded-full bg-muted-foreground/40" />
+                  <span>{r}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+
+        {/* Tags */}
+        {item.tags?.length ? (
+          <div className="mb-4 flex flex-wrap gap-1.5">
+            {item.tags.map((t) => (
+              <span
+                key={t}
+                className="rounded-md bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+        ) : null}
+
+        {/* Links */}
+        {item.links?.length ? (
+          <div className="flex flex-wrap gap-2 border-t border-border/50 pt-4">
+            {item.links.map((l) => (
+              <LinkPill key={l.href} href={l.href} label={l.label} />
+            ))}
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }
 
-/* --------------------------------- Bits ---------------------------------- */
-
-function Dot({ kind }: { kind: Kind }): React.JSX.Element {
-  const ring = kind === "education" ? "ring-blue-500" : kind === "freelance" ? "ring-amber-500" : "ring-primary";
-  const fill = kind === "education" ? "bg-blue-500/90" : kind === "freelance" ? "bg-amber-500/90" : "bg-primary";
-
-  return (
-    <span
-      aria-hidden
-      className={cn("absolute left-0 top-1.5 inline-flex size-3.5 -translate-x-1/2 items-center justify-center rounded-full ring-2", ring)}
-    >
-      <span className={cn("block size-2 rounded-full", fill)} />
-    </span>
-  );
-}
-
-function labelForKind(k: Kind): string {
-  switch (k) {
-    case "work": return "Work";
-    case "freelance": return "Freelance";
-    case "education": return "Education";
-  }
-}
+/* ──────────────────────────────── Parts ─────────────────────────────────── */
 
 function LinkPill({ href, label }: ExtLink): React.JSX.Element {
-  const isInternal = href.startsWith("/");
-
   const classes = cn(
-    "inline-flex items-center gap-2 rounded-md border px-2.5 py-1 text-xs transition-colors hover:bg-muted"
+    "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium",
+    "text-muted-foreground transition-colors duration-150",
+    "hover:bg-primary/10 hover:text-primary",
   );
 
-  if (isInternal) {
+  if (href.startsWith("/")) {
     return (
       <Link href={href} className={classes} aria-label={label}>
-        <ExternalLink className="h-3.5 w-3.5" aria-hidden />
-        <span>{label}</span>
+        <ExternalLink className="h-3 w-3" aria-hidden />
+        {label}
       </Link>
     );
   }
 
   return (
     <a href={href} target="_blank" rel="noreferrer" className={classes} aria-label={label}>
-      <ExternalLink className="h-3.5 w-3.5" aria-hidden />
-      <span>{label}</span>
+      <ExternalLink className="h-3 w-3" aria-hidden />
+      {label}
     </a>
   );
 }
@@ -545,68 +332,14 @@ function PeriodText({ period }: { period: Period }): React.JSX.Element {
   return <span>{start} — {end}</span>;
 }
 
-/* ------------------------------- Empty/Skeleton -------------------------- */
-
-function EmptyState({ clearFilters }: { clearFilters: () => void }): React.JSX.Element {
-  return (
-    <div className="flex flex-col items-start gap-4 rounded-lg border p-6">
-      <div className="inline-flex items-center gap-2 text-sm text-muted-foreground">
-        <Info className="h-4 w-4" aria-hidden />
-        <span>No matching records found.</span>
-      </div>
-      <div className="text-sm text-muted-foreground">
-        You narrowed the filters and made life harder for yourself. If you want to wipe them and try again:
-      </div>
-      <Button type="button" onClick={clearFilters}>
-        Clear filters
-      </Button>
-    </div>
-  );
-}
-
-function SkeletonList(): React.JSX.Element {
-  return (
-    <div className="space-y-8">
-      {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="grid gap-4 sm:grid-cols-[9rem_1fr]">
-          <div className="relative pl-10 sm:pl-0">
-            <div className="absolute left-0 top-1.5 inline-flex size-3.5 -translate-x-1/2 items-center justify-center rounded-full ring-2 ring-muted-foreground/30">
-              <span className="block size-2 rounded-full bg-muted-foreground/30" />
-            </div>
-            <div className="mt-1 h-4 w-28 animate-pulse rounded bg-muted" />
-            <div className="mt-2 h-4 w-20 animate-pulse rounded bg-muted" />
-            <div className="mt-2 h-4 w-16 animate-pulse rounded bg-muted" />
-          </div>
-          <Card>
-            <CardHeader className="pb-0">
-              <div className="mb-2 flex items-start justify-between gap-3">
-                <div className="h-5 w-40 animate-pulse rounded bg-muted" />
-                <div className="h-5 w-20 animate-pulse rounded bg-muted" />
-              </div>
-            </CardHeader>
-            <CardContent className="pt-4">
-              <div className="h-4 w-11/12 animate-pulse rounded bg-muted" />
-              <div className="mt-2 h-4 w-2/3 animate-pulse rounded bg-muted" />
-              <div className="mt-4 flex gap-2">
-                <div className="h-6 w-16 animate-pulse rounded bg-muted" />
-                <div className="h-6 w-14 animate-pulse rounded bg-muted" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/* -------------------------------- Utils ---------------------------------- */
+/* ──────────────────────────────── Utils ─────────────────────────────────── */
 
 function formatYYYYMM(s: `${number}-${MonthStr}`): string {
   const [y, m] = s.split("-") as [string, MonthStr];
-  return `${monthNameTR(m)} ${y}`;
+  return `${monthName(m)} ${y}`;
 }
 
-function monthNameTR(m: MonthStr): string {
+function monthName(m: MonthStr): string {
   switch (m) {
     case "01": return "Jan";
     case "02": return "Feb";
@@ -629,38 +362,30 @@ function comparePeriod(a: Period, b: Period): number {
   if (aNum === bNum) {
     const aEnd = a.end ? toMonthIndex(a.end) : Number.POSITIVE_INFINITY;
     const bEnd = b.end ? toMonthIndex(b.end) : Number.POSITIVE_INFINITY;
-    return bEnd - aEnd; // longer first if same start month
+    return bEnd - aEnd;
   }
-  return bNum - aNum; // newer first
+  return bNum - aNum;
 }
 
 function toMonthIndex(s: `${number}-${MonthStr}`): number {
   const [yStr, mStr] = s.split("-") as [string, MonthStr];
-  const y = Number(yStr);
-  const m = Number(mStr);
-  return y * 12 + (m - 1);
+  return Number(yStr) * 12 + (Number(mStr) - 1);
 }
 
-function durationHumanTR(period: Period): string {
+function durationHuman(period: Period): string {
   const start = toMonthIndex(period.start);
   const end = period.end ? toMonthIndex(period.end) : currentMonthIndex();
   const months = Math.max(0, end - start + 1);
   const years = Math.floor(months / 12);
   const rem = months % 12;
-
   const parts: string[] = [];
   if (years > 0) parts.push(`${years} ${years === 1 ? "year" : "years"}`);
   if (rem > 0) parts.push(`${rem} ${rem === 1 ? "month" : "months"}`);
-  if (parts.length === 0) return "Less than 1 month";
+  if (parts.length === 0) return "< 1 month";
   return parts.join(" ");
 }
 
 function currentMonthIndex(): number {
   const d = new Date();
   return d.getFullYear() * 12 + d.getMonth();
-}
-
-function totalCount(grouped: Record<string, readonly ExperienceItem[]> | { __all__: readonly ExperienceItem[] }): number {
-  if ("__all__" in grouped) return grouped.__all__.length;
-  return Object.values(grouped).reduce((acc, arr) => acc + arr.length, 0);
 }

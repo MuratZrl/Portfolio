@@ -9,29 +9,27 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-  TooltipProvider,
-} from "@/components/ui/tooltip";
-import { Separator } from "@/components/ui/separator";
-import { Search, Link2, X, HelpCircle } from "lucide-react";
+import { Search, Link2, X, MessageCircleQuestion } from "lucide-react";
 
 import type { QA } from "@/features/about/types";
 import { FAQ_ITEMS } from "@/features/about/data/FAQ";
 
-/* -------------------------------- Component ------------------------------- */
+/* ─────────────────────────── Category icon map ─────────────────────────── */
+
+const CATEGORY_COLORS: Record<string, string> = {
+  Process: "bg-blue-500/10 text-blue-500",
+  Quality: "bg-amber-500/10 text-amber-500",
+  Technical: "bg-primary/10 text-primary",
+  Delivery: "bg-violet-500/10 text-violet-500",
+};
+
+/* ────────────────────────────── Component ───────────────────────────────── */
 
 type FaqProps = {
   heading?: string;
   subheading?: string;
   items?: readonly QA[];
   defaultCategory?: QA["category"] | "All";
-  /** Maximum number of items to show on screen */
   maxVisible?: number;
   className?: string;
 };
@@ -41,27 +39,24 @@ export default function Faq({
   subheading = "Frequently asked questions with clear answers.",
   items = FAQ_ITEMS,
   defaultCategory = "All",
-  maxVisible = 5,
+  maxVisible = 8,
   className,
 }: FaqProps): React.JSX.Element {
   const headingId = React.useId();
 
-  // Build categories with “All”
   const categories = React.useMemo(() => {
     const set = new Set<string>(["All"]);
     for (const q of items) set.add(q.category);
     return Array.from(set) as (QA["category"] | "All")[];
   }, [items]);
 
-  // Start closed on both SSR and first client render.
   const [openItem, setOpenItem] = React.useState<string | undefined>(undefined);
-
-  // Search & category filter
-  const [query, setQuery] = React.useState<string>("");
+  const [query, setQuery] = React.useState("");
   const [activeCategory, setActiveCategory] =
     React.useState<QA["category"] | "All">(defaultCategory);
+  const [copied, setCopied] = React.useState<string | null>(null);
 
-  // Read hash AFTER mount, then keep listening.
+  // Hash-based deep linking
   React.useEffect(() => {
     const apply = (): void => setOpenItem(getHashId());
     apply();
@@ -69,7 +64,7 @@ export default function Faq({
     return () => window.removeEventListener("hashchange", apply);
   }, []);
 
-  // Filtered data
+  // Filtered items
   const prepared = React.useMemo(() => {
     const q = normalize(query);
     const rows = items.map(attachId);
@@ -77,38 +72,36 @@ export default function Faq({
       const byCategory = activeCategory === "All" || r.category === activeCategory;
       if (!byCategory) return false;
       if (!q) return true;
-      return (
-        normalize(r.question).includes(q) || normalize(r.answer).includes(q)
-      );
+      return normalize(r.question).includes(q) || normalize(r.answer).includes(q);
     });
   }, [items, query, activeCategory]);
 
-  // Keep true total for the counter, but only render up to maxVisible.
   const totalCount = prepared.length;
 
-  // Make sure the anchored item (via hash) stays visible even if it's beyond maxVisible.
+  // Ensure anchored item is always visible
   const visibleRows = React.useMemo(() => {
     const base = prepared.slice(0, Math.max(0, maxVisible));
     if (!openItem) return base;
-    const anchoredIdx = prepared.findIndex(r => r.id === openItem);
+    const anchoredIdx = prepared.findIndex((r) => r.id === openItem);
     if (anchoredIdx === -1) return base;
     const anchored = prepared[anchoredIdx];
-    const alreadyIn = base.some(r => r.id === anchored.id);
-    if (alreadyIn) return base;
+    if (base.some((r) => r.id === anchored.id)) return base;
     if (base.length === 0) return [anchored];
-    const deduped = base.filter(r => r.id !== anchored.id);
-    if (deduped.length >= maxVisible) {
-      deduped.pop();
-    }
+    const deduped = base.filter((r) => r.id !== anchored.id);
+    if (deduped.length >= maxVisible) deduped.pop();
     deduped.push(anchored);
     return deduped;
   }, [prepared, maxVisible, openItem]);
 
-  const resultCount = totalCount;
+  const handleCopy = React.useCallback(async (slug: string) => {
+    await copyLink(slug);
+    setCopied(slug);
+    setTimeout(() => setCopied(null), 1500);
+  }, []);
 
   return (
     <section aria-labelledby={headingId} className={cn("py-12 sm:py-16", className)}>
-      <div className="mb-6 flex flex-col gap-2">
+      <div className="mb-8 flex flex-col gap-2">
         <h2 id={headingId} className="text-xl font-semibold tracking-tight sm:text-2xl">
           {heading}
         </h2>
@@ -116,130 +109,226 @@ export default function Faq({
       </div>
 
       {/* Control bar */}
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="relative w-full sm:max-w-xs">
-          <Search className="pointer-events-none absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search questions..."
-            className="pl-8"
-            aria-label="Search in FAQ"
-          />
-          {query ? (
-            <Button
-              type="button"
-              size="icon"
-              variant="ghost"
-              className="absolute right-1 top-1/2 -translate-y-1/2"
-              aria-label="Clear search"
-              onClick={() => setQuery("")}
-            >
-              <X className="h-4 w-4" aria-hidden />
-            </Button>
-          ) : null}
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          {categories.map((cat) => {
-            const active = cat === activeCategory;
-            return (
-              <Badge
-                key={cat}
-                role="button"
-                tabIndex={0}
-                aria-pressed={active}
-                onClick={() => setActiveCategory(cat)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") setActiveCategory(cat);
-                }}
-                className={cn(
-                  "cursor-pointer select-none",
-                  active ? "bg-primary text-primary-foreground" : "border"
-                )}
+      <div className={cn(
+        "mb-6 rounded-2xl border p-4 sm:p-5",
+        "border-border/50 bg-card/80 backdrop-blur-sm",
+      )}>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+          {/* Search */}
+          <div className="relative w-full sm:max-w-xs">
+            <Search
+              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+              aria-hidden
+            />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search questions..."
+              aria-label="Search in FAQ"
+              className={cn(
+                "h-9 w-full rounded-full border border-border/50 bg-background/60 pl-9 pr-9 text-sm",
+                "placeholder:text-muted-foreground",
+                "outline-none transition-all",
+                "focus:border-primary/40 focus:ring-2 focus:ring-primary/20",
+              )}
+            />
+            {query ? (
+              <button
+                type="button"
+                aria-label="Clear search"
+                onClick={() => setQuery("")}
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
-                {cat}
-              </Badge>
-            );
-          })}
-        </div>
+                <X className="h-3.5 w-3.5" aria-hidden />
+              </button>
+            ) : null}
+          </div>
 
-        <div className="sm:ml-auto text-xs text-muted-foreground">
-          {resultCount} results
+          {/* Category pills */}
+          <div className="flex flex-wrap gap-2">
+            {categories.map((cat) => {
+              const active = cat === activeCategory;
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => setActiveCategory(cat)}
+                  className={cn(
+                    "rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-300",
+                    active
+                      ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+                      : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground",
+                  )}
+                >
+                  {cat}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Result count */}
+          <span className="text-xs tabular-nums text-muted-foreground sm:ml-auto">
+            {totalCount} {totalCount === 1 ? "result" : "results"}
+          </span>
         </div>
       </div>
 
-      <Separator className="mb-4" />
+      {/* FAQ items */}
+      {visibleRows.length > 0 ? (
+        <Accordion
+          type="single"
+          collapsible
+          value={openItem}
+          onValueChange={(v) => setOpenItem(v)}
+          className="space-y-3"
+        >
+          {visibleRows.map((item, i) => {
+            const slug = item.id!;
+            const qId = `faq-q-${slug}`;
+            const aId = `faq-a-${slug}`;
+            const catColor = CATEGORY_COLORS[item.category] ?? "bg-muted text-muted-foreground";
 
-      {/* List */}
-      <TooltipProvider delayDuration={120}>
-        {visibleRows.length > 0 ? (
-          <Accordion
-            type="single"
-            collapsible
-            value={openItem}
-            onValueChange={(v) => setOpenItem(v)}
-            className="w-full"
-          >
-            {visibleRows.map((item) => {
-              const slug = item.id!;
-              const value = slug;
-              const qId = `faq-q-${slug}`;
-              const aId = `faq-a-${slug}`;
-
-              return (
-                <AccordionItem key={value} value={value} id={slug} className="scroll-mt-24">
-                  <div className="flex items-start justify-between gap-2">
-                    <AccordionTrigger
-                      id={qId}
-                      aria-controls={aId}
-                      className="text-left"
-                      onClick={() => setHash(slug)}
-                    >
-                      <div className="flex items-center gap-2">
-                        <HelpCircle className="h-4 w-4 text-muted-foreground" aria-hidden />
-                        <span>{highlight(item.question, query)}</span>
-                      </div>
-                    </AccordionTrigger>
-
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          type="button"
-                          size="icon"
-                          variant="ghost"
-                          className="mt-1"
-                          aria-label="Copy link to this question"
-                          onClick={() => copyLink(slug)}
-                        >
-                          <Link2 className="h-4 w-4" aria-hidden />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Copy link</TooltipContent>
-                    </Tooltip>
-                  </div>
-
-                  <AccordionContent id={aId} aria-labelledby={qId}>
-                    <p className="text-sm text-muted-foreground">
-                      {highlight(item.answer, query)}
-                    </p>
-                    <div className="mt-2 text-xs text-muted-foreground">
-                      Category: {item.category}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              );
-            })}
-          </Accordion>
-        ) : (
-          <EmptyState onClear={() => { setQuery(""); setActiveCategory("All"); }} />
-        )}
-      </TooltipProvider>
+            return (
+              <FaqCard
+                key={slug}
+                item={item}
+                slug={slug}
+                qId={qId}
+                aId={aId}
+                catColor={catColor}
+                query={query}
+                index={i}
+                isCopied={copied === slug}
+                onOpen={() => setHash(slug)}
+                onCopy={() => handleCopy(slug)}
+              />
+            );
+          })}
+        </Accordion>
+      ) : (
+        <EmptyState onClear={() => { setQuery(""); setActiveCategory("All"); }} />
+      )}
     </section>
   );
 }
 
-/* --------------------------------- Helpers -------------------------------- */
+/* ────────────────────────────── FAQ Card ────────────────────────────────── */
+
+function FaqCard({
+  item,
+  slug,
+  qId,
+  aId,
+  catColor,
+  query,
+  isCopied,
+  onOpen,
+  onCopy,
+}: {
+  item: QA & { id: string };
+  slug: string;
+  qId: string;
+  aId: string;
+  catColor: string;
+  query: string;
+  index: number;
+  isCopied: boolean;
+  onOpen: () => void;
+  onCopy: () => void;
+}): React.JSX.Element {
+  return (
+    <AccordionItem
+      value={slug}
+      id={slug}
+      className={cn(
+        "group/faq rounded-xl border scroll-mt-24",
+        "border-border/50 bg-card/80",
+        "transition-[border-color,box-shadow] duration-200",
+        "hover:border-primary/20",
+        "data-[state=open]:border-primary/25 data-[state=open]:shadow-md data-[state=open]:shadow-primary/5",
+      )}
+    >
+      <AccordionTrigger
+        id={qId}
+        aria-controls={aId}
+        className="w-full px-5 text-left hover:no-underline"
+        onClick={onOpen}
+      >
+        <div className="flex items-center gap-3">
+          <div className={cn(
+            "flex size-8 shrink-0 items-center justify-center rounded-lg",
+            catColor,
+          )}>
+            <MessageCircleQuestion className="h-4 w-4" aria-hidden />
+          </div>
+          <span className="text-sm font-medium">
+            {highlight(item.question, query)}
+          </span>
+        </div>
+      </AccordionTrigger>
+
+      <AccordionContent id={aId} aria-labelledby={qId} className="px-5 pb-5 pt-0">
+        <div className="ml-11">
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            {highlight(item.answer, query)}
+          </p>
+          <div className="mt-3 flex items-center gap-2">
+            <span className={cn(
+              "inline-block rounded-full px-2.5 py-0.5 text-[10px] font-medium",
+              catColor,
+            )}>
+              {item.category}
+            </span>
+            <button
+              type="button"
+              aria-label="Copy link to this question"
+              onClick={(e) => { e.stopPropagation(); onCopy(); }}
+              className={cn(
+                "inline-flex size-6 items-center justify-center rounded-md transition-colors duration-150",
+                isCopied
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground/40 hover:bg-muted hover:text-muted-foreground",
+              )}
+            >
+              <Link2 className="h-3 w-3" aria-hidden />
+            </button>
+          </div>
+        </div>
+      </AccordionContent>
+    </AccordionItem>
+  );
+}
+
+/* ────────────────────────────── Empty State ─────────────────────────────── */
+
+function EmptyState({ onClear }: { onClear: () => void }): React.JSX.Element {
+  return (
+    <div className={cn(
+      "flex flex-col items-center justify-center rounded-2xl border py-16 text-center",
+      "border-border/50 bg-card/80 backdrop-blur-sm",
+    )}>
+      <div className="mb-3 flex size-12 items-center justify-center rounded-xl bg-muted">
+        <Search className="h-5 w-5 text-muted-foreground" aria-hidden />
+      </div>
+      <p className="text-sm font-medium">No results found</p>
+      <p className="mt-1 text-xs text-muted-foreground">Try a different keyword or category.</p>
+      <button
+        type="button"
+        onClick={onClear}
+        className={cn(
+          "mt-4 rounded-full px-4 py-2 text-xs font-medium transition-all",
+          "bg-primary text-primary-foreground hover:bg-primary/90",
+        )}
+      >
+        Clear filters
+      </button>
+    </div>
+  );
+}
+
+/* ──────────────────────────────── Helpers ───────────────────────────────── */
 
 function attachId(item: QA): QA & { id: string } {
   return { ...item, id: item.id ?? slugify(item.question) };
@@ -298,23 +387,5 @@ function highlight(text: string, query: string): React.ReactNode {
       <mark className="rounded bg-primary/15 px-0.5 py-0.5">{match}</mark>
       {after}
     </>
-  );
-}
-
-/* --------------------------------- Empty ---------------------------------- */
-
-function EmptyState({ onClear }: { onClear: () => void }): React.JSX.Element {
-  return (
-    <div className="flex flex-col items-center justify-center rounded-md border py-12 text-center">
-      <Search className="mb-2 h-5 w-5 text-muted-foreground" aria-hidden />
-      <p className="text-sm text-muted-foreground">
-        No results found. Try relaxing the filters.
-      </p>
-      <div className="mt-3">
-        <Button size="sm" variant="outline" onClick={onClear}>
-          Clear filters
-        </Button>
-      </div>
-    </div>
   );
 }
