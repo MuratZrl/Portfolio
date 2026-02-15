@@ -9,7 +9,7 @@ export const PROJECTS: readonly Project[] = [
       "Internal admin panel with real-time metrics (Supabase Realtime), cache-aware data layer (tag-based revalidation), Server Actions with optimistic updates, audit logs, and MUI theming.",
     tags: ["Realtime", "Yup", "Server Actions", "RLS", "Caching", "MUI"],
     category: "Full-Stack",
-    image: { src: "/images/projects/analytics.png", alt: "Admin analytics dashboard" },
+    image: { src: "https://placehold.co/800x450/e5e7eb/6b7280?text=Admin+Panel&font=raleway", alt: "Admin analytics dashboard" },
     links: {
       demo: { href: "https://szmetal.com.tr", label: "Live" },
       repo: {
@@ -29,7 +29,7 @@ export const PROJECTS: readonly Project[] = [
       "4K wallpaper gallery with a fast masonry grid, optimized images (LQIP + Next/Image), aggressive prefetch/preload, edge caching, and strong SEO (sitemap, robots, structured data, OG).",
     tags: ["Image Optimization", "Masonry Grid", "Prefetch/Preload", "SEO", "Edge Caching"],
     category: "Frontend",
-    image: { src: "/images/projects/wallpaper-website.png", alt: "Wallpaper Website" },
+    image: { src: "https://placehold.co/800x450/e5e7eb/6b7280?text=Wallpaper+Site&font=raleway", alt: "Wallpaper Website" },
     links: {
       demo: { href: "/wallpapers", label: "Live" },
       repo: { href: "https://github.com/MuratZrl/wallpaper-website", label: "Repo" },
@@ -46,7 +46,7 @@ export const PROJECTS: readonly Project[] = [
       "SEO-first blog with MDX content, nested routes, RSC streaming, per-post OG images, RSS/Atom, sitemap, and draft previews. Tag-based revalidation and edge caching for fast delivery.",
     tags: ["MDX", "RSC", "SEO", "OG Image", "RSS", "Sitemap", "Supabase"],
     category: "Full-Stack",
-    image: { src: "/images/projects/blog.png", alt: "Blog platform homepage" },
+    image: { src: "https://placehold.co/800x450/e5e7eb/6b7280?text=Blog+Platform&font=raleway", alt: "Blog platform homepage" },
     links: {
       demo: { href: "/blog", label: "Live" },
       repo: { href: "https://github.com/MuratZrl/blog-platform", label: "Repo" },
