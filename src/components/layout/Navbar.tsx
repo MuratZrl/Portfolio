@@ -4,15 +4,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-  SheetClose,
-} from "@/components/ui/sheet";
-import { Separator } from "@/components/ui/separator";
+import { Menu, X, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/theme/theme-toggle";
 
@@ -28,153 +20,121 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/donate", label: "Donate" },
 ];
 
-// CV dosyası: /public/cv/MuratZorlu-CV.pdf olmalı
 const CV_PATH = "/cv/MuratZorlu-CV.pdf" as const;
 
-function DesktopNav(): React.JSX.Element {
+export default function Navbar(): React.JSX.Element {
   const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+
+  // Close mobile nav on route change
+  React.useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
 
   return (
-    <nav className="hidden md:flex items-center gap-6">
-      {NAV_ITEMS.map(({ href, label }) => {
-        const isActive =
-          href === "/" ? pathname === "/" : pathname.startsWith(href);
-        return (
-          <Link
-            key={href}
-            href={href}
-            aria-current={isActive ? "page" : undefined}
-            className={cn(
-              "text-sm transition-colors",
-              isActive
-                ? "text-foreground font-medium"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            {label}
-          </Link>
-        );
-      })}
-    </nav>
-  );
-}
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2.5">
+          <span className="inline-flex size-7 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">
+            MZ
+          </span>
+          <span className="hidden text-sm font-semibold tracking-tight sm:inline">
+            Murat Zorlu
+          </span>
+        </Link>
 
-function MobileNav(): React.JSX.Element {
-  const pathname = usePathname();
-
-  return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="md:hidden"
-          aria-label="Menüyü aç"
-        >
-          <Menu className="h-5 w-5" />
-          <span className="sr-only">Menüyü aç</span>
-        </Button>
-      </SheetTrigger>
-
-      <SheetContent side="left" className="px-0" title="Mobil menü">
-        <div className="px-6 py-4">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded bg-primary text-primary-foreground text-sm font-bold">
-              MZ
-            </span>
-            <span className="text-base font-semibold tracking-tight">
-              Murat Zorlu
-            </span>
-          </Link>
-        </div>
-
-        <Separator />
-
-        <nav className="flex flex-col">
+        {/* Desktop nav */}
+        <nav className="hidden items-center gap-1 md:flex">
           {NAV_ITEMS.map(({ href, label }) => {
             const isActive =
               href === "/" ? pathname === "/" : pathname.startsWith(href);
             return (
-              <SheetClose asChild key={href}>
-                <Link
-                  href={href}
-                  aria-current={isActive ? "page" : undefined}
-                  className={cn(
-                    "px-6 py-3 text-sm transition-colors",
-                    isActive
-                      ? "text-foreground font-medium"
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  {label}
-                </Link>
-              </SheetClose> 
+              <Link
+                key={href}
+                href={href}
+                aria-current={isActive ? "page" : undefined}
+                className={cn(
+                  "rounded-md px-3 py-1.5 text-sm transition-colors",
+                  isActive
+                    ? "bg-primary/10 font-medium text-primary"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                )}
+              >
+                {label}
+              </Link>
             );
           })}
         </nav>
 
-        {/* Mobil menüde de CV indir butonu: alt kısım */}
-        <div className="mt-auto px-6 py-4">
-          <Button asChild className="w-full" aria-label="CV indir">
-            <a href={CV_PATH} download>
-              <Download className="mr-2 h-4 w-4" aria-hidden />
-              CV
-            </a>
-          </Button>
-        </div>
-      </SheetContent>
-    </Sheet>
-  );
-}
+        {/* Right side */}
+        <div className="flex items-center gap-1">
+          <ThemeToggle />
 
-export default function Navbar(): React.JSX.Element {
-  return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <a
+            href={CV_PATH}
+            download
+            aria-label="Download CV"
+            className={cn(
+              "hidden items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors sm:inline-flex",
+              "border border-border/50 text-muted-foreground hover:bg-muted hover:text-foreground",
+            )}
+          >
+            <Download className="h-3.5 w-3.5" aria-hidden />
+            CV
+          </a>
 
-        {/* relative konteyner: orta grup absolute merkezde */}
-        <div className="relative flex h-14 items-center">
-          {/* Sol grup: hamburger (mobil) + logo (her zaman) */}
-          <div className="flex items-center gap-2">
-            <div className="md:hidden">
-              <MobileNav />
-            </div>
-
-            <Link href="/" className="flex items-center gap-2">
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded bg-primary text-primary-foreground text-sm font-bold">
-                MZ
-              </span>
-              <span className="hidden sm:inline text-sm font-semibold tracking-tight">
-                Murat Zorlu
-              </span>
-            </Link>
-          </div>
-
-          {/* Orta: SADECE linkler (mutlak merkez) */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-            <DesktopNav />
-          </div>
-
-          {/* Sağ: theme toggle + CV indir */}
-          <div className="ml-auto flex items-center gap-2">
-            <ThemeToggle />
-
-            {/* Küçük, temiz CV butonu. asChild ile <a download> */}
-            <Button
-              asChild
-              size="sm"
-              variant="outline"
-              aria-label="CV indir"
-              className="xs:inline-flex"
-            >
-              <a href={CV_PATH} download>
-                <Download className="mr-2 h-4 w-4" aria-hidden />
-                <span>CV</span>
-              </a>
-            </Button>
-          </div>
+          {/* Mobile menu button */}
+          <button
+            type="button"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            className="inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground md:hidden"
+          >
+            {mobileOpen ? (
+              <X className="h-5 w-5" aria-hidden />
+            ) : (
+              <Menu className="h-5 w-5" aria-hidden />
+            )}
+          </button>
         </div>
       </div>
+
+      {/* Mobile nav panel */}
+      {mobileOpen ? (
+        <nav className="border-t border-border/40 bg-background/95 backdrop-blur-md md:hidden">
+          <div className="mx-auto max-w-7xl space-y-1 px-4 py-3">
+            {NAV_ITEMS.map(({ href, label }) => {
+              const isActive =
+                href === "/" ? pathname === "/" : pathname.startsWith(href);
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  aria-current={isActive ? "page" : undefined}
+                  className={cn(
+                    "block rounded-md px-3 py-2 text-sm transition-colors",
+                    isActive
+                      ? "bg-primary/10 font-medium text-primary"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                  )}
+                >
+                  {label}
+                </Link>
+              );
+            })}
+
+            <a
+              href={CV_PATH}
+              download
+              className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <Download className="h-3.5 w-3.5" aria-hidden />
+              Download CV
+            </a>
+          </div>
+        </nav>
+      ) : null}
     </header>
   );
 }

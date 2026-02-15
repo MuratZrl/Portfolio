@@ -9,9 +9,6 @@ import FeaturedProjects from "@/features/home/sections/Projects";
 import TechStack from "@/features/home/sections/TechStack";
 import FinalCta from "@/features/home/sections/FinalCTA";
 
-import { presetSplitPattern } from "@/features/home/data"; // ← index.ts
-
-import { Gauge, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Murat Zorlu — Home",
@@ -42,6 +39,8 @@ export default function HomePage(): React.JSX.Element {
         subtitle="Next.js 16 · Node.js · TypeScript · Shadcn UI · MUI · Supabase"
         primary={{ href: "/about", label: "About" }}
         secondary={{ href: "/projects", label: "Projects" }}
+        avatarSrc="/images/profile.jpg"
+        statusText="Available for work"
         align="center"
         className="py-16 sm:py-24"
       />
@@ -50,16 +49,7 @@ export default function HomePage(): React.JSX.Element {
       <FeaturedProjects />
       <TechStack />
 
-      {/* Image'lı split varyant */}
-      <FinalCta
-        {...presetSplitPattern()}
-        highlights={["Server Actions", "Caching Strategy"]}
-        stats={[
-          { label: "Lighthouse", value: "95", icon: Gauge },
-          { label: "Accessibility", value: "AA", icon: ShieldCheck },
-        ]}
-        tertiary={{ href: "/projects", label: "All Projects" }}
-      />
+      <FinalCta />
     </Page>
   );
 }

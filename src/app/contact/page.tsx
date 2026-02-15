@@ -8,6 +8,13 @@ import ContactDetails from "@/features/contact/sections/ContactDetails";
 export const metadata: Metadata = {
   title: "Contact",
   description: "Get in touch for projects, collaborations, or hiring.",
+  alternates: { canonical: "/contact" },
+  openGraph: {
+    title: "Contact",
+    description:
+      "Get in touch for project inquiries, collaborations, or hiring.",
+    url: "/contact",
+  },
 };
 
 export default function ContactPage(): React.JSX.Element {
@@ -16,7 +23,7 @@ export default function ContactPage(): React.JSX.Element {
       title="Contact"
       description="Get in touch for project inquiries, collaborations, or hiring. I typically review and respond to every message within 1–2 business days."
     >
-      <section className="w-full grid items-stretch gap-4 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(320px, 360px)]">
+      <section className="grid w-full items-start gap-6 lg:grid-cols-[1fr_340px]">
         <ContactForm />
         <ContactDetails />
       </section>

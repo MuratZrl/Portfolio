@@ -3,112 +3,136 @@
 
 import React from "react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { Github, Linkedin, Briefcase, Mail, Heart } from "lucide-react";
+
+/* ────────────────────────────── Data ────────────────────────────── */
+
+const NAV_LINKS = [
+  { label: "About", href: "/about" },
+  { label: "Projects", href: "/projects" },
+  { label: "Contact", href: "/contact" },
+  { label: "Donate", href: "/donate" },
+] as const;
+
+const SOCIAL_LINKS = [
+  {
+    label: "GitHub",
+    href: "https://github.com/MuratZrl",
+    icon: Github,
+  },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/murat-zorlu-dev/",
+    icon: Linkedin,
+  },
+  {
+    label: "Upwork",
+    href: "https://www.upwork.com/freelancers/~01eb1693cb0c1f6b22",
+    icon: Briefcase,
+  },
+] as const;
+
+/* ────────────────────────────── Component ────────────────────────────── */
 
 export default function Footer(): React.JSX.Element {
   const year = new Date().getFullYear();
 
-  // Replace with your real domain or alias, e.g. "hello" + "@" + "murat.dev"
-  const emailUser = "zorlu.murat2002";   // soldaki kısım
-  const emailDomain = "gmail.com";       // sağdaki kısım
+  const emailUser = "zorlu.murat2002";
+  const emailDomain = "gmail.com";
   const email = `${emailUser}@${emailDomain}`;
 
-  // Mailto'yu SSR'da boş bırak, istemcide doldur
-  const [mailtoHref, setMailtoHref] = React.useState<string>("");
-
+  const [mailtoHref, setMailtoHref] = React.useState("");
   React.useEffect(() => {
     setMailtoHref(`mailto:${email}`);
   }, [email]);
 
   return (
-    <footer role="contentinfo" className="mt-auto border-t">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-        
-        {/* Top row: nav • copyright • socials */}
-        <div
-          className="
-            grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3
-            gap-x-4 gap-y-4
-            justify-items-center md:justify-items-stretch
-            items-center
-            text-sm text-muted-foreground
-          "
-        >
-          {/* Left: nav + email */}
-          <div className="order-2 md:order-1 w-full">
-            <nav
-              aria-label="Footer navigation"
-              className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-2"
-            >
-              <Link href="/about" className="hover:text-foreground transition-colors">
-                About
-              </Link>
-              <Link href="/projects" className="hover:text-foreground transition-colors">
-                Projects
-              </Link>
-              <Link href="/contact" className="hover:text-foreground transition-colors">
-                Contact
-              </Link>
-              <Link href="/donate" className="hover:text-foreground transition-colors">
-                Donate
-              </Link>
-            </nav>
+    <footer role="contentinfo" className="mt-auto border-t border-border/50">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* ── Main row ── */}
+        <div className="grid grid-cols-1 gap-8 py-10 md:grid-cols-3">
+          {/* Brand + email */}
+          <div className="flex flex-col items-center md:items-start">
+            <Link href="/" className="text-lg font-semibold tracking-tight">
+              Murat Zorlu
+            </Link>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Full Stack Web Developer
+            </p>
 
-            {/* Contact email (simple obfuscation in text, real mailto in href) */}
-            <address className="mt-2 not-italic text-center md:text-left">
+            <address className="mt-3 not-italic">
               <a
                 href={mailtoHref || "#"}
                 onClick={(e) => {
                   if (!mailtoHref) {
-                    // JS devre dışıysa son çare
                     (e.currentTarget as HTMLAnchorElement).href = `mailto:${email}`;
                   }
                 }}
-                className="hover:text-foreground transition-colors"
+                className={cn(
+                  "inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
+                  "bg-muted text-muted-foreground hover:text-foreground",
+                )}
                 aria-label={`Email ${email}`}
               >
+                <Mail className="h-3.5 w-3.5" aria-hidden />
                 {emailUser} [at] {emailDomain}
               </a>
             </address>
-
           </div>
 
-          {/* Center: copyright */}
-          <p className="order-1 md:order-2 text-center sm:col-span-2 md:col-span-1 text-balance">
-            © {year} <span className="font-medium">Murat Zorlu</span>. All rights reserved.
-          </p>
+          {/* Nav */}
+          <div className="flex flex-col items-center">
+            <div className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              Pages
+            </div>
+            <nav aria-label="Footer navigation" className="flex flex-wrap justify-center gap-x-5 gap-y-2">
+              {NAV_LINKS.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm text-muted-foreground transition-colors hover:text-primary"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
 
-          {/* Right: social links */}
-          <div className="order-3 w-full">
-            <div className="flex items-center justify-center md:justify-end gap-3">
-              <a
-                href="https://github.com/MuratZrl"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-foreground transition-colors"
-                aria-label="GitHub profile (opens in a new tab)"
-              >
-                GitHub
-                <span className="sr-only">, opens in a new tab</span>
-              </a>
-              <span className="text-muted-foreground" aria-hidden>·</span>
-              <a
-                href="https://www.linkedin.com/in/murat-zorlu-dev/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-foreground transition-colors"
-                aria-label="LinkedIn profile (opens in a new tab)"
-              >
-                LinkedIn
-                <span className="sr-only">, opens in a new tab</span>
-              </a>
+          {/* Socials */}
+          <div className="flex flex-col items-center md:items-end">
+            <div className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              Connect
+            </div>
+            <div className="flex items-center gap-2">
+              {SOCIAL_LINKS.map((s) => (
+                <a
+                  key={s.label}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${s.label} (opens in a new tab)`}
+                  className={cn(
+                    "flex size-9 items-center justify-center rounded-lg transition-colors",
+                    "bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary",
+                  )}
+                >
+                  <s.icon className="h-4 w-4" aria-hidden />
+                </a>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Bottom row: legal + sitemap */}
-        <div className="mt-6 flex flex-col md:flex-row items-center justify-center md:justify-between gap-3 text-xs text-muted-foreground">
-          <p className="text-center md:text-right">
-            Built with Next.js, TypeScript and shadcn/ui
+        {/* ── Bottom bar ── */}
+        <div className="flex flex-col items-center gap-2 border-t border-border/50 py-5 text-xs text-muted-foreground sm:flex-row sm:justify-between">
+          <p>
+            © {year} Murat Zorlu. All rights reserved.
+          </p>
+          <p className="inline-flex items-center gap-1">
+            Built with
+            <Heart className="h-3 w-3 text-primary" aria-hidden />
+            Next.js & TypeScript
           </p>
         </div>
       </div>
