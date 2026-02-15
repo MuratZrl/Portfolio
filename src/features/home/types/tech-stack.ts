@@ -1,6 +1,8 @@
 // src/features/home/types/tech-stack.ts
 // Strong, reusable types for the Home > TechStack section.
 
+import type { LucideIcon } from "lucide-react";
+
 export type Skill = {
   name: string;
   /** 0..100 inclusive; the component clamps it but keep inputs sane. */
@@ -10,6 +12,7 @@ export type Skill = {
 
 export type Group = {
   title: string;
+  icon?: LucideIcon;
   skills: readonly Skill[];
 };
 

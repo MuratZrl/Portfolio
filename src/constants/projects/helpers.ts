@@ -1,6 +1,6 @@
 // src/constants/projects/helpers.ts
 import { PROJECTS } from "./data";
-import type { Project, InternalHref } from "./types";
+import type { Project, InternalHref, ProjectCategory } from "./types";
 
 export function getAllProjects(): readonly Project[] {
   // PROJECTS readonly, kopyalayıp sıralıyoruz
@@ -23,5 +23,11 @@ export function findProjectBySlug(slug: InternalHref): Project | undefined {
 export function getAllTags(): readonly string[] {
   const set = new Set<string>();
   PROJECTS.forEach(p => p.tags.forEach(t => set.add(t)));
+  return [...set].sort();
+}
+
+export function getAllCategories(): readonly ProjectCategory[] {
+  const set = new Set<ProjectCategory>();
+  PROJECTS.forEach(p => set.add(p.category));
   return [...set].sort();
 }

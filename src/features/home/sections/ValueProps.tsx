@@ -3,13 +3,6 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import {
-  Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  Tooltip, TooltipTrigger, TooltipContent, TooltipProvider,
-} from "@/components/ui/tooltip";
 
 import type { ValueItem, ValuePropsProps } from "@/features/home/types/value-props";
 import { DEFAULT_ITEMS } from "@/features/home/data";
@@ -29,13 +22,11 @@ export default function ValueProps({
         <p className="text-sm text-muted-foreground">{subheading}</p>
       </div>
 
-      <TooltipProvider delayDuration={150}>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((item) => (
-            <ValueCard key={item.title} item={item} />
-          ))}
-        </div>
-      </TooltipProvider>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {items.map((item) => (
+          <ValueCard key={item.title} item={item} />
+        ))}
+      </div>
     </section>
   );
 }
@@ -46,61 +37,54 @@ function ValueCard({ item }: { item: ValueItem }): React.JSX.Element {
   const Icon = item.icon;
 
   return (
-    <Card className="h-full transition-shadow hover:shadow-md focus-within:shadow-md">
-      <CardHeader className="pb-0">
-        <div className="mb-3 inline-flex size-10 items-center justify-center rounded-lg border bg-gradient-to-b from-primary/10 to-transparent">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="inline-flex items-center justify-center">
-                <Icon className="h-5 w-5" aria-hidden />
-                <span className="sr-only">{item.title} icon</span>
-              </span>
-            </TooltipTrigger>
-            <TooltipContent>{item.title}</TooltipContent>
-          </Tooltip>
+    <div className={cn(
+      "group relative flex h-full flex-col rounded-xl border p-6",
+      "border-border/50 bg-card/80 backdrop-blur-sm",
+      "transition-all duration-300 ease-out",
+      "hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20",
+    )}>
+      {/* Icon */}
+      <div className="mb-4 inline-flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <Icon className="h-5 w-5" aria-hidden />
+      </div>
+
+      {/* Title & description */}
+      <h3 className="mb-1 text-base font-semibold tracking-tight sm:text-lg">{item.title}</h3>
+      <p className="mb-4 text-sm leading-relaxed text-muted-foreground">{item.description}</p>
+
+      {/* Highlights */}
+      {item.highlights?.length ? (
+        <ul className="mb-4 space-y-1.5 text-sm text-muted-foreground">
+          {item.highlights.map((h) => (
+            <li key={h} className="flex items-center gap-2">
+              <span className="inline-block size-1 rounded-full bg-primary" />
+              <span>{h}</span>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+
+      {/* Tags */}
+      {item.tags?.length ? (
+        <div className="mb-4 flex flex-wrap gap-1.5">
+          {item.tags.map((t) => (
+            <span
+              key={t}
+              className="rounded-md bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground"
+            >
+              {t}
+            </span>
+          ))}
         </div>
+      ) : null}
 
-        <CardTitle className="text-base sm:text-lg">{item.title}</CardTitle>
-        <CardDescription>{item.description}</CardDescription>
-      </CardHeader>
-
-      {(item.highlights?.length || item.tags?.length) && (
-        <CardContent className="pt-4">
-          {item.highlights?.length ? (
-            <ul className="mb-4 space-y-2 text-sm text-muted-foreground">
-              {item.highlights.map((h) => (
-                <li key={h} className="flex items-start gap-2">
-                  <span className="mt-1 inline-block size-1.5 rounded-full bg-primary/60" />
-                  <span>{h}</span>
-                </li>
-              ))}
-            </ul>
-          ) : null}
-
-          {item.tags?.length ? (
-            <div className="flex flex-wrap gap-2">
-              {item.tags.map((t) => (
-                <Badge key={t} variant="secondary">
-                  {t}
-                </Badge>
-              ))}
-            </div>
-          ) : null}
-        </CardContent>
-      )}
-
-      {(item.stat || item.cta) && (
-        <CardFooter className="mt-auto">
-          {item.stat ? (
-            <div className="flex items-baseline gap-2">
-              <span className="text-xl font-semibold leading-none">{item.stat.value}</span>
-              <span className="text-xs text-muted-foreground">{item.stat.label}</span>
-            </div>
-          ) : (
-            <span />
-          )}
-        </CardFooter>
-      )}
-    </Card>
+      {/* Stat */}
+      {item.stat ? (
+        <div className="mt-auto flex items-baseline gap-2 border-t border-border/50 pt-4">
+          <span className="text-xl font-bold text-primary">{item.stat.value}</span>
+          <span className="text-xs text-muted-foreground">{item.stat.label}</span>
+        </div>
+      ) : null}
+    </div>
   );
 }

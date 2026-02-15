@@ -7,6 +7,7 @@ export type {
   DateStr,
   ProjectLink,
   Project,
+  ProjectCategory,
 } from "./types";
 
 export { PROJECTS } from "./data";
@@ -17,4 +18,5 @@ export {
   getFeaturedProjects,
   findProjectBySlug,
   getAllTags,
+  getAllCategories,
 } from "./helpers";

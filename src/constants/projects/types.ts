@@ -25,11 +25,20 @@ export type ProjectLink = {
   isPrivate?: boolean;
 };
 
+export type ProjectCategory =
+  | "Full-Stack"
+  | "Frontend"
+  | "Backend"
+  | "Tooling"
+  | "Auth"
+  | "E-Commerce";
+
 export type Project = {
   slug: InternalHref;
   title: string;
   summary: string;
   tags: readonly string[];
+  category: ProjectCategory;
   image?: { src: string; alt: string };
   links?: { demo?: ProjectLink; repo?: ProjectLink };
   metrics?: { lighthouse?: string; stars?: string };
