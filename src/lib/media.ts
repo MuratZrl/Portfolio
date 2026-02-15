@@ -5,6 +5,8 @@ export function placeholder(
   text?: string,
   format: "png" | "jpg" = "png"
 ): string {
-  const q = text ? `?text=${encodeURIComponent(text)}` : "";
-  return `https://placehold.co/${w}x${h}.${format}${q}`; // ← .png önemli
+  const bg = "e5e7eb";       // neutral-200 — light, theme-friendly
+  const fg = "6b7280";       // neutral-500 — muted text
+  const textParam = text ? `&text=${encodeURIComponent(text)}` : "";
+  return `https://placehold.co/${w}x${h}/${bg}/${fg}.${format}?font=raleway${textParam}`;
 }
