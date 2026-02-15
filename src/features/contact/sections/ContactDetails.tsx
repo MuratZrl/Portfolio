@@ -1,11 +1,9 @@
 // src/features/contact/sections/ContactDetails.tsx
-'use client'
+"use client";
 
 import React from "react";
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   Mail,
   MapPin,
@@ -16,7 +14,7 @@ import {
   Copy,
   Check,
   HeartHandshake,
-  Briefcase, // Upwork için
+  Briefcase,
 } from "lucide-react";
 
 type ContactDetailsProps = {
@@ -26,8 +24,33 @@ type ContactDetailsProps = {
   responseWindow?: string;
   githubUrl?: string;
   linkedinUrl?: string;
-  upworkUrl?: string; // NEW
+  upworkUrl?: string;
 };
+
+const SOCIAL_LINKS = (
+  githubUrl: string,
+  linkedinUrl: string,
+  upworkUrl: string,
+) => [
+  {
+    label: "GitHub",
+    icon: Github,
+    href: githubUrl,
+    handle: "@MuratZrl",
+  },
+  {
+    label: "LinkedIn",
+    icon: Linkedin,
+    href: linkedinUrl,
+    handle: "murat-zorlu-dev",
+  },
+  {
+    label: "Upwork",
+    icon: Briefcase,
+    href: upworkUrl,
+    handle: "Murat Z.",
+  },
+];
 
 export default function ContactDetails({
   email = "zorlu.murat2002@gmail.com",
@@ -36,9 +59,9 @@ export default function ContactDetails({
   responseWindow = "Mon–Fri, 10:00–18:00",
   githubUrl = "https://github.com/MuratZrl",
   linkedinUrl = "https://www.linkedin.com/in/murat-zorlu-dev/",
-  upworkUrl = "https://www.upwork.com/freelancers/~01eb1693cb0c1f6b22", // ← kendi profil URL’ini yaz
+  upworkUrl = "https://www.upwork.com/freelancers/~01eb1693cb0c1f6b22",
 }: ContactDetailsProps): React.JSX.Element {
-  const [copied, setCopied] = React.useState<boolean>(false);
+  const [copied, setCopied] = React.useState(false);
 
   async function copyToClipboard(text: string): Promise<void> {
     try {
@@ -46,151 +69,155 @@ export default function ContactDetails({
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1500);
     } catch {
-      // no toast
+      // silent
     }
   }
 
+  const socials = SOCIAL_LINKS(githubUrl, linkedinUrl, upworkUrl);
+
   return (
-    <aside className="w-full h-full space-y-4">
-      {/* Direct contact card */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Direct</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4 text-sm">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-start gap-3">
-              <Mail className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
-              <div>
-                <div className="font-medium">Email</div>
-                <Link
-                  href={`mailto:${email}`}
-                  className="text-muted-foreground hover:underline break-all"
-                >
-                  {email}
-                </Link>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                aria-label="Copy email address"
-                onClick={() => void copyToClipboard(email)}
+    <aside className="flex h-full flex-col gap-4">
+      {/* ── Direct Contact ── */}
+      <div
+        className={cn(
+          "rounded-2xl border p-5 sm:p-6",
+          "border-border/50 bg-card/80 backdrop-blur-sm",
+        )}
+      >
+        <div className="mb-5 flex items-center gap-3">
+          <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <Mail className="h-4 w-4" aria-hidden />
+          </div>
+          <h3 className="text-base font-semibold">Direct</h3>
+        </div>
+
+        <div className="space-y-4 text-sm">
+          {/* Email */}
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <div className="text-xs font-medium text-muted-foreground">Email</div>
+              <Link
+                href={`mailto:${email}`}
+                className="break-all text-sm font-medium text-foreground hover:text-primary transition-colors"
               >
-                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-              </Button>
-              <span className="sr-only" aria-live="polite">
-                {copied ? "Copied email address" : ""}
-              </span>
+                {email}
+              </Link>
             </div>
+            <button
+              type="button"
+              aria-label="Copy email address"
+              onClick={() => void copyToClipboard(email)}
+              className={cn(
+                "flex size-8 shrink-0 items-center justify-center rounded-lg transition-colors",
+                copied
+                  ? "bg-green-600/10 text-green-600 dark:text-green-400"
+                  : "bg-muted text-muted-foreground hover:text-foreground",
+              )}
+            >
+              {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+            </button>
+            <span className="sr-only" aria-live="polite">
+              {copied ? "Copied email address" : ""}
+            </span>
           </div>
 
-          <Separator />
+          <div className="h-px bg-border/50" />
 
+          {/* Location */}
           <div className="flex items-start gap-3">
-            <MapPin className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+              <MapPin className="h-3.5 w-3.5" aria-hidden />
+            </div>
             <div>
-              <div className="font-medium">Location</div>
-              <p className="text-muted-foreground">
-                {location} <span className="ml-1">({timezoneLabel})</span>
+              <div className="text-xs font-medium text-muted-foreground">Location</div>
+              <p className="text-sm font-medium">
+                {location}{" "}
+                <span className="text-muted-foreground">({timezoneLabel})</span>
               </p>
             </div>
           </div>
 
+          {/* Response window */}
           <div className="flex items-start gap-3">
-            <Clock className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+              <Clock className="h-3.5 w-3.5" aria-hidden />
+            </div>
             <div>
-              <div className="font-medium">Response window</div>
-              <p className="text-muted-foreground">{responseWindow}</p>
+              <div className="text-xs font-medium text-muted-foreground">Response window</div>
+              <p className="text-sm font-medium">{responseWindow}</p>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* Social / elsewhere */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Elsewhere</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3 text-sm">
-          {/* GitHub */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Github className="h-4 w-4" aria-hidden />
-              <span>GitHub</span>
-            </div>
+      {/* ── Elsewhere ── */}
+      <div
+        className={cn(
+          "rounded-2xl border p-5 sm:p-6",
+          "border-border/50 bg-card/80 backdrop-blur-sm",
+        )}
+      >
+        <div className="mb-5 flex items-center gap-3">
+          <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <ExternalLink className="h-4 w-4" aria-hidden />
+          </div>
+          <h3 className="text-base font-semibold">Elsewhere</h3>
+        </div>
+
+        <div className="space-y-2">
+          {socials.map((s) => (
             <a
-              href={githubUrl}
+              key={s.label}
+              href={s.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-muted-foreground hover:underline"
+              className={cn(
+                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors",
+                "hover:bg-muted",
+              )}
             >
-              {githubUrl.replace(/^https?:\/\//, "")}
-              <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                <s.icon className="h-3.5 w-3.5" aria-hidden />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-medium">{s.label}</div>
+                <div className="truncate text-xs text-muted-foreground">{s.handle}</div>
+              </div>
+              <ExternalLink className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
             </a>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Support ── */}
+      <div
+        className={cn(
+          "rounded-2xl border p-5 sm:p-6",
+          "border-border/50 bg-card/80 backdrop-blur-sm",
+        )}
+      >
+        <div className="mb-4 flex items-center gap-3">
+          <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <HeartHandshake className="h-4 w-4" aria-hidden />
           </div>
+          <h3 className="text-base font-semibold">Support</h3>
+        </div>
 
-          <Separator />
+        <p className="mb-3 text-sm text-muted-foreground">
+          No PayPal — bank transfer via IBAN on the Donate page.
+        </p>
 
-          {/* LinkedIn */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Linkedin className="h-4 w-4" aria-hidden />
-              <span>LinkedIn</span>
-            </div>
-            <a
-              href={linkedinUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-muted-foreground hover:underline"
-            >
-              {linkedinUrl.replace(/^https?:\/\//, "")}
-              <ExternalLink className="h-3.5 w-3.5" aria-hidden />
-            </a>
-          </div>
-
-          <Separator />
-
-          {/* Upwork */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Briefcase className="h-4 w-4" aria-hidden />
-              <span>Upwork</span>
-            </div>
-            <a
-              href={upworkUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-muted-foreground hover:underline"
-            >
-              {upworkUrl.replace(/^https?:\/\//, "")}
-              <ExternalLink className="h-3.5 w-3.5" aria-hidden />
-            </a>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Support / donate */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Support</CardTitle>
-        </CardHeader>
-        <CardContent className="text-sm">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <HeartHandshake className="h-4 w-4" aria-hidden />
-              <span>Prefer bank transfer?</span>
-            </div>
-            <Link href="/donate" className="text-muted-foreground hover:underline">
-              Donate
-            </Link>
-          </div>
-          <p className="mt-3 text-muted-foreground">
-            No PayPal. Bank transfer via IBAN on the Donate page.
-          </p>
-        </CardContent>
-      </Card>
+        <Link
+          href="/donate"
+          className={cn(
+            "inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-medium transition-colors",
+            "bg-primary text-primary-foreground hover:bg-primary/90",
+          )}
+        >
+          <HeartHandshake className="h-3.5 w-3.5" aria-hidden />
+          Donate
+        </Link>
+      </div>
     </aside>
   );
 }
