@@ -1,10 +1,10 @@
 // src/features/about/types/skills.ts
 
 /** Skill group identifier used for tabs. */
-export type GroupId = "frontend" | "backend" | "tooling" | "quality";
+export type GroupId = "frontend" | "backend" | "database" | "tooling";
 
 /** Icon identifier (data React'tan bağımsız kalsın isteyenler için). */
-export type IconId = "layout" | "database" | "wrench" | "shield";
+export type IconId = "layout" | "server" | "database" | "wrench";
 
 /** CEFR-like levels for language list. */
 export type LangLevel = "Native" | "C2" | "C1" | "B2" | "B1" | "A2" | "A1";

@@ -36,13 +36,13 @@ export default function HomePage(): React.JSX.Element {
       <Hero
         kicker="Murat Zorlu"
         title="Ship reliable web apps, minus the chaos"
-        subtitle="Next.js 16 · Node.js · TypeScript · Shadcn UI · MUI · Supabase"
+        subtitle="Full-stack developer crafting type-safe, production-ready applications."
+        techStack={["Next.js", "NestJS", "TypeScript", "PostgreSQL", "Docker", "Redis", "Tailwind CSS"]}
         primary={{ href: "/about", label: "About" }}
         secondary={{ href: "/projects", label: "Projects" }}
-        avatarSrc="/images/profile.jpg"
         statusText="Available for work"
         align="center"
-        className="py-16 sm:py-24"
+        className="py-20 sm:py-28"
       />
 
       <ValueProps />
