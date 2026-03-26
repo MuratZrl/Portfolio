@@ -17,15 +17,15 @@ export const ABOUT_DEFAULTS: AboutIntroDefaults = {
   availability: "available",
   avatar: { src: "/images/profile.jpg", alt: "Murat Zorlu" },
   bio: [
-    "I develop fast and maintainable web applications with Next.js + TypeScript.",
-    "Performance, accessibility, and low-maintenance architectures are my priorities.",
+    "Fullstack TypeScript developer with production experience in Next.js, NestJS, and PostgreSQL.",
+    "Delivered two live applications serving real businesses in Turkey.",
   ],
   highlights: [
-    "Architecture focused on RSC & Server Actions",
-    "WCAG-compliant interfaces",
-    "Edge-first delivery and caching",
+    "Full-stack apps with Next.js, NestJS & PostgreSQL",
+    "Real-time systems with WebSocket & Redis",
+    "Containerized deployments with Docker",
   ],
-  techTags: ["Next.js", "Node.js", "TypeScript", "Supabase", "Express", "MUI", "ShadcnUI", "TailwindCSS", "Ant Design UI", "Motion"],
+  techTags: ["Next.js", "NestJS", "TypeScript", "PostgreSQL", "Docker", "Redis", "Supabase", "Tailwind CSS", "MUI", "Prisma"],
   social: [
     { href: "https://github.com/MuratZrl", label: "GitHub", icon: Github },
     { href: "https://www.linkedin.com/in/murat-zorlu-dev", label: "LinkedIn", icon: Linkedin },
