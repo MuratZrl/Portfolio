@@ -30,17 +30,28 @@ type ProjectsProps = {
   source?: "all" | "featured";
   limit?: number;
   className?: string;
+  /** Extra projects (e.g. from GitHub API) to append after local ones. */
+  extraProjects?: Project[];
 };
 
 export default function Projects({
   source = "all",
   limit,
   className,
+  extraProjects = [],
 }: ProjectsProps): React.JSX.Element {
-  const allProjects: readonly Project[] =
+  const local: readonly Project[] =
     source === "featured" ? getFeaturedProjects(limit) : getAllProjects();
 
-  const categories = getAllCategories();
+  // Merge local + extra, dedup by slug
+  const seen = new Set(local.map((p) => p.slug));
+  const extra = extraProjects.filter((p) => !seen.has(p.slug));
+  const allProjects = [...local, ...extra];
+
+  // Derive categories from the merged list
+  const catSet = new Set<ProjectCategory>();
+  allProjects.forEach((p) => catSet.add(p.category));
+  const categories = [...catSet].sort();
 
   const [activeFilter, setActiveFilter] = React.useState<ProjectCategory | "All">("All");
   const [currentPage, setCurrentPage] = React.useState(1);
