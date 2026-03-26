@@ -43,9 +43,16 @@ export default function Projects({
   const local: readonly Project[] =
     source === "featured" ? getFeaturedProjects(limit) : getAllProjects();
 
-  // Merge local + extra, dedup by slug
-  const seen = new Set(local.map((p) => p.slug));
-  const extra = extraProjects.filter((p) => !seen.has(p.slug));
+  // Merge local + extra, dedup by slug and repo URL
+  const seenSlugs = new Set(local.map((p) => p.slug));
+  const seenRepos = new Set(
+    local.map((p) => p.links?.repo?.href?.toLowerCase()).filter(Boolean),
+  );
+  const extra = extraProjects.filter(
+    (p) =>
+      !seenSlugs.has(p.slug) &&
+      !seenRepos.has(p.links?.repo?.href?.toLowerCase() ?? ""),
+  );
   const allProjects = [...local, ...extra];
 
   // Derive categories from the merged list

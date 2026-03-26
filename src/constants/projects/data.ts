@@ -47,7 +47,7 @@ export const PROJECTS: readonly Project[] = [
     image: { src: "https://placehold.co/800x450/e5e7eb/6b7280?text=Portfolio&font=raleway", alt: "Portfolio website" },
     links: {
       repo: {
-        href: "https://github.com/MuratZrl/portfolio_",
+        href: "https://github.com/MuratZrl/Portfolio",
         label: "Repo",
       },
     },
