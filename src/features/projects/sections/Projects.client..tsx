@@ -30,6 +30,8 @@ type ProjectsProps = {
   source?: "all" | "featured";
   limit?: number;
   className?: string;
+  /** Pre-enriched local projects (with commit counts). */
+  localProjects?: Project[];
   /** Extra projects (e.g. from GitHub API) to append after local ones. */
   extraProjects?: Project[];
 };
@@ -38,10 +40,13 @@ export default function Projects({
   source = "all",
   limit,
   className,
+  localProjects,
   extraProjects = [],
 }: ProjectsProps): React.JSX.Element {
-  const local: readonly Project[] =
-    source === "featured" ? getFeaturedProjects(limit) : getAllProjects();
+  // Use pre-enriched local projects if provided, otherwise fall back to static imports
+  const local: readonly Project[] = localProjects
+    ? localProjects
+    : source === "featured" ? getFeaturedProjects(limit) : getAllProjects();
 
   // Merge local + extra, dedup by slug and repo URL
   const seenSlugs = new Set(local.map((p) => p.slug));
@@ -53,7 +58,15 @@ export default function Projects({
       !seenSlugs.has(p.slug) &&
       !seenRepos.has(p.links?.repo?.href?.toLowerCase() ?? ""),
   );
-  const allProjects = [...local, ...extra];
+
+  // Sort: live demo projects first, then by commit count descending
+  const merged = [...local, ...extra].sort((a, b) => {
+    const aHasDemo = a.links?.demo ? 1 : 0;
+    const bHasDemo = b.links?.demo ? 1 : 0;
+    if (bHasDemo !== aHasDemo) return bHasDemo - aHasDemo;
+    return (b.commitCount ?? 0) - (a.commitCount ?? 0);
+  });
+  const allProjects = merged;
 
   // Derive categories from the merged list
   const catSet = new Set<ProjectCategory>();

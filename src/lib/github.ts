@@ -19,6 +19,11 @@ type GitHubRepo = {
   updated_at: string;
 };
 
+type ContributorStats = {
+  total: number;
+  author: { login: string };
+};
+
 /**
  * Fetch all public repos for the configured GitHub user.
  * Uses Next.js fetch cache with 1-hour revalidation.
@@ -35,10 +40,29 @@ export async function getGitHubRepos(): Promise<Project[]> {
   }
 
   const repos: GitHubRepo[] = await res.json();
+  const filtered = repos.filter((r) => !r.fork && !r.archived);
 
-  return repos
-    .filter((r) => !r.fork && !r.archived)
-    .map((r) => repoToProject(r));
+  // Fetch commit counts in parallel
+  const commitCounts = await Promise.all(
+    filtered.map((r) => getCommitCount(r.full_name)),
+  );
+
+  return filtered.map((r, i) => repoToProject(r, commitCounts[i]));
+}
+
+/** Get total commit count for a repo using the Contributors Stats API. */
+async function getCommitCount(fullName: string): Promise<number> {
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${fullName}/contributors?per_page=100&anon=true`,
+      { next: { revalidate: 3600 } },
+    );
+    if (!res.ok) return 0;
+    const contributors: ContributorStats[] = await res.json();
+    return contributors.reduce((sum, c) => sum + c.total, 0);
+  } catch {
+    return 0;
+  }
 }
 
 /** Map language / topics to the closest ProjectCategory. */
@@ -61,7 +85,7 @@ function inferCategory(repo: GitHubRepo): ProjectCategory {
   return "Full-Stack";
 }
 
-function repoToProject(repo: GitHubRepo): Project {
+function repoToProject(repo: GitHubRepo, commitCount: number): Project {
   const tags: string[] = [];
   if (repo.language) tags.push(repo.language);
   tags.push(...repo.topics);
@@ -86,7 +110,26 @@ function repoToProject(repo: GitHubRepo): Project {
         : undefined,
     featured: false,
     createdAt: createdDate,
+    commitCount,
   };
+}
+
+/**
+ * Enrich curated projects with commit counts from their GitHub repos.
+ */
+export async function enrichWithCommitCounts(
+  projects: readonly Project[],
+): Promise<Project[]> {
+  const enriched = await Promise.all(
+    projects.map(async (p) => {
+      const repoUrl = p.links?.repo?.href ?? "";
+      const match = repoUrl.match(/github\.com\/([^/]+\/[^/]+)/);
+      if (!match) return { ...p };
+      const commitCount = await getCommitCount(match[1]);
+      return { ...p, commitCount };
+    }),
+  );
+  return enriched;
 }
 
 /** "my-cool-repo" → "My Cool Repo" */
