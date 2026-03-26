@@ -69,7 +69,7 @@ async function getCommitCount(fullName: string): Promise<number> {
 function inferCategory(repo: GitHubRepo): ProjectCategory {
   const lang = (repo.language ?? "").toLowerCase();
   const topics = repo.topics.map((t) => t.toLowerCase());
-  const all = [lang, ...topics].join(" ");
+  const all = [lang, repo.name.toLowerCase(), ...topics].join(" ");
 
   if (all.includes("e-commerce") || all.includes("ecommerce") || all.includes("shop"))
     return "E-Commerce";
@@ -89,6 +89,7 @@ function repoToProject(repo: GitHubRepo, commitCount: number): Project {
   const tags: string[] = [];
   if (repo.language) tags.push(repo.language);
   tags.push(...repo.topics);
+  tags.push(...inferTags(repo));
 
   const createdDate = repo.created_at.slice(0, 10) as Project["createdAt"];
 
@@ -187,6 +188,64 @@ export function extractRepoName(project: Project): string | null {
   const repoUrl = project.links?.repo?.href ?? "";
   const match = repoUrl.match(/github\.com\/[^/]+\/([^/]+)/);
   return match ? match[1] : null;
+}
+
+/** Known tech keywords → display label. Checked against description + repo name. */
+const TAG_KEYWORDS: [pattern: RegExp, label: string][] = [
+  [/\bnext\.?js\b/i, "Next.js"],
+  [/\bnestjs\b/i, "NestJS"],
+  [/\btypescript\b/i, "TypeScript"],
+  [/\btailwind/i, "Tailwind CSS"],
+  [/\breact\b/i, "React"],
+  [/\bnode\.?js\b/i, "Node.js"],
+  [/\bexpress\b/i, "Express"],
+  [/\bsocket\.?io\b/i, "Socket.io"],
+  [/\bredis\b/i, "Redis"],
+  [/\bpostgresql\b|\bpostgres\b/i, "PostgreSQL"],
+  [/\bprisma\b/i, "Prisma"],
+  [/\bsupabase\b/i, "Supabase"],
+  [/\bdocker\b/i, "Docker"],
+  [/\bstripe\b/i, "Stripe"],
+  [/\bjwt\b/i, "JWT"],
+  [/\boauth\b/i, "OAuth"],
+  [/\bgraphql\b/i, "GraphQL"],
+  [/\bmongodb\b|\bmongo\b/i, "MongoDB"],
+  [/\bmui\b|\bmaterial.?ui\b/i, "MUI"],
+  [/\bpuppeteer\b/i, "Puppeteer"],
+  [/\bsoap\b/i, "SOAP"],
+  [/\bcron\b/i, "Cron"],
+  [/\bscrape[sr]?\b|\bscraping\b/i, "Web Scraping"],
+  [/\brate.?limit/i, "Rate Limiting"],
+  [/\bcircuit.?breaker\b/i, "Circuit Breaker"],
+  [/\bload.?balanc/i, "Load Balancing"],
+  [/\breverse.?proxy\b/i, "Reverse Proxy"],
+  [/\bkanban\b/i, "Kanban"],
+  [/\bwebsocket\b/i, "WebSocket"],
+  [/\bdrag.?and.?drop\b/i, "Drag & Drop"],
+  [/\bframer.?motion\b/i, "Framer Motion"],
+  [/\bshadcn\b/i, "shadcn/ui"],
+  [/\bzod\b/i, "Zod"],
+  [/\be-?commerce\b/i, "E-Commerce"],
+  [/\bmulti.?tenant\b/i, "Multi-Tenant"],
+  [/\be2e\b|\bend.?to.?end\b/i, "E2E Tests"],
+  [/\brls\b/i, "RLS"],
+];
+
+/** Extract extra tags from repo description and name that aren't already present. */
+function inferTags(repo: GitHubRepo): string[] {
+  const text = `${repo.name} ${repo.description ?? ""}`;
+  const existing = new Set(
+    [...repo.topics, repo.language ?? ""].map((t) => t.toLowerCase()),
+  );
+
+  const extra: string[] = [];
+  for (const [pattern, label] of TAG_KEYWORDS) {
+    if (pattern.test(text) && !existing.has(label.toLowerCase())) {
+      extra.push(label);
+      existing.add(label.toLowerCase());
+    }
+  }
+  return extra;
 }
 
 /** "my-cool-repo" → "My Cool Repo" */
