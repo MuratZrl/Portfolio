@@ -132,6 +132,63 @@ export async function enrichWithCommitCounts(
   return enriched;
 }
 
+/** Extra details for a single repo's detail page. */
+export type RepoDetails = {
+  readme: string | null;
+  languages: Record<string, number>;
+  lastCommitDate: string | null;
+  openIssues: number;
+  forks: number;
+  watchers: number;
+  defaultBranch: string;
+};
+
+/**
+ * Fetch detailed info for a single GitHub repo by name.
+ */
+export async function getRepoDetails(repoName: string): Promise<RepoDetails | null> {
+  const fullName = `${GITHUB_USERNAME}/${repoName}`;
+  const opts = { next: { revalidate: 3600 } } as const;
+
+  try {
+    const [repoRes, readmeRes, langsRes, commitsRes] = await Promise.all([
+      fetch(`https://api.github.com/repos/${fullName}`, opts),
+      fetch(`https://api.github.com/repos/${fullName}/readme`, {
+        ...opts,
+        headers: { Accept: "application/vnd.github.raw+json" },
+      }),
+      fetch(`https://api.github.com/repos/${fullName}/languages`, opts),
+      fetch(`https://api.github.com/repos/${fullName}/commits?per_page=1`, opts),
+    ]);
+
+    const repo = repoRes.ok ? await repoRes.json() : null;
+    const readme = readmeRes.ok ? await readmeRes.text() : null;
+    const languages: Record<string, number> = langsRes.ok ? await langsRes.json() : {};
+    const commits = commitsRes.ok ? await commitsRes.json() : [];
+
+    return {
+      readme,
+      languages,
+      lastCommitDate: commits[0]?.commit?.committer?.date?.slice(0, 10) ?? null,
+      openIssues: repo?.open_issues_count ?? 0,
+      forks: repo?.forks_count ?? 0,
+      watchers: repo?.watchers_count ?? 0,
+      defaultBranch: repo?.default_branch ?? "main",
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Find a GitHub repo name from a project (curated or auto-fetched).
+ */
+export function extractRepoName(project: Project): string | null {
+  const repoUrl = project.links?.repo?.href ?? "";
+  const match = repoUrl.match(/github\.com\/[^/]+\/([^/]+)/);
+  return match ? match[1] : null;
+}
+
 /** "my-cool-repo" → "My Cool Repo" */
 function formatRepoName(name: string): string {
   return name

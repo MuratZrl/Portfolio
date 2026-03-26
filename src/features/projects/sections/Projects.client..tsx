@@ -255,7 +255,11 @@ function ProjectCard({ project }: { project: Project }): React.JSX.Element {
 
       {/* Body */}
       <CardHeader className="pb-2">
-        <CardTitle className="text-base font-semibold sm:text-lg">{project.title}</CardTitle>
+        <CardTitle className="text-base font-semibold sm:text-lg">
+          <Link href={project.slug} className="hover:text-primary transition-colors">
+            {project.title}
+          </Link>
+        </CardTitle>
         <CardDescription className="line-clamp-2">{project.summary}</CardDescription>
       </CardHeader>
 
