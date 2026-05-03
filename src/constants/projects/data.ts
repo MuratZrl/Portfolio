@@ -3,55 +3,50 @@ import type { Project } from "./types";
 
 export const PROJECTS: readonly Project[] = [
   {
-    slug: "/projects/szmetal-admin-panel",
-    title: "SZMetal Admin Panel",
+    slug: "/projects/teamboard",
+    title: "TeamBoard",
     summary:
-      "Full-stack admin dashboard for managing products, clients, and analytics. Features role-based access control (Admin/Manager/User), product catalog with category hierarchies and media uploads, analytics with date filtering and trend charts, and PDF document handling. Secured with RLS, IP restrictions, and CSP headers.",
-    tags: ["Next.js 16", "TypeScript", "MUI 7", "Supabase", "React Query", "Framer Motion", "React Hook Form", "Yup"],
+      "Multi-tenant project management SaaS with kanban boards, team workspaces, and Stripe subscription billing.",
+    tags: ["Next.js 16", "NestJS 11", "TypeScript", "PostgreSQL", "Prisma", "Stripe"],
     category: "Full-Stack",
-    image: { src: "https://placehold.co/800x450/e5e7eb/6b7280?text=SZMetal+Admin&font=raleway", alt: "SZMetal admin dashboard" },
+    image: { src: "/images/projects/teamboard.png", alt: "TeamBoard kanban dashboard" },
     links: {
-      demo: { href: "https://szmetal.com.tr", label: "Live" },
-      repo: {
-        href: "https://github.com/MuratZrl/szmetal-admin-panel",
-        label: "Repo",
-      },
+      demo: { href: "https://teamboard-web.vercel.app", label: "Live" },
+      repo: { href: "https://github.com/MuratZrl/teamboard", label: "Repo" },
     },
     featured: true,
-    createdAt: "2025-04-10",
+    order: 1,
+    createdAt: "2026-02-01",
   },
   {
-    slug: "/projects/realtime-chat",
-    title: "Real-Time Chat",
+    slug: "/projects/pulsechat",
+    title: "PulseChat",
     summary:
-      "Full-stack real-time chat application with WebSocket messaging, typing indicators, read receipts, and online presence tracking. Features channels, direct messages, emoji reactions, file uploads, message pinning/starring, invite links, and role-based room moderation. Monorepo architecture with Docker Compose for deployment.",
-    tags: ["Next.js 16", "TypeScript", "NestJS", "Prisma", "PostgreSQL", "Redis", "Socket.io", "Tailwind CSS", "Docker"],
+      "Real-time chat platform with WebSocket messaging, multi-room channels, and 10+ live features powered by Redis pub/sub.",
+    tags: ["Next.js 16", "NestJS 11", "TypeScript", "PostgreSQL", "Prisma", "Redis", "Socket.io"],
     category: "Full-Stack",
-    image: { src: "https://placehold.co/800x450/e5e7eb/6b7280?text=Real-Time+Chat&font=raleway", alt: "Real-time chat application" },
+    image: { src: "/images/projects/pulsechat.png", alt: "PulseChat real-time chat interface" },
     links: {
-      repo: {
-        href: "https://github.com/MuratZrl/real-time-chat",
-        label: "Repo",
-      },
+      demo: { href: "https://pulsechat-plum.vercel.app", label: "Live" },
+      repo: { href: "https://github.com/MuratZrl/pulsechat", label: "Repo" },
     },
     featured: true,
-    createdAt: "2025-06-01",
+    order: 2,
+    createdAt: "2026-02-01",
   },
   {
-    slug: "/projects/portfolio",
-    title: "Portfolio",
+    slug: "/projects/yenigunemlak",
+    title: "YenigunEmlak",
     summary:
-      "Personal portfolio site built with Next.js, TypeScript, and Tailwind CSS. Features a contact form backed by Supabase, skeleton loading states, responsive design, and Framer Motion animations.",
-    tags: ["Next.js 16", "TypeScript", "Tailwind CSS", "Supabase", "Framer Motion", "shadcn/ui"],
-    category: "Frontend",
-    image: { src: "https://placehold.co/800x450/e5e7eb/6b7280?text=Portfolio&font=raleway", alt: "Portfolio website" },
+      "Live real estate platform serving 240+ active property listings, with map-based search and full admin panel.",
+    tags: ["Next.js 16", "TypeScript", "Tailwind CSS", "Zustand", "Google Maps", "Leaflet"],
+    category: "Full-Stack",
+    image: { src: "/images/projects/yenigunemlak.png", alt: "YenigunEmlak property listings with map search" },
     links: {
-      repo: {
-        href: "https://github.com/MuratZrl/Portfolio",
-        label: "Repo",
-      },
+      demo: { href: "https://yenigunemlak.com", label: "Live" },
     },
     featured: true,
-    createdAt: "2025-03-01",
+    order: 3,
+    createdAt: "2026-01-01",
   },
 ] as const;

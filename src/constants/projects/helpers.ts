@@ -3,8 +3,12 @@ import { PROJECTS } from "./data";
 import type { Project, InternalHref, ProjectCategory } from "./types";
 
 export function getAllProjects(): readonly Project[] {
-  // PROJECTS readonly, kopyalayıp sıralıyoruz
+  // Sort by explicit `order` first (ascending), then by createdAt descending.
+  // Projects without `order` sort after those with one.
   return [...PROJECTS].sort((a, b) => {
+    const ao = a.order ?? Number.POSITIVE_INFINITY;
+    const bo = b.order ?? Number.POSITIVE_INFINITY;
+    if (ao !== bo) return ao - bo;
     const ad = a.createdAt ?? "1970-01-01";
     const bd = b.createdAt ?? "1970-01-01";
     return bd.localeCompare(ad);

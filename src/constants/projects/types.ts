@@ -47,4 +47,6 @@ export type Project = {
   createdAt?: DateStr;
   /** Total commit count — used for sorting. */
   commitCount?: number;
+  /** Lower number = appears first in featured/listing order. Falls back to createdAt desc. */
+  order?: number;
 };
