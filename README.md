@@ -10,7 +10,7 @@
 
 <p align="center">
   Personal portfolio built with Next.js 16, React 19, and Tailwind CSS 4.<br/>
-  Frosted glass design, dark mode, GitHub auto-sync, contact form, and more.
+  Frosted glass design, dark mode, contact form, and more.
 </p>
 
 <p align="center">
@@ -23,7 +23,6 @@
 
 - **Frosted Glass UI** — backdrop-blur cards, gradient overlays, and smooth hover animations
 - **Dark / Light Mode** — system preference detection with manual toggle, OKLCH color system
-- **GitHub Auto-Sync** — fetches all public repos via GitHub API with 1-hour ISR revalidation
 - **Contact Form** — React Hook Form + Zod validation, honeypot spam protection, IP rate limiting, Supabase storage
 - **SEO Ready** — sitemap, robots.txt, web manifest, metadata API
 - **Fully Responsive** — mobile-first with hamburger nav, optimized for all breakpoints
@@ -71,7 +70,6 @@ src/
 │   └── projects/            # Project cards & filters
 ├── constants/projects/      # Project data & types
 ├── lib/
-│   ├── github.ts            # GitHub API integration
 │   ├── supabase/            # Supabase client
 │   ├── media.ts             # Placeholder helpers
 │   └── utils.ts             # cn() utility
@@ -139,21 +137,8 @@ npm start
 |---|---|
 | `/` | Home — hero, value props, featured projects, tech stack |
 | `/about` | Experience timeline, languages, CV download |
-| `/projects` | All projects with category filters & pagination + GitHub repos |
+| `/projects` | Curated projects with category filters & pagination |
 | `/contact` | Contact form with validation & rate limiting |
-
----
-
-## GitHub Auto-Sync
-
-The projects page automatically fetches your public GitHub repositories and displays them alongside curated projects. Repos are:
-
-- Filtered (no forks or archived repos)
-- Auto-categorized by language and topics
-- Deduplicated against manually curated projects
-- Refreshed every hour via ISR
-
-No API token required for public repos.
 
 ---
 

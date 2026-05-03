@@ -11,46 +11,23 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
-  ExternalLink, Github, ArrowLeft, Calendar, GitCommit,
-  GitFork, Eye, CircleDot, Gauge, Star,
+  ExternalLink, Github, ArrowLeft, Calendar, Gauge, Star,
 } from "lucide-react";
 
 import { PROJECTS } from "@/constants/projects";
-import {
-  getGitHubRepos,
-  getRepoDetails,
-  extractRepoName,
-  enrichWithCommitCounts,
-} from "@/lib/github";
 import { placeholder } from "@/lib/media";
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
-/** Resolve the project from curated list or GitHub repos. */
-async function resolveProject(slug: string) {
-  // Check curated projects first
-  const curated = PROJECTS.find(
-    (p) => p.slug === `/projects/${slug}`,
-  );
-  if (curated) {
-    const enriched = await enrichWithCommitCounts([curated]);
-    return enriched[0];
-  }
-
-  // Check GitHub auto-fetched projects
-  if (slug.startsWith("gh-")) {
-    const ghProjects = await getGitHubRepos();
-    return ghProjects.find((p) => p.slug === `/projects/${slug}`) ?? null;
-  }
-
-  return null;
+function resolveProject(slug: string) {
+  return PROJECTS.find((p) => p.slug === `/projects/${slug}`) ?? null;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const project = await resolveProject(slug);
+  const project = resolveProject(slug);
   if (!project) return { title: "Project Not Found" };
 
   return {
@@ -61,30 +38,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProjectDetailPage({ params }: Props) {
   const { slug } = await params;
-  const project = await resolveProject(slug);
+  const project = resolveProject(slug);
   if (!project) notFound();
-
-  const repoName = extractRepoName(project);
-  const details = repoName ? await getRepoDetails(repoName) : null;
 
   const imgSrc = project.image?.src || placeholder(1280, 720, project.title);
   const imgAlt = project.image?.alt ?? project.title;
   const isRemote = imgSrc.startsWith("http");
   const demo = project.links?.demo;
   const repo = project.links?.repo;
-
-  // Language percentages
-  const totalBytes = details
-    ? Object.values(details.languages).reduce((a, b) => a + b, 0)
-    : 0;
-  const languageEntries = details
-    ? Object.entries(details.languages)
-        .sort(([, a], [, b]) => b - a)
-        .map(([lang, bytes]) => ({
-          lang,
-          pct: Math.round((bytes / totalBytes) * 100),
-        }))
-    : [];
 
   return (
     <Page>
@@ -111,7 +72,6 @@ export default async function ProjectDetailPage({ params }: Props) {
           />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
 
-          {/* Category badge */}
           <div className="absolute left-4 top-4">
             <Badge className="bg-background/80 text-foreground backdrop-blur-sm border-border/50 shadow-sm">
               {project.category}
@@ -166,112 +126,31 @@ export default async function ProjectDetailPage({ params }: Props) {
       <Separator className="my-8" />
 
       {/* Stats grid */}
-      <section>
-        <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
-          {project.createdAt ? (
-            <StatCard
-              icon={<Calendar className="h-4 w-4" />}
-              label="Created"
-              value={formatDate(project.createdAt)}
-            />
-          ) : null}
-          {details?.lastCommitDate ? (
-            <StatCard
-              icon={<GitCommit className="h-4 w-4" />}
-              label="Last Commit"
-              value={formatDate(details.lastCommitDate)}
-            />
-          ) : null}
-          {project.commitCount ? (
-            <StatCard
-              icon={<GitCommit className="h-4 w-4" />}
-              label="Commits"
-              value={String(project.commitCount)}
-            />
-          ) : null}
-          {details && details.forks > 0 ? (
-            <StatCard
-              icon={<GitFork className="h-4 w-4" />}
-              label="Forks"
-              value={String(details.forks)}
-            />
-          ) : null}
-          {details && details.watchers > 0 ? (
-            <StatCard
-              icon={<Eye className="h-4 w-4" />}
-              label="Watchers"
-              value={String(details.watchers)}
-            />
-          ) : null}
-          {details && details.openIssues > 0 ? (
-            <StatCard
-              icon={<CircleDot className="h-4 w-4" />}
-              label="Open Issues"
-              value={String(details.openIssues)}
-            />
-          ) : null}
-          {project.metrics?.lighthouse ? (
-            <StatCard
-              icon={<Gauge className="h-4 w-4" />}
-              label="Lighthouse"
-              value={project.metrics.lighthouse}
-            />
-          ) : null}
-          {project.metrics?.stars ? (
-            <StatCard
-              icon={<Star className="h-4 w-4" />}
-              label="Stars"
-              value={project.metrics.stars}
-            />
-          ) : null}
-        </div>
-      </section>
-
-      {/* Languages */}
-      {languageEntries.length > 0 ? (
-        <section className="mt-8">
-          <h2 className="text-lg font-semibold mb-4">Languages</h2>
-
-          {/* Color bar */}
-          <div className="flex h-3 w-full overflow-hidden rounded-full bg-muted">
-            {languageEntries.map(({ lang, pct }) => (
-              <div
-                key={lang}
-                className="h-full transition-all"
-                style={{
-                  width: `${pct}%`,
-                  backgroundColor: getLanguageColor(lang),
-                }}
-                title={`${lang}: ${pct}%`}
+      {project.createdAt || project.metrics?.lighthouse || project.metrics?.stars ? (
+        <section>
+          <div className="grid gap-4 grid-cols-2 sm:grid-cols-3">
+            {project.createdAt ? (
+              <StatCard
+                icon={<Calendar className="h-4 w-4" />}
+                label="Created"
+                value={formatDate(project.createdAt)}
               />
-            ))}
+            ) : null}
+            {project.metrics?.lighthouse ? (
+              <StatCard
+                icon={<Gauge className="h-4 w-4" />}
+                label="Lighthouse"
+                value={project.metrics.lighthouse}
+              />
+            ) : null}
+            {project.metrics?.stars ? (
+              <StatCard
+                icon={<Star className="h-4 w-4" />}
+                label="Stars"
+                value={project.metrics.stars}
+              />
+            ) : null}
           </div>
-
-          {/* Legend */}
-          <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5">
-            {languageEntries.map(({ lang, pct }) => (
-              <div key={lang} className="flex items-center gap-1.5 text-sm">
-                <span
-                  className="inline-block h-3 w-3 rounded-full"
-                  style={{ backgroundColor: getLanguageColor(lang) }}
-                />
-                <span className="text-muted-foreground">{lang}</span>
-                <span className="font-medium">{pct}%</span>
-              </div>
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      {/* README */}
-      {details?.readme ? (
-        <section className="mt-8">
-          <h2 className="text-lg font-semibold mb-4">README</h2>
-          <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-            <CardContent className="prose prose-sm dark:prose-invert max-w-none pt-6 overflow-x-auto whitespace-pre-wrap break-words font-mono text-sm text-muted-foreground leading-relaxed">
-              {details.readme}
-            </CardContent>
-          </Card>
         </section>
       ) : null}
     </Page>
@@ -306,25 +185,4 @@ function formatDate(dateStr: string): string {
     month: "short",
     day: "numeric",
   });
-}
-
-/** Simple language → color mapping (GitHub-style). */
-function getLanguageColor(lang: string): string {
-  const colors: Record<string, string> = {
-    TypeScript: "#3178c6",
-    JavaScript: "#f1e05a",
-    HTML: "#e34c26",
-    CSS: "#563d7c",
-    Python: "#3572A5",
-    Go: "#00ADD8",
-    Rust: "#dea584",
-    Java: "#b07219",
-    Ruby: "#701516",
-    PHP: "#4F5D95",
-    Shell: "#89e051",
-    Dockerfile: "#384d54",
-    SCSS: "#c6538c",
-    Prisma: "#2D3748",
-  };
-  return colors[lang] ?? "#8b8b8b";
 }

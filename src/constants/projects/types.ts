@@ -45,8 +45,6 @@ export type Project = {
   /** If omitted, treated as featured=true by consumers. */
   featured?: boolean;
   createdAt?: DateStr;
-  /** Total commit count — used for sorting. */
-  commitCount?: number;
   /** Lower number = appears first in featured/listing order. Falls back to createdAt desc. */
   order?: number;
 };

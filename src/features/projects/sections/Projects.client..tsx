@@ -10,7 +10,6 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
   getAllProjects,
   getFeaturedProjects,
-  type Project,
   type ProjectCategory,
 } from "@/constants/projects";
 import { ProjectCard } from "@/components/ProjectCard";
@@ -21,55 +20,34 @@ type ProjectsProps = {
   source?: "all" | "featured";
   limit?: number;
   className?: string;
-  /** Pre-enriched local projects (with commit counts). */
-  localProjects?: Project[];
-  /** Extra projects (e.g. from GitHub API) to append after local ones. */
-  extraProjects?: Project[];
 };
 
 export default function Projects({
   source = "all",
   limit,
   className,
-  localProjects,
-  extraProjects = [],
 }: ProjectsProps): React.JSX.Element {
-  // Use pre-enriched local projects if provided, otherwise fall back to static imports
-  const local: readonly Project[] = localProjects
-    ? localProjects
-    : source === "featured" ? getFeaturedProjects(limit) : getAllProjects();
+  const allProjects =
+    source === "featured" ? getFeaturedProjects(limit) : getAllProjects();
 
-  // Merge local + extra, dedup by slug and repo URL
-  const seenSlugs = new Set(local.map((p) => p.slug));
-  const seenRepos = new Set(
-    local.map((p) => p.links?.repo?.href?.toLowerCase()).filter(Boolean),
-  );
-  const extra = extraProjects.filter(
-    (p) =>
-      !seenSlugs.has(p.slug) &&
-      !seenRepos.has(p.links?.repo?.href?.toLowerCase() ?? ""),
-  );
-
-  // Sort: live demo projects first, then by commit count descending
-  const merged = [...local, ...extra].sort((a, b) => {
+  // Sort: live demo projects first
+  const sortedProjects = [...allProjects].sort((a, b) => {
     const aHasDemo = a.links?.demo ? 1 : 0;
     const bHasDemo = b.links?.demo ? 1 : 0;
-    if (bHasDemo !== aHasDemo) return bHasDemo - aHasDemo;
-    return (b.commitCount ?? 0) - (a.commitCount ?? 0);
+    return bHasDemo - aHasDemo;
   });
-  const allProjects = merged;
 
-  // Derive categories from the merged list
+  // Derive categories from the sorted list
   const catSet = new Set<ProjectCategory>();
-  allProjects.forEach((p) => catSet.add(p.category));
+  sortedProjects.forEach((p) => catSet.add(p.category));
   const categories = [...catSet].sort();
 
   const [activeFilter, setActiveFilter] = React.useState<ProjectCategory | "All">("All");
   const [currentPage, setCurrentPage] = React.useState(1);
 
   const filteredProjects = activeFilter === "All"
-    ? allProjects
-    : allProjects.filter((p) => p.category === activeFilter);
+    ? sortedProjects
+    : sortedProjects.filter((p) => p.category === activeFilter);
 
   const totalPages = Math.max(1, Math.ceil(filteredProjects.length / PER_PAGE));
   const safePage = Math.min(currentPage, totalPages);
@@ -105,10 +83,10 @@ export default function Projects({
           )}
         >
           All
-          <span className="text-[11px] opacity-60">{allProjects.length}</span>
+          <span className="text-[11px] opacity-60">{sortedProjects.length}</span>
         </button>
         {categories.map((cat) => {
-          const count = allProjects.filter((p) => p.category === cat).length;
+          const count = sortedProjects.filter((p) => p.category === cat).length;
           return (
             <button
               key={cat}
