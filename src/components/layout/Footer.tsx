@@ -12,7 +12,6 @@ const NAV_LINKS = [
   { label: "About", href: "/about" },
   { label: "Projects", href: "/projects" },
   { label: "Contact", href: "/contact" },
-  { label: "Donate", href: "/donate" },
 ] as const;
 
 const SOCIAL_LINKS = [
@@ -37,15 +36,7 @@ const SOCIAL_LINKS = [
 
 export default function Footer(): React.JSX.Element {
   const year = new Date().getFullYear();
-
-  const emailUser = "zorlu.murat2002";
-  const emailDomain = "gmail.com";
-  const email = `${emailUser}@${emailDomain}`;
-
-  const [mailtoHref, setMailtoHref] = React.useState("");
-  React.useEffect(() => {
-    setMailtoHref(`mailto:${email}`);
-  }, [email]);
+  const email = "zorlu.murat2002@gmail.com";
 
   return (
     <footer role="contentinfo" className="mt-auto border-t border-border/50">
@@ -63,12 +54,7 @@ export default function Footer(): React.JSX.Element {
 
             <address className="mt-3 not-italic">
               <a
-                href={mailtoHref || "#"}
-                onClick={(e) => {
-                  if (!mailtoHref) {
-                    (e.currentTarget as HTMLAnchorElement).href = `mailto:${email}`;
-                  }
-                }}
+                href={`mailto:${email}`}
                 className={cn(
                   "inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
                   "bg-muted text-muted-foreground hover:text-foreground",
@@ -76,7 +62,7 @@ export default function Footer(): React.JSX.Element {
                 aria-label={`Email ${email}`}
               >
                 <Mail className="h-3.5 w-3.5" aria-hidden />
-                {emailUser} [at] {emailDomain}
+                {email}
               </a>
             </address>
           </div>

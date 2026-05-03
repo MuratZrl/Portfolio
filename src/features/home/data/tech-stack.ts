@@ -1,54 +1,57 @@
 // src/features/home/data/tech-stack.ts
 // Single source of truth for TechStack groups used on the Home page.
 
-import { Layout, Server, Wrench, Database } from "lucide-react";
+import { Code2, Palette, Database, Wrench } from "lucide-react";
 import type { Group } from "@/features/home/types/tech-stack";
 
 export const DEFAULT_GROUPS = [
   {
-    title: "Frontend",
-    icon: Layout,
+    title: "Languages & Frameworks",
+    icon: Code2,
     skills: [
-      { name: "Next.js", level: 92, hint: "App Router, RSC, Server Actions" },
-      { name: "React", level: 90, hint: "hooks, suspense, context" },
-      { name: "TypeScript", level: 90, hint: "strict, generics, utility types" },
-      { name: "Tailwind CSS", level: 88, hint: "utility-first, design tokens" },
-      { name: "shadcn/ui", level: 85, hint: "Radix primitives, composable" },
-      { name: "MUI", level: 80, hint: "theming, sx prop, custom variants" },
+      { name: "TypeScript", hint: "strict, generics, utility types" },
+      { name: "Next.js", hint: "App Router, RSC, Server Actions" },
+      { name: "React", hint: "hooks, suspense, context" },
+      { name: "NestJS", hint: "modules, guards, interceptors" },
+      { name: "Node.js", hint: "Express, streams, workers" },
     ],
   },
   {
-    title: "Backend",
-    icon: Server,
+    title: "UI & Styling",
+    icon: Palette,
     skills: [
-      { name: "NestJS", level: 88, hint: "modules, guards, interceptors" },
-      { name: "Node.js", level: 85, hint: "Express, streams, workers" },
-      { name: "Go", level: 70, hint: "middleware, reverse proxy, concurrency" },
-      { name: "Socket.io", level: 80, hint: "rooms, namespaces, events" },
-      { name: "REST / SOAP", level: 85, hint: "API design, integrations" },
-      { name: "JWT / OAuth", level: 80, hint: "auth flows, RBAC" },
+      { name: "Tailwind CSS", hint: "utility-first, design tokens" },
+      { name: "Material UI", hint: "theming, sx prop, custom variants" },
+      { name: "Framer Motion", hint: "page transitions, gestures" },
+      { name: "Zustand", hint: "lightweight state management" },
+      { name: "TanStack React Query", hint: "server state, caching" },
     ],
   },
   {
-    title: "Database & Storage",
+    title: "Data & Infrastructure",
     icon: Database,
     skills: [
-      { name: "PostgreSQL", level: 85, hint: "indexes, JSONB, CTE, RLS" },
-      { name: "Supabase", level: 85, hint: "Auth, Realtime, RLS, Storage" },
-      { name: "Redis", level: 78, hint: "caching, rate limiting, pub/sub" },
-      { name: "Prisma", level: 80, hint: "schema-first, migrations" },
+      { name: "PostgreSQL", hint: "indexes, JSONB, CTE, RLS" },
+      { name: "Prisma", hint: "schema-first, migrations" },
+      { name: "Supabase", hint: "Auth, Realtime, RLS, Storage" },
+      { name: "Redis", hint: "caching, rate limiting, pub/sub" },
+      { name: "Socket.io", hint: "rooms, namespaces, events" },
+      { name: "REST API", hint: "design, integrations" },
+      { name: "JWT / OAuth", hint: "auth flows, RBAC" },
+      { name: "Stripe", hint: "payments, subscriptions, webhooks" },
     ],
   },
   {
-    title: "DevOps & Tooling",
+    title: "DevOps & Testing",
     icon: Wrench,
     skills: [
-      { name: "Docker", level: 80, hint: "compose, multi-stage, networking" },
-      { name: "Git", level: 90, hint: "rebase, cherry-pick, worktrees" },
-      { name: "Puppeteer", level: 75, hint: "web scraping, automation" },
-      { name: "Stripe", level: 70, hint: "payments, subscriptions, webhooks" },
-      { name: "ESLint / Prettier", level: 88, hint: "rules, CI fail-fast" },
-      { name: "Playwright", level: 70, hint: "e2e, trace viewer" },
+      { name: "Docker", hint: "compose, multi-stage, networking" },
+      { name: "Git", hint: "rebase, cherry-pick, worktrees" },
+      { name: "GitHub Actions", hint: "CI/CD pipelines" },
+      { name: "Vercel", hint: "frontend hosting, edge functions" },
+      { name: "Railway", hint: "backend hosting, databases" },
+      { name: "Jest", hint: "unit testing" },
+      { name: "Playwright", hint: "E2E, trace viewer" },
     ],
   },
 ] satisfies readonly Group[];

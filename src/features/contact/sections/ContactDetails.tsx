@@ -13,7 +13,6 @@ import {
   ExternalLink,
   Copy,
   Check,
-  HeartHandshake,
   Briefcase,
 } from "lucide-react";
 
@@ -189,35 +188,6 @@ export default function ContactDetails({
         </div>
       </div>
 
-      {/* ── Support ── */}
-      <div
-        className={cn(
-          "rounded-2xl border p-5 sm:p-6",
-          "border-border/50 bg-card/80 backdrop-blur-sm",
-        )}
-      >
-        <div className="mb-4 flex items-center gap-3">
-          <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <HeartHandshake className="h-4 w-4" aria-hidden />
-          </div>
-          <h3 className="text-base font-semibold">Support</h3>
-        </div>
-
-        <p className="mb-3 text-sm text-muted-foreground">
-          No PayPal — bank transfer via IBAN on the Donate page.
-        </p>
-
-        <Link
-          href="/donate"
-          className={cn(
-            "inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-medium transition-colors",
-            "bg-primary text-primary-foreground hover:bg-primary/90",
-          )}
-        >
-          <HeartHandshake className="h-3.5 w-3.5" aria-hidden />
-          Donate
-        </Link>
-      </div>
     </aside>
   );
 }

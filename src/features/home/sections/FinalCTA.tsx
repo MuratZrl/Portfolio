@@ -3,7 +3,7 @@ import React from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Mail, Heart, Sparkles, Clock, Zap } from "lucide-react";
+import { ArrowRight, Mail, Sparkles, Clock, Zap } from "lucide-react";
 
 import type { FinalCtaProps } from "@/features/home/types/final-cta";
 import { FINAL_CTA_DEFAULTS } from "@/features/home/data";
@@ -18,9 +18,6 @@ export default function FinalCta({
   heading = FINAL_CTA_DEFAULTS.heading,
   subheading = FINAL_CTA_DEFAULTS.subheading,
   primary = FINAL_CTA_DEFAULTS.primary,
-  secondary = FINAL_CTA_DEFAULTS.secondary,
-  showDonateHint = FINAL_CTA_DEFAULTS.showDonateHint,
-  donateHintText = FINAL_CTA_DEFAULTS.donateHintText,
   className,
 }: FinalCtaProps): React.JSX.Element {
   const headingId = React.useId();
@@ -121,34 +118,15 @@ export default function FinalCta({
             })}
           </div>
 
-          {/* CTA buttons */}
-          <div className="mx-auto mt-10 flex max-w-md flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          {/* CTA button */}
+          <div className="mx-auto mt-10 flex justify-center">
             <Button asChild size="lg" aria-label={primary.ariaLabel ?? primary.label}>
               <Link href={primary.href}>
                 {primary.label}
                 <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
               </Link>
             </Button>
-
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              aria-label={secondary.ariaLabel ?? secondary.label}
-            >
-              <Link href={secondary.href}>
-                <Heart className="mr-2 h-4 w-4" aria-hidden />
-                {secondary.label}
-              </Link>
-            </Button>
           </div>
-
-          {/* Donate hint */}
-          {showDonateHint ? (
-            <p className="mt-4 text-center text-xs text-muted-foreground">
-              {donateHintText}
-            </p>
-          ) : null}
         </div>
       </div>
     </section>

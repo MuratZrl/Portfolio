@@ -25,7 +25,6 @@
 - **Dark / Light Mode** — system preference detection with manual toggle, OKLCH color system
 - **GitHub Auto-Sync** — fetches all public repos via GitHub API with 1-hour ISR revalidation
 - **Contact Form** — React Hook Form + Zod validation, honeypot spam protection, IP rate limiting, Supabase storage
-- **Donation Page** — multi-currency IBAN accounts (TRY/USD/EUR), Bitcoin with QR code generation, copy-to-clipboard, downloadable summaries
 - **SEO Ready** — sitemap, robots.txt, web manifest, metadata API
 - **Fully Responsive** — mobile-first with hamburger nav, optimized for all breakpoints
 - **Skeleton Loading** — animated loading states across all sections
@@ -58,7 +57,6 @@ src/
 │   │   └── qr/             # GET  — QR code generator (Edge runtime)
 │   ├── about/
 │   ├── contact/
-│   ├── donate/
 │   ├── projects/
 │   ├── layout.tsx           # Root layout with providers
 │   ├── page.tsx             # Home page
@@ -69,7 +67,6 @@ src/
 ├── features/                # Feature modules
 │   ├── about/               # Timeline, skills, FAQ, CV
 │   ├── contact/             # Form schema & sections
-│   ├── donate/              # IBAN, crypto, utilities
 │   ├── home/                # Hero, value props, tech stack
 │   └── projects/            # Project cards & filters
 ├── constants/projects/      # Project data & types
@@ -144,7 +141,6 @@ npm start
 | `/about` | Experience timeline, skills matrix, principles, FAQ |
 | `/projects` | All projects with category filters & pagination + GitHub repos |
 | `/contact` | Contact form with validation & rate limiting |
-| `/donate` | Multi-currency IBAN & Bitcoin donation |
 
 ---
 

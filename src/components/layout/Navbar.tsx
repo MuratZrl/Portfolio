@@ -17,7 +17,6 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/about", label: "About" },
   { href: "/projects", label: "Projects" },
   { href: "/contact", label: "Contact" },
-  { href: "/donate", label: "Donate" },
 ];
 
 const CV_PATH = "/cv/MuratZorlu-CV.pdf" as const;
