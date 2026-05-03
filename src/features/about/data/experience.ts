@@ -10,7 +10,7 @@ export const EXPERIENCE_ITEMS = [
     location: "Istanbul",
     period: { start: "2026-01", end: "2026-03" },
     summary:
-      "Architected and delivered a production real estate platform for a Sakarya-based agency, currently live at yenigunemlak.com with 240+ active property listings.",
+      "Architected and delivered a production real estate platform for a Sakarya-based agency, listing properties across Turkey. Currently live at yenigunemlak.com with 240+ active property listings.",
     achievements: [
       "Designed advanced property search with filters for price, area, rooms, location, and amenities, plus interactive map-based search using Google Maps and Leaflet.",
       "Integrated Google Cloud Storage for image galleries, WhatsApp API for agent contact, and a complete admin panel for listing management, customer tracking, and contract handling.",

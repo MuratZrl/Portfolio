@@ -3,12 +3,7 @@ import {
   type AboutIntroDefaults,
 } from "@/features/about/types";
 
-import {
-  Github,
-  Linkedin,
-  Gauge,
-  FolderGit2,
-} from "lucide-react";
+import { Github, Linkedin } from "lucide-react";
 
 export const ABOUT_DEFAULTS: AboutIntroDefaults = {
   name: "Murat Zorlu",
@@ -30,10 +25,7 @@ export const ABOUT_DEFAULTS: AboutIntroDefaults = {
     { href: "https://github.com/MuratZrl", label: "GitHub", icon: Github },
     { href: "https://www.linkedin.com/in/murat-zorlu-dev", label: "LinkedIn", icon: Linkedin },
   ],
-  stats: [
-    { label: "Lighthouse", value: "95+", icon: Gauge },
-    { label: "Projects", value: "10+", icon: FolderGit2 },
-  ],
+  stats: [],
   primary: { href: "/contact", label: "Get in touch", ariaLabel: "Open contact page" },
-  secondary: { href: "/cv/MuratZorlu-CV.pdf", label: "Download CV", ariaLabel: "Download CV", download: true },
+  secondary: { href: "/cv/Murat_Zorlu_CV.pdf", label: "Download CV", ariaLabel: "Download CV", download: true },
 } as const;

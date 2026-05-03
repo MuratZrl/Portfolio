@@ -153,6 +153,11 @@ export default function AboutIntro(props: AboutIntroProps): React.JSX.Element {
               </ul>
             ) : null}
 
+            {/* Languages */}
+            <p className="text-sm text-muted-foreground">
+              Languages: Turkish (Native) · English (B2) · German (A2)
+            </p>
+
             {/* Tech tags */}
             {techTags.length > 0 ? (
               <div className="flex flex-wrap gap-1.5">

@@ -65,7 +65,7 @@ src/
 │   ├── layout/              # Container, Navbar, Footer, Page
 │   └── ui/                  # shadcn/ui components
 ├── features/                # Feature modules
-│   ├── about/               # Timeline, skills, FAQ, CV
+│   ├── about/               # Timeline, languages, CV
 │   ├── contact/             # Form schema & sections
 │   ├── home/                # Hero, value props, tech stack
 │   └── projects/            # Project cards & filters
@@ -138,7 +138,7 @@ npm start
 | Route | Description |
 |---|---|
 | `/` | Home — hero, value props, featured projects, tech stack |
-| `/about` | Experience timeline, skills matrix, principles, FAQ |
+| `/about` | Experience timeline, languages, CV download |
 | `/projects` | All projects with category filters & pagination + GitHub repos |
 | `/contact` | Contact form with validation & rate limiting |
 

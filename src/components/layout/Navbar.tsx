@@ -19,7 +19,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/contact", label: "Contact" },
 ];
 
-const CV_PATH = "/cv/MuratZorlu-CV.pdf" as const;
+const CV_PATH = "/cv/Murat_Zorlu_CV.pdf" as const;
 
 export default function Navbar(): React.JSX.Element {
   const pathname = usePathname();

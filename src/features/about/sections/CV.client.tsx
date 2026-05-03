@@ -14,7 +14,7 @@ type CvViewerProps = {
 };
 
 export default function CvSection({
-  pdfSrc = "/cv/MuratZorlu-CV.pdf",
+  pdfSrc = "/cv/Murat_Zorlu_CV.pdf",
   title = "CV",
   description = "View inline, download, or open in a new tab.",
   maxHeightPx = 1000,
@@ -56,7 +56,7 @@ export default function CvSection({
               <FileText className="h-4 w-4" aria-hidden />
             </div>
             <div>
-              <div className="text-sm font-semibold">MuratZorlu-CV.pdf</div>
+              <div className="text-sm font-semibold">Murat_Zorlu_CV.pdf</div>
               <div className="text-xs text-muted-foreground">PDF document</div>
             </div>
           </div>
