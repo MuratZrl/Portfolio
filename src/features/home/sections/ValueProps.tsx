@@ -53,7 +53,7 @@ function ValueCard({ item, index }: { item: ValueItem; index: number }): React.J
       style={{ animation: `fade-in-up 0.5s ease-out ${0.1 + index * 0.1}s both` }}
     >
       {/* Background number watermark */}
-      <span className="pointer-events-none absolute -right-2 -top-4 text-[80px] font-bold leading-none text-muted-foreground/[0.04] select-none">
+      <span className="pointer-events-none absolute -right-2 -top-4 text-[80px] font-bold leading-none text-muted-foreground/[0.12] select-none">
         0{index + 1}
       </span>
 
