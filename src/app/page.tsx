@@ -11,11 +11,11 @@ import FinalCta from "@/features/home/sections/FinalCTA";
 
 
 export const metadata: Metadata = {
-  title: "Murat Zorlu — Home",
+  title: "Home",
   description:
     "Build, ship, iterate. Simple, fast, and clear. A developer portfolio with clean UX and solid engineering.",
   openGraph: {
-    title: "Portfolio — Home",
+    title: "Murat Zorlu | Home",
     description:
       "Build, ship, iterate. Simple, fast, and clear. A developer portfolio with clean UX and solid engineering.",
     type: "website",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Portfolio — Home",
+    title: "Murat Zorlu | Home",
     description:
       "Build, ship, iterate. Simple, fast, and clear. A developer portfolio with clean UX and solid engineering.",
   },

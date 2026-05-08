@@ -9,7 +9,7 @@ import Testimonials from "@/features/about/sections/Testimonials.client";
 import CvSection from "@/features/about/sections/CV.client";
 
 export const metadata: Metadata = {
-  title: "About Me",
+  title: "About",
   description:
     "Who I am, how I work, and what I’ve built — experience timeline, skills, and a downloadable CV.",
   alternates: { canonical: "/about" },
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 export default function AboutPage(): React.JSX.Element {
   return (
     <Page
-      title="About Me"
+      title="About"
       description="Who I am, how I work, and what I’ve built."
     >
       {/* Page artık H1 veriyor, o yüzden AboutIntro başlığını H2 yapıyoruz */}

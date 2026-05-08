@@ -1,8 +1,13 @@
 // src/app/not-found.tsx
 import React from "react";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { Page } from "@/components/layout/Page";
+
+export const metadata: Metadata = {
+  title: "Page not found",
+};
 
 export default function NotFound(): React.JSX.Element {
   return (
