@@ -107,7 +107,7 @@ export default function ContactDetails({
               aria-label="Copy email address"
               onClick={() => void copyToClipboard(email)}
               className={cn(
-                "flex size-8 shrink-0 items-center justify-center rounded-lg transition-colors",
+                "flex size-8 shrink-0 select-none items-center justify-center rounded-lg transition-colors",
                 copied
                   ? "bg-green-600/10 text-green-600 dark:text-green-400"
                   : "bg-muted text-muted-foreground hover:text-foreground",
@@ -170,8 +170,9 @@ export default function ContactDetails({
               href={s.href}
               target="_blank"
               rel="noopener noreferrer"
+              draggable={false}
               className={cn(
-                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors",
+                "flex select-none items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors",
                 "hover:bg-muted",
               )}
             >

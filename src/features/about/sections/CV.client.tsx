@@ -65,9 +65,10 @@ export default function CvSection({
             <a
               href={pdfSrc}
               download
+              draggable={false}
               aria-label="Download CV"
               className={cn(
-                "inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-medium",
+                "inline-flex select-none items-center gap-2 rounded-full px-4 py-2 text-xs font-medium",
                 "bg-muted text-muted-foreground transition-colors duration-200",
                 "hover:bg-muted/80 hover:text-foreground",
               )}
@@ -80,9 +81,10 @@ export default function CvSection({
               href={pdfSrc}
               target="_blank"
               rel="noreferrer"
+              draggable={false}
               aria-label="Open CV in a new tab"
               className={cn(
-                "inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-medium",
+                "inline-flex select-none items-center gap-2 rounded-full px-4 py-2 text-xs font-medium",
                 "bg-primary text-primary-foreground transition-colors duration-200",
                 "hover:bg-primary/90",
               )}

@@ -53,7 +53,8 @@ export default async function ProjectDetailPage({ params }: Props) {
       <section>
         <Link
           href="/projects"
-          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
+          draggable={false}
+          className="inline-flex select-none items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Projects
