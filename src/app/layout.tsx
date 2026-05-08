@@ -16,7 +16,10 @@ import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://murat-zorlu-dev.vercel.app"),
-  title: "Portfolio",
+  title: {
+    default: "Murat Zorlu | Portfolio",
+    template: "Murat Zorlu | %s",
+  },
   description: "Minimal portfolio website. Pages: Home, About, Projects, Donation.",
 };
 
