@@ -21,10 +21,8 @@ type Align = "left" | "center";
 
 type HeroProps = {
   className?: string;
-  kicker?: string;
   title?: string;
   subtitle?: string;
-  techStack?: string[];
   primary?: ActionLink;
   secondary?: ActionLink;
   align?: Align;
@@ -34,10 +32,8 @@ type HeroProps = {
 
 export default function Hero({
   className,
-  kicker,
   title = "Build clearly. Ship confidently.",
   subtitle,
-  techStack,
   primary = { href: "/about", label: "About" },
   secondary = { href: "/projects", label: "Projects" },
   align = "center",
@@ -78,19 +74,6 @@ export default function Hero({
           </div>
         ) : null}
 
-        {/* Kicker */}
-        {kicker ? (
-          <p
-            className={cn(
-              "text-sm font-medium tracking-widest uppercase text-muted-foreground",
-              textAlign,
-            )}
-            style={{ animation: "fade-in-up 0.5s ease-out 0.1s both" }}
-          >
-            {kicker}
-          </p>
-        ) : null}
-
         {/* Heading */}
         <h1
           id={headingId}
@@ -116,23 +99,6 @@ export default function Hero({
           >
             {subtitle}
           </p>
-        ) : null}
-
-        {/* Tech stack badges */}
-        {techStack && techStack.length > 0 ? (
-          <div
-            className={cn("flex flex-wrap gap-2", rowJustify)}
-            style={{ animation: "fade-in-up 0.6s ease-out 0.35s both" }}
-          >
-            {techStack.map((tech) => (
-              <span
-                key={tech}
-                className="rounded-full border border-border/50 bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur-sm transition-colors hover:border-primary/30 hover:text-foreground"
-              >
-                {tech}
-              </span>
-            ))}
-          </div>
         ) : null}
 
         {/* Actions */}

@@ -34,10 +34,8 @@ export default function HomePage(): React.JSX.Element {
     // Page sadece layout/padding işini yapıyor; başlık vermiyoruz
     <Page>
       <Hero
-        kicker="Murat Zorlu"
         title="Ship reliable web apps, minus the chaos"
         subtitle="Full-stack developer crafting type-safe, production-ready applications."
-        techStack={["Next.js", "NestJS", "TypeScript", "PostgreSQL", "Docker", "Redis", "Tailwind CSS"]}
         primary={{ href: "/about", label: "About" }}
         secondary={{ href: "/projects", label: "Projects" }}
         statusText="Available for work"
