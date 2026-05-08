@@ -21,7 +21,7 @@ export function Shimmer({
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(90deg, transparent 0%, oklch(0.72 0.17 162 / 0.08) 40%, oklch(0.72 0.17 162 / 0.14) 50%, oklch(0.72 0.17 162 / 0.08) 60%, transparent 100%)",
+            "linear-gradient(90deg, transparent 0%, oklch(0.65 0.15 235 / 0.08) 40%, oklch(0.65 0.15 235 / 0.14) 50%, oklch(0.65 0.15 235 / 0.08) 60%, transparent 100%)",
           backgroundSize: "200% 100%",
           animation: "shimmer 1.8s ease-in-out infinite",
         }}
@@ -55,7 +55,7 @@ export function CardSkeleton({
   );
 }
 
-/* ── Icon box skeleton (the emerald squares) ── */
+/* ── Icon box skeleton (the sky-blue squares) ── */
 export function IconBoxSkeleton() {
   return (
     <div

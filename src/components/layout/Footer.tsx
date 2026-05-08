@@ -45,7 +45,7 @@ export default function Footer(): React.JSX.Element {
         <div className="grid grid-cols-1 gap-8 py-10 md:grid-cols-3">
           {/* Brand + email */}
           <div className="flex flex-col items-center md:items-start">
-            <Link href="/" className="text-lg font-semibold tracking-tight">
+            <Link href="/" draggable={false} className="select-none text-lg font-semibold tracking-tight">
               Murat Zorlu
             </Link>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -55,8 +55,9 @@ export default function Footer(): React.JSX.Element {
             <address className="mt-3 not-italic">
               <a
                 href={`mailto:${email}`}
+                draggable={false}
                 className={cn(
-                  "inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
+                  "inline-flex select-none items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
                   "bg-muted text-muted-foreground hover:text-foreground",
                 )}
                 aria-label={`Email ${email}`}
@@ -77,7 +78,8 @@ export default function Footer(): React.JSX.Element {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-sm text-muted-foreground transition-colors hover:text-primary"
+                  draggable={false}
+                  className="select-none text-sm text-muted-foreground transition-colors hover:text-primary"
                 >
                   {link.label}
                 </Link>
@@ -97,9 +99,10 @@ export default function Footer(): React.JSX.Element {
                   href={s.href}
                   target="_blank"
                   rel="noopener noreferrer"
+                  draggable={false}
                   aria-label={`${s.label} (opens in a new tab)`}
                   className={cn(
-                    "flex size-9 items-center justify-center rounded-lg transition-colors",
+                    "flex size-9 select-none items-center justify-center rounded-lg transition-colors",
                     "bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary",
                   )}
                 >

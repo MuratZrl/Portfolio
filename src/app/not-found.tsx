@@ -31,7 +31,8 @@ export default function NotFound(): React.JSX.Element {
 
           <Link
             href="/projects"
-            className="inline-flex h-11 items-center text-sm font-medium underline underline-offset-4 text-muted-foreground hover:text-foreground"
+            draggable={false}
+            className="inline-flex h-11 select-none items-center text-sm font-medium underline underline-offset-4 text-muted-foreground hover:text-foreground"
             aria-label="See all projects"
           >
             View projects

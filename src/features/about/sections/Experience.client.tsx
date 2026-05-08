@@ -23,20 +23,20 @@ const KIND_CONFIG: Record<Kind, {
   work: {
     label: "Work",
     icon: Building2,
-    dot: "bg-primary border-primary/30",
+    dot: "bg-primary border-primary/30 text-white",
     badge: "bg-primary/10 text-primary",
   },
   freelance: {
     label: "Freelance",
     icon: Briefcase,
-    dot: "bg-amber-500 border-amber-500/30",
+    dot: "bg-amber-500 border-amber-500/30 text-neutral-900",
     badge: "bg-amber-500/10 text-amber-500",
   },
   education: {
     label: "Education",
     icon: GraduationCap,
-    dot: "bg-blue-500 border-blue-500/30",
-    badge: "bg-blue-500/10 text-blue-500",
+    dot: "bg-violet-500 border-violet-500/30 dark:bg-violet-400 dark:border-violet-400/30 text-white",
+    badge: "bg-violet-500/10 text-violet-500 dark:bg-violet-400/10 dark:text-violet-400",
   },
 };
 
@@ -82,7 +82,7 @@ export default function ExperienceTimeline({
           onClick={() => setActiveKind("all")}
           aria-pressed={activeKind === "all"}
           className={cn(
-            "rounded-full px-4 py-2 text-xs font-medium transition-all duration-200",
+            "select-none rounded-full px-4 py-2 text-xs font-medium transition-all duration-200",
             activeKind === "all"
               ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
               : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground",
@@ -100,7 +100,7 @@ export default function ExperienceTimeline({
               onClick={() => setActiveKind(k)}
               aria-pressed={activeKind === k}
               className={cn(
-                "inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-medium transition-all duration-200",
+                "inline-flex select-none items-center gap-1.5 rounded-full px-4 py-2 text-xs font-medium transition-all duration-200",
                 activeKind === k
                   ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
                   : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground",
@@ -137,7 +137,7 @@ export default function ExperienceTimeline({
           <button
             type="button"
             onClick={() => setActiveKind("all")}
-            className="mt-3 rounded-full bg-primary px-4 py-2 text-xs font-medium text-primary-foreground hover:bg-primary/90"
+            className="mt-3 select-none rounded-full bg-primary px-4 py-2 text-xs font-medium text-primary-foreground hover:bg-primary/90"
           >
             Show all
           </button>
@@ -304,14 +304,14 @@ function TimelineCard({
 
 function LinkPill({ href, label }: ExtLink): React.JSX.Element {
   const classes = cn(
-    "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium",
+    "inline-flex select-none items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium",
     "text-muted-foreground transition-colors duration-150",
     "hover:bg-primary/10 hover:text-primary",
   );
 
   if (href.startsWith("/")) {
     return (
-      <Link href={href} className={classes} aria-label={label}>
+      <Link href={href} draggable={false} className={classes} aria-label={label}>
         <ExternalLink className="h-3 w-3" aria-hidden />
         {label}
       </Link>
@@ -319,7 +319,7 @@ function LinkPill({ href, label }: ExtLink): React.JSX.Element {
   }
 
   return (
-    <a href={href} target="_blank" rel="noreferrer" className={classes} aria-label={label}>
+    <a href={href} target="_blank" rel="noreferrer" draggable={false} className={classes} aria-label={label}>
       <ExternalLink className="h-3 w-3" aria-hidden />
       {label}
     </a>

@@ -23,7 +23,7 @@ export default function HomeLoading() {
             className="absolute inset-0 rounded-full"
             style={{
               background:
-                "conic-gradient(from 0deg, oklch(0.72 0.17 162 / 0.3), transparent 40%, oklch(0.72 0.17 162 / 0.3))",
+                "conic-gradient(from 0deg, oklch(0.65 0.15 235 / 0.3), transparent 40%, oklch(0.65 0.15 235 / 0.3))",
               animation: "spin 3s linear infinite",
             }}
           />

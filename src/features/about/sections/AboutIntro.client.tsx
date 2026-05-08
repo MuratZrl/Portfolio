@@ -119,9 +119,10 @@ export default function AboutIntro(props: AboutIntroProps): React.JSX.Element {
                     href={s.href}
                     target="_blank"
                     rel="noreferrer"
+                    draggable={false}
                     aria-label={s.label}
                     className={cn(
-                      "inline-flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-all",
+                      "inline-flex size-9 select-none items-center justify-center rounded-lg text-muted-foreground transition-all",
                       "hover:bg-primary/10 hover:text-primary",
                     )}
                   >

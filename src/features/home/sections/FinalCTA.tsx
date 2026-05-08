@@ -37,7 +37,7 @@ export default function FinalCta({
           <div
             className="absolute h-[60%] w-[50%] rounded-full opacity-[0.07] blur-[80px]"
             style={{
-              background: "oklch(0.60 0.16 160)",
+              background: "oklch(0.62 0.17 235)",
               animation: "cta-drift-1 12s ease-in-out infinite alternate",
             }}
           />
@@ -45,7 +45,7 @@ export default function FinalCta({
           <div
             className="absolute h-[50%] w-[45%] rounded-full opacity-[0.06] blur-[80px]"
             style={{
-              background: "oklch(0.55 0.14 180)",
+              background: "oklch(0.6 0.14 215)",
               animation: "cta-drift-2 14s ease-in-out infinite alternate",
             }}
           />
@@ -53,14 +53,14 @@ export default function FinalCta({
           <div
             className="absolute h-[40%] w-[40%] rounded-full opacity-[0.05] blur-[100px]"
             style={{
-              background: "oklch(0.65 0.12 140)",
+              background: "oklch(0.7 0.12 250)",
               animation: "cta-drift-3 10s ease-in-out infinite alternate",
             }}
           />
           {/* Top edge glow line */}
           <div
             className="absolute left-1/2 top-0 h-px w-3/4 -translate-x-1/2"
-            style={{ background: "linear-gradient(90deg, transparent, oklch(0.72 0.17 162 / 0.3), transparent)" }}
+            style={{ background: "linear-gradient(90deg, transparent, oklch(0.65 0.15 235 / 0.3), transparent)" }}
           />
         </div>
         <style>{`
@@ -107,7 +107,7 @@ export default function FinalCta({
                     <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
                       <StepIcon className="h-5 w-5" aria-hidden />
                     </div>
-                    <span className="absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                    <span className="absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
                       {i + 1}
                     </span>
                   </div>
