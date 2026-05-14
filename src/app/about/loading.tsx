@@ -18,15 +18,22 @@ export default function AboutLoading() {
       {/* ── Intro skeleton ── */}
       <section className="mt-10" style={{ animation: "fade-in-up 0.5s ease-out 0.1s both" }}>
         <CardSkeleton>
-          <div className="flex flex-col sm:flex-row gap-6">
-            <div className="shrink-0">
-              <div
-                className="size-28 rounded-2xl bg-muted"
-                style={{ animation: "pulse-glow 2s ease-in-out infinite" }}
-              />
+          <div className="space-y-6">
+            {/* Identity header */}
+            <div className="space-y-3">
+              <Shimmer className="h-8 w-56" />
+              <Shimmer className="h-4 w-40" />
+              <PillSkeleton width="w-28" />
             </div>
-            <div className="flex-1 space-y-3">
-              <Shimmer className="h-6 w-48" />
+
+            {/* CTAs */}
+            <div className="flex gap-2">
+              <Shimmer className="h-8 w-28" rounded="rounded-md" />
+              <Shimmer className="h-8 w-32" rounded="rounded-md" />
+            </div>
+
+            {/* Bio lines */}
+            <div className="space-y-2">
               <Shimmer className="h-4 w-full" />
               <Shimmer className="h-4 w-full" />
               <Shimmer className="h-4 w-3/4" />
