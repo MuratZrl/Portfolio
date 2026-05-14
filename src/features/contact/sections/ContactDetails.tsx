@@ -52,7 +52,7 @@ const SOCIAL_LINKS = (
 ];
 
 export default function ContactDetails({
-  email = "zorlu.murat2002@gmail.com",
+  email = "me@muratzorlu.dev",
   location = "Istanbul, Türkiye",
   timezoneLabel = "TRT (UTC+3)",
   responseWindow = "Mon–Fri, 10:00–18:00",
