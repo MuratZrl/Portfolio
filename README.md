@@ -3,10 +3,10 @@
   <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black" />
   <img src="https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
   <img src="https://img.shields.io/badge/Tailwind-4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" />
-  <img src="https://img.shields.io/badge/Supabase-2-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white" />
+  <img src="https://img.shields.io/badge/Resend-Email-000000?style=for-the-badge&logo=resend&logoColor=white" />
 </p>
 
-<h1 align="center">murat-zorlu.dev</h1>
+<h1 align="center">muratzorlu.dev</h1>
 
 <p align="center">
   Personal portfolio built with Next.js 16, React 19, and Tailwind CSS 4.<br/>
@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-  <a href="https://murat-zorlu-dev.vercel.app"><strong>Live Demo</strong></a>
+  <a href="https://muratzorlu.dev"><strong>Live Demo</strong></a>
 </p>
 
 ---
@@ -23,7 +23,7 @@
 
 - **Frosted Glass UI** — backdrop-blur cards, gradient overlays, and smooth hover animations
 - **Dark / Light Mode** — system preference detection with manual toggle, OKLCH color system
-- **Contact Form** — React Hook Form + Zod validation, honeypot spam protection, IP rate limiting, Supabase storage
+- **Contact Form** — React Hook Form + Zod validation, honeypot spam protection, IP rate limiting, Resend email forwarding
 - **SEO Ready** — sitemap, robots.txt, web manifest, metadata API
 - **Fully Responsive** — mobile-first with hamburger nav, optimized for all breakpoints
 - **Skeleton Loading** — animated loading states across all sections
@@ -40,7 +40,7 @@
 | **UI** | React 19, Tailwind CSS 4, shadcn/ui, Radix UI |
 | **Icons & Fonts** | Lucide React, Geist Sans & Mono |
 | **Forms** | React Hook Form, Zod 4 |
-| **Database** | Supabase (PostgreSQL) |
+| **Email** | Resend |
 | **Theming** | next-themes, OKLCH color system |
 | **Deployment** | Vercel |
 
@@ -70,7 +70,6 @@ src/
 │   └── projects/            # Project cards & filters
 ├── constants/projects/      # Project data & types
 ├── lib/
-│   ├── supabase/            # Supabase client
 │   ├── media.ts             # Placeholder helpers
 │   └── utils.ts             # cn() utility
 └── theme/                   # Theme provider & toggle
@@ -84,6 +83,7 @@ src/
 
 - Node.js 18+
 - npm or pnpm
+- A [Resend](https://resend.com) account (free tier is enough for the contact form)
 
 ### Installation
 
@@ -95,16 +95,13 @@ npm install
 
 ### Environment Variables
 
-Create a `.env.local` file in the root:
+Copy `.env.example` to `.env.local` and fill in your Resend API key:
 
 ```env
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-
-# Site
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+RESEND_API_KEY=your_resend_api_key_here
 ```
+
+Get an API key at [resend.com/api-keys](https://resend.com/api-keys). The contact form sends through Resend's `onboarding@resend.dev` sender — to send from a custom domain instead, verify your domain in Resend and update the `from` address in `src/app/api/contact/route.ts`.
 
 ### Development
 
@@ -127,7 +124,6 @@ npm start
 |---|---|
 | `npm run lint` | Run ESLint |
 | `npm run typecheck` | TypeScript type checking |
-| `npm run types:sb` | Generate Supabase types |
 
 ---
 
@@ -146,7 +142,7 @@ npm start
 
 This project is configured for **Vercel**. Push to `main` and it deploys automatically.
 
-Make sure to add the environment variables in your Vercel project settings.
+Add `RESEND_API_KEY` to your Vercel project's environment variables (Production scope at minimum).
 
 ---
 
