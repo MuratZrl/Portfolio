@@ -10,7 +10,6 @@ export const ABOUT_DEFAULTS: AboutIntroDefaults = {
   role: "Fullstack Web Developer",
   location: "Istanbul, Turkey",
   availability: "available",
-  avatar: { src: "/images/profile.jpg", alt: "Murat Zorlu" },
   bio: [
     "Fullstack TypeScript developer with production experience in Next.js, NestJS, and PostgreSQL.",
     "Delivered two live applications serving real businesses in Turkey.",

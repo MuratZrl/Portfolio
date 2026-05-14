@@ -19,14 +19,11 @@ export type Cta = {
 
 export type Stat = { label: string; value: string; icon?: LucideIcon };
 
-export type Avatar = { src: string; alt: string };
-
 export type AboutIntroDefaults = {
   name: string;
   role: string;
   location: string;
   availability: Availability;
-  avatar: Avatar;
   bio: readonly string[];
   highlights: readonly string[];
   techTags: readonly string[];
