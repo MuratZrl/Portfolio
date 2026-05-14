@@ -184,7 +184,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<OkPayload | E
   try {
     const resend = new Resend(apiKey);
     const { error } = await resend.emails.send({
-      from: "Portfolio Contact <onboarding@resend.dev>",
+      from: "Portfolio Contact <contact@muratzorlu.dev>",
       to: "me@muratzorlu.dev",
       replyTo: cleanEmail,
       subject: `[Portfolio] ${subjectLabel} — ${cleanName}`,
