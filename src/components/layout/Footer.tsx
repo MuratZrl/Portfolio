@@ -36,7 +36,7 @@ const SOCIAL_LINKS = [
 
 export default function Footer(): React.JSX.Element {
   const year = new Date().getFullYear();
-  const email = "zorlu.murat2002@gmail.com";
+  const email = "me@muratzorlu.dev";
 
   return (
     <footer role="contentinfo" className="mt-auto border-t border-border/50">
