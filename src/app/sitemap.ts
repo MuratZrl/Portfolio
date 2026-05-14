@@ -4,6 +4,8 @@ import type { MetadataRoute } from "next";
 const BASE_URL = "https://muratzorlu.dev";
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  if (process.env.VERCEL_ENV !== "production") return [];
+
   const lastModified = new Date();
 
   return [
