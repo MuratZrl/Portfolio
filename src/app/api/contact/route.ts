@@ -1,9 +1,9 @@
 // src/app/api/contact/route.ts
 import { NextResponse, type NextRequest } from "next/server";
+import { Resend } from "resend";
 import { ContactSchema } from "@/features/contact/schema";
-import { createServerClient } from "@/lib/supabase/server";
 
-export const runtime = "nodejs"; // service role için Node runtime
+export const runtime = "nodejs";
 
 /* ------------------------------ Rate limiting ----------------------------- */
 
@@ -41,26 +41,107 @@ function rateLimitOk(req: NextRequest): boolean {
   return false;
 }
 
-/* --------------------------------- Types --------------------------------- */
+/* --------------------------------- Helpers -------------------------------- */
 
-type FieldKey = "name" | "email" | "subject" | "message";
-type FieldErrors = Partial<Record<FieldKey, string>>;
+const SUBJECT_LABELS: Record<"general" | "project" | "hiring", string> = {
+  general: "General",
+  project: "Project",
+  hiring: "Hiring",
+};
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function buildEmail(args: {
+  name: string;
+  email: string;
+  subjectLabel: string;
+  message: string;
+}): { html: string; text: string } {
+  const { name, email, subjectLabel, message } = args;
+  const safeName = escapeHtml(name);
+  const safeEmail = escapeHtml(email);
+  const safeSubject = escapeHtml(subjectLabel);
+  const safeMessageHtml = escapeHtml(message).replace(/\n/g, "<br>");
+
+  const html = `<!doctype html>
+<html>
+  <body style="margin:0;padding:24px;background:#f5f5f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#111;">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:8px;overflow:hidden;border:1px solid #e5e5e5;">
+      <tr>
+        <td style="padding:20px 24px;background:#0ea5e9;color:#ffffff;">
+          <div style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;opacity:0.9;">New contact message</div>
+          <div style="font-size:18px;font-weight:600;margin-top:4px;">${safeSubject}</div>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:24px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="font-size:14px;line-height:1.5;">
+            <tr>
+              <td style="padding:6px 0;color:#666;width:80px;">From</td>
+              <td style="padding:6px 0;color:#111;font-weight:500;">${safeName}</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 0;color:#666;">Email</td>
+              <td style="padding:6px 0;"><a href="mailto:${safeEmail}" style="color:#0ea5e9;text-decoration:none;">${safeEmail}</a></td>
+            </tr>
+            <tr>
+              <td style="padding:6px 0;color:#666;">Subject</td>
+              <td style="padding:6px 0;color:#111;">${safeSubject}</td>
+            </tr>
+          </table>
+          <div style="margin:20px 0 8px;height:1px;background:#e5e5e5;"></div>
+          <div style="font-size:12px;color:#666;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:8px;">Message</div>
+          <div style="font-size:14px;line-height:1.6;color:#111;">${safeMessageHtml}</div>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:14px 24px;background:#fafafa;border-top:1px solid #e5e5e5;font-size:11px;color:#888;">
+          Sent from muratzorlu.dev — reply directly to respond to ${safeName}.
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>`;
+
+  const text = [
+    `New contact message — ${subjectLabel}`,
+    ``,
+    `From:    ${name}`,
+    `Email:   ${email}`,
+    `Subject: ${subjectLabel}`,
+    ``,
+    `Message:`,
+    `--------`,
+    message,
+    ``,
+    `--`,
+    `Sent from muratzorlu.dev`,
+  ].join("\n");
+
+  return { html, text };
+}
+
+/* --------------------------------- Types --------------------------------- */
 
 type OkPayload = { ok: true };
 type ErrorPayload =
-  | { message: "Invalid JSON" | "Too many requests" | "Spam detected" | "Database error" }
-  | { message: "Invalid payload"; issues: unknown }
-  | { message: "Validation error"; fieldErrors: FieldErrors };
+  | { message: "Invalid JSON" | "Too many requests" | "Spam detected" | "Failed to send message" }
+  | { message: "Invalid payload"; issues: unknown };
 
 /* --------------------------------- Route --------------------------------- */
 
 export async function POST(req: NextRequest): Promise<NextResponse<OkPayload | ErrorPayload>> {
-  // rate limit
   if (!rateLimitOk(req)) {
     return NextResponse.json({ message: "Too many requests" }, { status: 429 });
   }
 
-  // json parse
   let json: unknown;
   try {
     json = await req.json();
@@ -68,7 +149,6 @@ export async function POST(req: NextRequest): Promise<NextResponse<OkPayload | E
     return NextResponse.json({ message: "Invalid JSON" }, { status: 400 });
   }
 
-  // zod validate
   const parsed = ContactSchema.safeParse(json);
   if (!parsed.success) {
     return NextResponse.json(
@@ -79,52 +159,46 @@ export async function POST(req: NextRequest): Promise<NextResponse<OkPayload | E
 
   const { company, name, email, subject, message } = parsed.data;
 
-  // Honeypot
   if (company && company.trim().length > 0) {
     return NextResponse.json({ message: "Spam detected" }, { status: 400 });
   }
 
-  // Normalize (DB'deki email/message check'lerine takılmamak için)
-  const payload = {
-    name: name.trim(),
-    email: email.trim().toLowerCase(),
-    subject,
-    message: message.trim(),
-  };
+  const cleanName = name.trim();
+  const cleanEmail = email.trim().toLowerCase();
+  const cleanMessage = message.trim();
+  const subjectLabel = SUBJECT_LABELS[subject];
 
-  // Insert
-  const supabase = createServerClient(); // server-side, service role key ile
-  const { error } = await supabase.from("contacts").insert(payload);
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.error("[contact] RESEND_API_KEY is not set; cannot send email");
+    return NextResponse.json({ message: "Failed to send message" }, { status: 500 });
+  }
 
-  if (error) {
-    const blob = `${error.message ?? ""} ${error.details ?? ""}`;
+  const { html, text } = buildEmail({
+    name: cleanName,
+    email: cleanEmail,
+    subjectLabel,
+    message: cleanMessage,
+  });
 
-    if (error.code === "23514") {
-      const fieldErrors: FieldErrors = {};
-      if (blob.includes("contacts_email_check")) {
-        fieldErrors.email = "Please enter a valid email address.";
-      }
-      if (blob.includes("contacts_message_check")) {
-        fieldErrors.message = "Message must be 2000 characters or fewer.";
-      }
-      if (blob.includes("contacts_subject_check")) {
-        fieldErrors.subject = "Invalid subject value.";
-      }
-      if (Object.keys(fieldErrors).length > 0) {
-        return NextResponse.json(
-          { message: "Validation error", fieldErrors },
-          { status: 422 }
-        );
-      }
-    }
-
-    console.error("[contact] insert error:", {
-      code: error.code,
-      message: error.message,
-      details: error.details,
-      hint: error.hint,
+  try {
+    const resend = new Resend(apiKey);
+    const { error } = await resend.emails.send({
+      from: "Portfolio Contact <onboarding@resend.dev>",
+      to: "me@muratzorlu.dev",
+      replyTo: cleanEmail,
+      subject: `[Portfolio] ${subjectLabel} — ${cleanName}`,
+      html,
+      text,
     });
-    return NextResponse.json({ message: "Database error" }, { status: 502 });
+
+    if (error) {
+      console.error("[contact] resend send error:", error);
+      return NextResponse.json({ message: "Failed to send message" }, { status: 500 });
+    }
+  } catch (err) {
+    console.error("[contact] resend exception:", err);
+    return NextResponse.json({ message: "Failed to send message" }, { status: 500 });
   }
 
   return NextResponse.json({ ok: true }, { status: 200 });
