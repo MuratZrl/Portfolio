@@ -13,6 +13,7 @@ import { Container } from "@/components/layout/Container";
 import { ThemeProvider } from "@/theme/theme-provider";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://murat-zorlu-dev.vercel.app"),
@@ -45,6 +46,7 @@ export default function RootLayout({
           <Footer />
 
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
