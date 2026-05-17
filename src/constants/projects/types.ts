@@ -45,6 +45,8 @@ export type Project = {
   slug: InternalHref;
   title: string;
   summary: string;
+  /** Optional short summary used on cards (line-clamp-2). Falls back to `summary` if absent. */
+  cardSummary?: string;
   tags: readonly string[];
   category: ProjectCategory;
   /** Badge rendered on the thumbnail — reflects project type, not tech category. */

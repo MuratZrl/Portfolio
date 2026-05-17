@@ -60,24 +60,22 @@ export function ProjectCard({ project }: { project: Project }): React.JSX.Elemen
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
 
         {/* Project-type badge on image (driven by project.badge) */}
-        <div className="absolute left-3 top-3">
-          <Badge
-            className={cn(
-              "text-[10px] font-medium shadow-sm",
-              project.badge.variant === "accent"
-                ? "border-transparent bg-primary text-primary-foreground"
-                : "border-border/50 bg-background/80 text-foreground backdrop-blur-sm",
-            )}
-          >
-            {project.badge.label}
-          </Badge>
-        </div>
+        <Badge
+          className={cn(
+            "absolute left-3 top-3 text-[10px] font-medium shadow-sm",
+            project.badge.variant === "accent"
+              ? "border-transparent bg-primary text-primary-foreground"
+              : "border-border/50 bg-background/80 text-foreground backdrop-blur-sm",
+          )}
+        >
+          {project.badge.label}
+        </Badge>
       </div>
 
       {/* Body */}
       <CardHeader className="pb-2">
         <CardTitle className="text-base font-semibold sm:text-lg">{project.title}</CardTitle>
-        <CardDescription className="line-clamp-2">{project.summary}</CardDescription>
+        <CardDescription className="line-clamp-2">{project.cardSummary ?? project.summary}</CardDescription>
       </CardHeader>
 
       <CardContent className="flex-1 pt-0">
