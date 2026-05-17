@@ -107,7 +107,7 @@ export default function ContactDetails({
               aria-label="Copy email address"
               onClick={() => void copyToClipboard(email)}
               className={cn(
-                "flex size-8 shrink-0 select-none items-center justify-center rounded-lg transition-colors",
+                "flex size-8 shrink-0 cursor-pointer select-none items-center justify-center rounded-lg transition-colors",
                 copied
                   ? "bg-green-600/10 text-green-600 dark:text-green-400"
                   : "bg-muted text-muted-foreground hover:text-foreground",
@@ -163,7 +163,7 @@ export default function ContactDetails({
           <h3 className="text-base font-semibold">Elsewhere</h3>
         </div>
 
-        <div className="space-y-2">
+        <div className="-mb-2.5 space-y-2">
           {socials.map((s) => (
             <a
               key={s.label}
@@ -171,10 +171,7 @@ export default function ContactDetails({
               target="_blank"
               rel="noopener noreferrer"
               draggable={false}
-              className={cn(
-                "flex select-none items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors",
-                "hover:bg-muted",
-              )}
+              className="group flex select-none items-center gap-3 py-2.5 text-sm"
             >
               <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
                 <s.icon className="h-3.5 w-3.5" aria-hidden />
@@ -183,7 +180,10 @@ export default function ContactDetails({
                 <div className="text-sm font-medium">{s.label}</div>
                 <div className="truncate text-xs text-muted-foreground">{s.handle}</div>
               </div>
-              <ExternalLink className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
+              <ExternalLink
+                className="h-3.5 w-3.5 shrink-0 text-muted-foreground transition-colors group-hover:text-primary"
+                aria-hidden
+              />
             </a>
           ))}
         </div>

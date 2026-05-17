@@ -9,6 +9,7 @@ export const PROJECTS: readonly Project[] = [
       "Multi-tenant project management SaaS with kanban boards, team workspaces, and Stripe subscription billing.",
     tags: ["Next.js 16", "NestJS 11", "TypeScript", "PostgreSQL", "Prisma", "Stripe"],
     category: "Full-Stack",
+    badge: { label: "Personal project", variant: "muted" },
     image: { src: "/images/projects/teamboard.png", alt: "TeamBoard kanban dashboard" },
     links: {
       demo: { href: "https://teamboard-web.vercel.app", label: "Live" },
@@ -25,6 +26,7 @@ export const PROJECTS: readonly Project[] = [
       "Real-time chat platform with WebSocket messaging, multi-room channels, and 10+ live features powered by Redis pub/sub.",
     tags: ["Next.js 16", "NestJS 11", "TypeScript", "PostgreSQL", "Prisma", "Redis", "Socket.io"],
     category: "Full-Stack",
+    badge: { label: "Personal project", variant: "muted" },
     image: { src: "/images/projects/pulsechat.png", alt: "PulseChat real-time chat interface" },
     links: {
       demo: { href: "https://pulsechat-plum.vercel.app", label: "Live" },
@@ -41,9 +43,11 @@ export const PROJECTS: readonly Project[] = [
       "Live real estate platform serving 240+ active property listings, with map-based search and full admin panel.",
     tags: ["Next.js 16", "TypeScript", "Tailwind CSS", "Zustand", "Google Maps", "Leaflet"],
     category: "Full-Stack",
+    badge: { label: "Client work", variant: "accent" },
     image: { src: "/images/projects/yenigunemlak.png", alt: "YenigunEmlak property listings with map search" },
     links: {
       demo: { href: "https://yenigunemlak.com", label: "Live" },
+      repo: { href: "#", label: "Private repo", isPrivate: true },
     },
     featured: true,
     order: 3,

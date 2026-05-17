@@ -59,10 +59,17 @@ export function ProjectCard({ project }: { project: Project }): React.JSX.Elemen
         {/* Gradient overlay */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
 
-        {/* Category badge on image */}
+        {/* Project-type badge on image (driven by project.badge) */}
         <div className="absolute left-3 top-3">
-          <Badge className="bg-background/80 text-foreground backdrop-blur-sm border-border/50 text-[10px] font-medium shadow-sm">
-            {project.category}
+          <Badge
+            className={cn(
+              "text-[10px] font-medium shadow-sm",
+              project.badge.variant === "accent"
+                ? "border-transparent bg-primary text-primary-foreground"
+                : "border-border/50 bg-background/80 text-foreground backdrop-blur-sm",
+            )}
+          >
+            {project.badge.label}
           </Badge>
         </div>
       </div>

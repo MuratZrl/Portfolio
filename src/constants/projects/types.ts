@@ -33,12 +33,22 @@ export type ProjectCategory =
   | "Auth"
   | "E-Commerce";
 
+/** "accent" = highlighted (client / commercial work). "muted" = subtle (personal / demo). */
+export type ProjectBadgeVariant = "accent" | "muted";
+
+export type ProjectBadge = {
+  label: string;
+  variant: ProjectBadgeVariant;
+};
+
 export type Project = {
   slug: InternalHref;
   title: string;
   summary: string;
   tags: readonly string[];
   category: ProjectCategory;
+  /** Badge rendered on the thumbnail — reflects project type, not tech category. */
+  badge: ProjectBadge;
   image?: { src: string; alt: string };
   links?: { demo?: ProjectLink; repo?: ProjectLink };
   metrics?: { lighthouse?: string; stars?: string };

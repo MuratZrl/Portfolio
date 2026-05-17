@@ -78,7 +78,7 @@ export default function Hero({
         <h1
           id={headingId}
           className={cn(
-            "text-balance text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl",
+            "text-balance text-3xl font-bold leading-[1.08] tracking-tight sm:text-4xl lg:text-5xl",
             textAlign,
             narrow ? "max-w-2xl" : "max-w-3xl",
           )}
@@ -111,7 +111,10 @@ export default function Hero({
             size="lg"
             aria-label={primary.ariaLabel ?? `Go to ${primary.label} page`}
           >
-            <Link href={primary.href}>{primary.label}</Link>
+            <Link href={primary.href}>
+              {primary.label}
+              <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
+            </Link>
           </Button>
 
           {secondary ? (
@@ -122,10 +125,7 @@ export default function Hero({
               className="border-border/50 backdrop-blur-sm"
               aria-label={secondary.ariaLabel ?? `Go to ${secondary.label} page`}
             >
-              <Link href={secondary.href}>
-                {secondary.label}
-                <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
-              </Link>
+              <Link href={secondary.href}>{secondary.label}</Link>
             </Button>
           ) : null}
         </div>

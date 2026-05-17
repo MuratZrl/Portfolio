@@ -34,10 +34,10 @@ export default function HomePage(): React.JSX.Element {
     // Page sadece layout/padding işini yapıyor; başlık vermiyoruz
     <Page>
       <Hero
-        title="Ship reliable web apps, minus the chaos"
-        subtitle="Full-stack developer crafting type-safe, production-ready applications."
-        primary={{ href: "/about", label: "About" }}
-        secondary={{ href: "/projects", label: "Projects" }}
+        title="Full-Stack Developer building type-safe web apps"
+        subtitle="Next.js, NestJS & TypeScript. Available for remote roles and freelance work."
+        primary={{ href: "/projects", label: "Projects" }}
+        secondary={{ href: "/about", label: "About" }}
         statusText="Available for work"
         align="center"
         className="py-20 sm:py-28"

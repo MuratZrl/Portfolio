@@ -272,7 +272,7 @@ export default function ContactForm(): React.JSX.Element {
                             "outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
                             selected
                               ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
-                              : "border border-border/50 bg-background/60 text-muted-foreground hover:bg-muted hover:text-foreground",
+                              : "cursor-pointer border border-border/50 bg-background/60 text-muted-foreground hover:bg-muted hover:text-foreground",
                           )}
                         >
                           {opt.label}
@@ -358,7 +358,7 @@ export default function ContactForm(): React.JSX.Element {
               className={cn(
                 "inline-flex w-full select-none items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-medium transition-all duration-200",
                 canSubmit
-                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/90"
+                  ? "cursor-pointer bg-primary text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/90"
                   : "bg-muted text-muted-foreground cursor-not-allowed",
               )}
             >
