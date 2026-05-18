@@ -3,40 +3,6 @@ import type { Project } from "./types";
 
 export const PROJECTS: readonly Project[] = [
   {
-    slug: "/projects/teamboard",
-    title: "TeamBoard",
-    summary:
-      "Multi-tenant project management SaaS with kanban boards, team workspaces, and Stripe subscription billing.",
-    tags: ["Next.js 16", "NestJS 11", "TypeScript", "PostgreSQL", "Prisma", "Stripe"],
-    category: "Full-Stack",
-    badge: { label: "Personal project", variant: "muted" },
-    image: { src: "/images/projects/teamboard.png", alt: "TeamBoard kanban dashboard" },
-    links: {
-      demo: { href: "https://teamboard-web.vercel.app", label: "Live" },
-      repo: { href: "https://github.com/MuratZrl/teamboard", label: "Repo" },
-    },
-    featured: true,
-    order: 3,
-    createdAt: "2026-02-01",
-  },
-  {
-    slug: "/projects/pulsechat",
-    title: "PulseChat",
-    summary:
-      "Real-time chat platform with WebSocket messaging, multi-room channels, and 10+ live features powered by Redis pub/sub.",
-    tags: ["Next.js 16", "NestJS 11", "TypeScript", "PostgreSQL", "Prisma", "Redis", "Socket.io"],
-    category: "Full-Stack",
-    badge: { label: "Personal project", variant: "muted" },
-    image: { src: "/images/projects/pulsechat.png", alt: "PulseChat real-time chat interface" },
-    links: {
-      demo: { href: "https://pulsechat-plum.vercel.app", label: "Live" },
-      repo: { href: "https://github.com/MuratZrl/pulsechat", label: "Repo" },
-    },
-    featured: true,
-    order: 4,
-    createdAt: "2026-02-01",
-  },
-  {
     slug: "/projects/szmetal-admin-panel",
     title: "SZMetal Admin Panel",
     summary:
@@ -73,5 +39,57 @@ export const PROJECTS: readonly Project[] = [
     featured: true,
     order: 2,
     createdAt: "2026-01-01",
+  },
+  {
+    slug: "/projects/ticimax-dashboard",
+    title: "Ticimax Dashboard",
+    summary:
+      "Ticimax e-commerce sync engine and admin dashboard for Temalu: realtime supplier scraping with Puppeteer, a Supabase backend, and live sync progress monitoring built on Next.js App Router.",
+    cardSummary:
+      "Ticimax e-commerce sync engine + admin dashboard — realtime supplier scraping and live sync progress monitoring.",
+    tags: ["Next.js 16", "TypeScript", "Supabase", "Puppeteer", "Tailwind CSS"],
+    category: "Full-Stack",
+    badge: { label: "Client work", variant: "accent" },
+    image: { src: "/images/projects/ticimax-dashboard.png", alt: "Ticimax sync dashboard" },
+    links: {
+      repo: { href: "#", label: "Private repo", isPrivate: true },
+    },
+    featured: true,
+    order: 3,
+    createdAt: "2026-05-18",
+  },
+  {
+    slug: "/projects/teamboard",
+    title: "TeamBoard",
+    summary:
+      "Multi-tenant project management SaaS with kanban boards, team workspaces, and Stripe subscription billing.",
+    tags: ["Next.js 16", "NestJS 11", "TypeScript", "PostgreSQL", "Prisma", "Stripe"],
+    category: "Full-Stack",
+    badge: { label: "Personal project", variant: "muted" },
+    image: { src: "/images/projects/teamboard.png", alt: "TeamBoard kanban dashboard" },
+    links: {
+      demo: { href: "https://teamboard-web.vercel.app", label: "Live" },
+      repo: { href: "https://github.com/MuratZrl/teamboard", label: "Repo" },
+    },
+    featured: true,
+    order: 4,
+    createdAt: "2026-02-01",
+  },
+  {
+    slug: "/projects/pulsechat",
+    title: "PulseChat",
+    summary:
+      "Real-time chat platform with WebSocket messaging, multi-room channels, and 10+ live features powered by Redis pub/sub.",
+    tags: ["Next.js 16", "NestJS 11", "TypeScript", "PostgreSQL", "Prisma", "Redis", "Socket.io"],
+    category: "Full-Stack",
+    badge: { label: "Personal project", variant: "muted" },
+    image: { src: "/images/projects/pulsechat.png", alt: "PulseChat real-time chat interface" },
+    links: {
+      demo: { href: "https://pulsechat-plum.vercel.app", label: "Live" },
+      repo: { href: "https://github.com/MuratZrl/pulsechat", label: "Repo" },
+    },
+    featured: true,
+    order: 5,
+    createdAt: "2026-02-01",
   },
 ] as const;

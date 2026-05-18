@@ -27,15 +27,8 @@ export default function Projects({
   limit,
   className,
 }: ProjectsProps): React.JSX.Element {
-  const allProjects =
+  const sortedProjects =
     source === "featured" ? getFeaturedProjects(limit) : getAllProjects();
-
-  // Sort: live demo projects first
-  const sortedProjects = [...allProjects].sort((a, b) => {
-    const aHasDemo = a.links?.demo ? 1 : 0;
-    const bHasDemo = b.links?.demo ? 1 : 0;
-    return bHasDemo - aHasDemo;
-  });
 
   // Derive categories from the sorted list
   const catSet = new Set<ProjectCategory>();
