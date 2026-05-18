@@ -38,7 +38,7 @@ export const PROJECTS: readonly Project[] = [
     },
     featured: true,
     order: 2,
-    createdAt: "2026-01-01",
+    createdAt: "2025-11-26",
   },
   {
     slug: "/projects/ticimax-dashboard",
@@ -56,7 +56,7 @@ export const PROJECTS: readonly Project[] = [
     },
     featured: true,
     order: 3,
-    createdAt: "2026-05-18",
+    createdAt: "2026-03-30",
   },
   {
     slug: "/projects/teamboard",
