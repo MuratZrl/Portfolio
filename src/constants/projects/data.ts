@@ -13,8 +13,11 @@ export const PROJECTS: readonly Project[] = [
     category: "Full-Stack",
     badge: { label: "Client work", variant: "accent" },
     image: { src: "/images/projects/szmetal-admin-panel.png", alt: "SZMetal admin panel dashboard" },
+    gallery: [
+      { src: "/images/projects/szmetal-dashboard.png", alt: "SZMetal kontrol paneli — döviz, aktivite akışı ve grafikler" },
+      { src: "/images/projects/szmetal-users.png", alt: "SZMetal kullanıcı yönetimi — rol ve durum kontrolü" },
+    ],
     links: {
-      demo: { href: "https://szmetal.com.tr", label: "Live" },
       repo: { href: "#", label: "Private repo", isPrivate: true },
     },
     featured: true,
@@ -32,6 +35,9 @@ export const PROJECTS: readonly Project[] = [
     category: "Full-Stack",
     badge: { label: "Client work", variant: "accent" },
     image: { src: "/images/projects/yenigunemlak.png", alt: "Yenigün Emlak property listings with map search" },
+    gallery: [
+      { src: "/images/projects/yenigun-istatistik.png", alt: "Yenigün Emlak istatistik paneli — Google Search Console CTR, sorgu ve ülke dağılımı" },
+    ],
     links: {
       demo: { href: "https://yenigunemlak.com", label: "Live" },
       repo: { href: "#", label: "Private repo", isPrivate: true },
