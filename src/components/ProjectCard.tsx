@@ -131,10 +131,15 @@ export function ProjectCard({ project }: { project: Project }): React.JSX.Elemen
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button size="sm" variant="ghost" disabled className="text-muted-foreground">
-                    <Lock className="mr-1.5 h-3.5 w-3.5" aria-hidden />
+                  <span
+                    tabIndex={0}
+                    role="note"
+                    aria-label={`${project.title} repository is private and not publicly available`}
+                    className="inline-flex select-none items-center gap-1.5 h-8 rounded-md bg-muted px-3 text-sm font-medium text-muted-foreground cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                  >
+                    <Lock className="h-3.5 w-3.5" aria-hidden />
                     {repo.label}
-                  </Button>
+                  </span>
                 </TooltipTrigger>
                 <TooltipContent>Repository is private</TooltipContent>
               </Tooltip>

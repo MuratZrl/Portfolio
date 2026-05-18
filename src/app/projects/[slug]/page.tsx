@@ -10,8 +10,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import {
-  ExternalLink, Github, ArrowLeft, Calendar, Gauge, Star,
+  ExternalLink, Github, ArrowLeft, Calendar, Gauge, Star, Lock,
 } from "lucide-react";
 
 import { PROJECTS } from "@/constants/projects";
@@ -46,6 +47,7 @@ export default async function ProjectDetailPage({ params }: Props) {
   const isRemote = imgSrc.startsWith("http");
   const demo = project.links?.demo;
   const repo = project.links?.repo;
+  const repoIsPrivate = Boolean(repo?.isPrivate);
 
   return (
     <Page>
@@ -101,12 +103,31 @@ export default async function ProjectDetailPage({ params }: Props) {
               </Button>
             ) : null}
             {repo ? (
-              <Button asChild variant="outline">
-                <a href={repo.href} target="_blank" rel="noreferrer">
-                  <Github className="mr-2 h-4 w-4" />
-                  {repo.label}
-                </a>
-              </Button>
+              repoIsPrivate ? (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span
+                        tabIndex={0}
+                        role="note"
+                        aria-label={`${project.title} repository is private and not publicly available`}
+                        className="inline-flex select-none items-center gap-2 h-9 rounded-md bg-muted px-4 text-sm font-medium text-muted-foreground cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                      >
+                        <Lock className="h-4 w-4" aria-hidden />
+                        {repo.label}
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>Repository is private</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <Button asChild variant="outline">
+                  <a href={repo.href} target="_blank" rel="noreferrer">
+                    <Github className="mr-2 h-4 w-4" />
+                    {repo.label}
+                  </a>
+                </Button>
+              )
             ) : null}
           </div>
         </div>
