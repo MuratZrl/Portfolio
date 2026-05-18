@@ -41,6 +41,11 @@ export type ProjectBadge = {
   variant: ProjectBadgeVariant;
 };
 
+export type ProjectImage = {
+  src: string;
+  alt: string;
+};
+
 export type Project = {
   slug: InternalHref;
   title: string;
@@ -51,7 +56,10 @@ export type Project = {
   category: ProjectCategory;
   /** Badge rendered on the thumbnail — reflects project type, not tech category. */
   badge: ProjectBadge;
-  image?: { src: string; alt: string };
+  /** Primary/hero image. Used on the card and as the first image on the detail page. */
+  image?: ProjectImage;
+  /** Additional screenshots shown on the detail page only, in order, after the hero. */
+  gallery?: readonly ProjectImage[];
   links?: { demo?: ProjectLink; repo?: ProjectLink };
   metrics?: { lighthouse?: string; stars?: string };
   /** If omitted, treated as featured=true by consumers. */

@@ -6,7 +6,6 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 import { Page } from "@/components/layout/Page";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -42,17 +41,18 @@ export default async function ProjectDetailPage({ params }: Props) {
   const project = resolveProject(slug);
   if (!project) notFound();
 
-  const imgSrc = project.image?.src || placeholder(1280, 720, project.title);
-  const imgAlt = project.image?.alt ?? project.title;
-  const isRemote = imgSrc.startsWith("http");
+  const heroSrc = project.image?.src || placeholder(1280, 720, project.title);
+  const heroAlt = project.image?.alt ?? project.title;
+  const galleryImages = project.gallery ?? [];
+
   const demo = project.links?.demo;
   const repo = project.links?.repo;
   const repoIsPrivate = Boolean(repo?.isPrivate);
 
   return (
     <Page>
-      {/* Back link */}
       <section>
+        {/* Back link */}
         <Link
           href="/projects"
           draggable={false}
@@ -61,26 +61,6 @@ export default async function ProjectDetailPage({ params }: Props) {
           <ArrowLeft className="h-4 w-4" />
           Back to Projects
         </Link>
-
-        {/* Hero image */}
-        <div className="relative aspect-video w-full overflow-hidden rounded-xl border border-border/50 bg-muted">
-          <Image
-            src={imgSrc}
-            alt={imgAlt}
-            fill
-            priority
-            sizes="(min-width: 1024px) 80vw, 100vw"
-            className="object-cover"
-            unoptimized={isRemote}
-          />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
-
-          <div className="absolute left-4 top-4">
-            <Badge className="bg-background/80 text-foreground backdrop-blur-sm border-border/50 shadow-sm">
-              {project.category}
-            </Badge>
-          </div>
-        </div>
 
         {/* Title & actions */}
         <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -143,6 +123,14 @@ export default async function ProjectDetailPage({ params }: Props) {
             </span>
           ))}
         </div>
+
+        {/* All images: hero + gallery stacked as one uninterrupted sequence */}
+        <div className="mt-8 space-y-6">
+          <BrowserFrame src={heroSrc} alt={heroAlt} priority />
+          {galleryImages.map((img, i) => (
+            <BrowserFrame key={`${img.src}-${i}`} src={img.src} alt={img.alt} />
+          ))}
+        </div>
       </section>
 
       <Separator className="my-8" />
@@ -180,6 +168,48 @@ export default async function ProjectDetailPage({ params }: Props) {
 }
 
 /* -------------------------------- Helpers -------------------------------- */
+
+function BrowserFrame({
+  src,
+  alt,
+  priority = false,
+}: {
+  src: string;
+  alt: string;
+  priority?: boolean;
+}) {
+  const isRemote = src.startsWith("http");
+  return (
+    // Desktop layer: subtle gradient backdrop, modest padding so the window
+    // reads as floating without shrinking the screenshot too much.
+    <div className="rounded-2xl bg-gradient-to-br from-primary/15 via-muted/50 to-primary/5 p-3 sm:p-6 lg:p-8">
+      {/* Window layer: Mac-style chrome + screenshot */}
+      <div className="overflow-hidden rounded-xl border border-border/50 bg-card shadow-xl">
+        {/* Title bar with macOS-style traffic-light dots */}
+        <div
+          aria-hidden
+          className="flex h-7 items-center gap-1.5 border-b border-border/50 bg-muted/60 px-3"
+        >
+          <span className="size-2.5 rounded-full bg-[#ff5f57]" />
+          <span className="size-2.5 rounded-full bg-[#febc2e]" />
+          <span className="size-2.5 rounded-full bg-[#28c840]" />
+        </div>
+        {/* Image area — stays 16:9 for the screenshots */}
+        <div className="relative aspect-video w-full bg-muted">
+          <Image
+            src={src}
+            alt={alt}
+            fill
+            priority={priority}
+            sizes="(min-width: 1024px) 72vw, 92vw"
+            className="object-cover"
+            unoptimized={isRemote}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function StatCard({
   icon,
