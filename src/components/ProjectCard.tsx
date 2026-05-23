@@ -41,7 +41,7 @@ export function ProjectCard({ project }: { project: Project }): React.JSX.Elemen
       "group flex h-full flex-col overflow-hidden",
       "border-border/50 bg-card/80 backdrop-blur-sm",
       "transition-all duration-300 ease-out",
-      "hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20",
+      "hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20",
       "focus-within:shadow-lg focus-within:border-primary/20",
     )}>
 
