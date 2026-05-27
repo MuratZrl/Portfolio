@@ -15,11 +15,13 @@ export const metadata: Metadata = {
   description:
     "Build, ship, iterate. Simple, fast, and clear. A developer portfolio with clean UX and solid engineering.",
   openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "Murat Zorlu",
+    locale: "en_US",
     title: "Murat Zorlu | Home",
     description:
       "Build, ship, iterate. Simple, fast, and clear. A developer portfolio with clean UX and solid engineering.",
-    type: "website",
-    url: "https://example.com/",
   },
   twitter: {
     card: "summary_large_image",

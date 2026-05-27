@@ -16,12 +16,15 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://murat-zorlu-dev.vercel.app"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://muratzorlu.dev"),
   title: {
     default: "Murat Zorlu | Portfolio",
     template: "Murat Zorlu | %s",
   },
   description: "Minimal portfolio website. Pages: Home, About, Projects, Donation.",
+  authors: [{ name: "Murat Zorlu", url: "https://muratzorlu.dev" }],
+  creator: "Murat Zorlu",
+  publisher: "Murat Zorlu",
   openGraph: {
     type: "website",
     url: "/",

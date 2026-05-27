@@ -10,10 +10,13 @@ export const metadata: Metadata = {
   description: "Get in touch for projects, collaborations, or hiring.",
   alternates: { canonical: "/contact" },
   openGraph: {
+    type: "website",
+    url: "/contact",
+    siteName: "Murat Zorlu",
+    locale: "en_US",
     title: "Contact",
     description:
       "Get in touch for project inquiries, collaborations, or hiring.",
-    url: "/contact",
   },
 };
 

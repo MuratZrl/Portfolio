@@ -14,11 +14,13 @@ export const metadata: Metadata = {
     "Who I am, how I work, and what I’ve built — experience timeline, skills, and a downloadable CV.",
   alternates: { canonical: "/about" },
   openGraph: {
+    type: "profile",
+    url: "/about",
+    siteName: "Murat Zorlu",
+    locale: "en_US",
     title: "About",
     description:
       "Experience, skills, and CV — all in one place.",
-    url: "/about",
-    type: "profile",
   },
 };
 
