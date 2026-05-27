@@ -22,6 +22,21 @@ export const metadata: Metadata = {
     template: "Murat Zorlu | %s",
   },
   description: "Minimal portfolio website. Pages: Home, About, Projects, Donation.",
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "Murat Zorlu",
+    title: "Murat Zorlu | Portfolio",
+    description: "Full-Stack Developer — Next.js, NestJS, TypeScript.",
+    locale: "en_US",
+    // The image is added automatically by src/app/opengraph-image.tsx.
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Murat Zorlu | Portfolio",
+    description: "Full-Stack Developer — Next.js, NestJS, TypeScript.",
+    // The image is added automatically by src/app/twitter-image.tsx.
+  },
 };
 
 export default function RootLayout({
