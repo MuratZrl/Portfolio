@@ -133,6 +133,30 @@ export default async function ProjectDetailPage({ params }: Props) {
         </div>
       </section>
 
+      {/* Key technical decisions — only rendered when project data provides them */}
+      {project.technicalDecisions && project.technicalDecisions.length > 0 ? (
+        <section aria-labelledby="technical-decisions-heading">
+          <h2
+            id="technical-decisions-heading"
+            className="text-xl font-semibold tracking-tight sm:text-2xl"
+          >
+            Key technical decisions
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Trade-offs that shaped the build — what was chosen, and why over the alternative.
+          </p>
+
+          <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+            {project.technicalDecisions.map((d, i) => (
+              <article key={`${d.title}-${i}`} className="space-y-2">
+                <h3 className="text-base font-semibold tracking-tight">{d.title}</h3>
+                <p className="text-sm leading-relaxed text-muted-foreground">{d.body}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
       <Separator className="my-8" />
 
       {/* Stats grid */}

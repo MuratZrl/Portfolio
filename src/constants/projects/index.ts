@@ -8,6 +8,7 @@ export type {
   ProjectLink,
   Project,
   ProjectCategory,
+  TechnicalDecision,
 } from "./types";
 
 export { PROJECTS } from "./data";

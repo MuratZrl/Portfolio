@@ -46,6 +46,16 @@ export type ProjectImage = {
   alt: string;
 };
 
+/**
+ * A single engineering decision called out on the project detail page.
+ * `title` is the short heading (e.g. "Why Supabase over Firebase").
+ * `body` is a 2-3 sentence prose paragraph: problem, choice, and rationale vs. the alternative.
+ */
+export type TechnicalDecision = {
+  title: string;
+  body: string;
+};
+
 export type Project = {
   slug: InternalHref;
   title: string;
@@ -62,6 +72,11 @@ export type Project = {
   gallery?: readonly ProjectImage[];
   links?: { demo?: ProjectLink; repo?: ProjectLink };
   metrics?: { lighthouse?: string; stars?: string };
+  /**
+   * Optional list of 2-4 key engineering decisions shown on the detail page.
+   * Section is hidden entirely when this field is missing or empty.
+   */
+  technicalDecisions?: readonly TechnicalDecision[];
   /** If omitted, treated as featured=true by consumers. */
   featured?: boolean;
   createdAt?: DateStr;
