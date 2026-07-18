@@ -53,7 +53,12 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
   return (
     <article
       className={cn(
-        "plate group flex flex-col overflow-hidden transition-shadow duration-[var(--dur-base)] ease-[var(--ease-standard)]",
+        // `relative` is load-bearing, not cosmetic: the title link below
+        // stretches an ::after over the whole card to make it clickable. With
+        // no positioned ancestor that pseudo-element resolves against the
+        // initial containing block and covers the entire document, so every
+        // click on the page lands on the last card in DOM order.
+        "plate group relative flex flex-col overflow-hidden transition-shadow duration-[var(--dur-base)] ease-[var(--ease-standard)]",
         "hover:shadow-[var(--shadow-raised-lg)] focus-within:shadow-[var(--shadow-raised-lg)]",
       )}
     >
