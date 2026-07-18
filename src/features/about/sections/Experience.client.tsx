@@ -206,7 +206,7 @@ function TimelineCard({
       <div className={cn(
         "group rounded-2xl border p-5 sm:p-6",
         "border-[var(--edge-soft)] bg-[var(--surface)]",
-        "transition-[border-color,box-shadow] duration-200",
+        "interactive",
         "hover:border-primary/20 hover:shadow-md hover:shadow-primary/5",
       )}>
         {/* Header */}
@@ -309,7 +309,7 @@ function TimelineCard({
 function LinkPill({ href, label }: ExtLink): React.JSX.Element {
   const classes = cn(
     "inline-flex select-none items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium",
-    "text-muted-foreground transition-colors duration-150",
+    "text-muted-foreground interactive",
     "hover:bg-primary/10 hover:text-primary",
   );
 

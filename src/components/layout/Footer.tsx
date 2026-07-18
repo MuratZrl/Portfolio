@@ -57,7 +57,7 @@ export default function Footer(): React.JSX.Element {
                 href={`mailto:${email}`}
                 draggable={false}
                 className={cn(
-                  "recessed inline-flex min-h-6 select-none items-center gap-2 px-3 py-1.5 text-xs font-medium transition-colors",
+                  "recessed inline-flex min-h-6 select-none items-center gap-2 px-3 py-1.5 text-xs font-medium interactive",
                   "text-muted-foreground hover:text-foreground",
                 )}
                 aria-label={`Email ${email}`}
@@ -79,7 +79,7 @@ export default function Footer(): React.JSX.Element {
                   key={link.href}
                   href={link.href}
                   draggable={false}
-                  className="inline-flex min-h-6 select-none items-center text-sm text-muted-foreground transition-colors hover:text-primary"
+                  className="inline-flex min-h-6 select-none items-center text-sm text-muted-foreground interactive hover:text-primary"
                 >
                   {link.label}
                 </Link>
@@ -102,7 +102,7 @@ export default function Footer(): React.JSX.Element {
                   draggable={false}
                   aria-label={`${s.label} (opens in a new tab)`}
                   className={cn(
-                    "flex size-9 select-none items-center justify-center rounded-lg transition-colors",
+                    "flex size-9 select-none items-center justify-center rounded-lg interactive",
                     "bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary",
                   )}
                 >

@@ -183,7 +183,7 @@ function StatCard({
   return (
     <div className={cn(
       "flex items-center gap-3 rounded-xl border border-[var(--edge-soft)] px-4 py-3",
-      "transition-colors hover:border-primary/20",
+      "interactive hover:border-primary/20",
     )}>
       {Icon ? (
         <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">

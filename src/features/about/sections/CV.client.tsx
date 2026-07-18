@@ -66,7 +66,7 @@ export default function CvSection({
               aria-label="Download CV"
               className={cn(
                 "inline-flex select-none items-center gap-2 rounded-full px-4 py-2 text-xs font-medium",
-                "bg-muted text-muted-foreground transition-colors duration-200",
+                "bg-muted text-muted-foreground interactive",
                 "hover:bg-muted/80 hover:text-foreground",
               )}
             >
@@ -82,7 +82,7 @@ export default function CvSection({
               aria-label="Open CV in a new tab"
               className={cn(
                 "inline-flex select-none items-center gap-2 rounded-full px-4 py-2 text-xs font-medium",
-                "bg-primary text-primary-foreground transition-colors duration-200",
+                "bg-primary text-primary-foreground interactive",
                 "hover:bg-primary/90",
               )}
             >

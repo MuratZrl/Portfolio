@@ -90,7 +90,7 @@ function SheetContent({
 
         <SheetPrimitive.Close
           className={cn(
-            "absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100",
+            "absolute right-4 top-4 rounded-sm opacity-70 interactive hover:opacity-100",
             "disabled:pointer-events-none"
           )}
         >

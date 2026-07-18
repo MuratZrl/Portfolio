@@ -365,7 +365,7 @@ export default function ContactForm(): React.JSX.Element {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="soft-btn inline-flex w-full min-h-11 select-none items-center justify-center gap-2 rounded-[var(--radius-sm)] bg-[var(--accent)] px-6 py-3 text-sm font-medium text-[color:var(--primary-foreground)] transition-colors duration-[var(--dur-fast)] ease-[var(--ease-standard)] hover:bg-[var(--accent-hover)] disabled:opacity-60"
+              className="soft-btn inline-flex w-full min-h-11 select-none items-center justify-center gap-2 rounded-[var(--radius-sm)] bg-[var(--accent)] px-6 py-3 text-sm font-medium text-[color:var(--primary-foreground)] interactive duration-[var(--dur-fast)] ease-[var(--ease-standard)] hover:bg-[var(--accent-hover)] disabled:opacity-60"
             >
               {isSubmitting ? (
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden />

@@ -69,7 +69,7 @@ export default function Projects({
           onClick={() => handleFilterChange("All")}
           aria-pressed={activeFilter === "All"}
           className={cn(
-            "inline-flex select-none items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
+            "inline-flex select-none items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium interactive",
             activeFilter === "All"
               ? "bg-primary text-primary-foreground"
               : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground",
@@ -87,7 +87,7 @@ export default function Projects({
               onClick={() => handleFilterChange(cat)}
               aria-pressed={activeFilter === cat}
               className={cn(
-                "inline-flex select-none items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
+                "inline-flex select-none items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium interactive",
                 activeFilter === cat
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground",
