@@ -279,7 +279,7 @@ export default function ContactForm(): React.JSX.Element {
                           onClick={() => field.onChange(opt.value)}
                           className={cn(
                             "inline-flex select-none items-center justify-center rounded-lg px-3 py-2 text-sm font-medium interactive",
-                            "outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
+                            "outline-none",
                             selected
                               ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
                               : "cursor-pointer border border-[var(--edge-soft)] bg-background/60 text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -324,7 +324,7 @@ export default function ContactForm(): React.JSX.Element {
                     id="contact-message"
                     placeholder="Tell me about your idea..."
                     aria-describedby="message-counter"
-                    className="flex-1 h-full min-h-[180px] md:min-h-[260px] resize-y rounded-lg border-[var(--edge-soft)] bg-background/60 focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+                    className="flex-1 h-full min-h-[180px] md:min-h-[260px] resize-y rounded-lg border-[var(--edge-soft)] bg-background/60"
                     rows={10}
                     {...field}
                     onChange={(e) => {

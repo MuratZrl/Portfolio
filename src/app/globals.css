@@ -225,13 +225,20 @@
     text-wrap: balance;
   }
 
-  /* High-contrast solid outline. Never a shadow, never a glow — this is the
-     one thing that must survive on every surface in the system.
-     :focus-visible, never :focus, so it does not fire on mouse press. */
+  /* Two-tone focus ring. Never a shadow, never a glow.
+     :focus-visible, never :focus, so it does not fire on mouse press.
+
+     The accent ring alone is 1:1 against the primary button, whose fill is
+     the same colour — so the offset gap is not cosmetic, it is the second
+     tone. It exposes the surface underneath and separates ring from fill:
+     5.29:1 light / 5.38:1 dark on BOTH boundaries.
+
+     No border-radius here. `outline` already follows the element's own
+     radius; setting it would reshape the element on focus, snapping a 16px
+     card or the 20px coupon down to 10px the moment it is focused. */
   :focus-visible {
-    outline: 3px solid var(--accent);
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
-    border-radius: var(--radius-sm);
   }
 
   /* Belt and braces: some shadcn primitives ship their own ring. One focus

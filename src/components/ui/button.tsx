@@ -11,7 +11,7 @@ const buttonVariants = cva(
       variant: {
         default: "soft-btn bg-primary text-primary-foreground hover:bg-[var(--accent-hover)]",
         destructive:
-          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+          "bg-destructive text-white hover:bg-destructive/90 dark: dark:bg-destructive/60",
         outline: "soft-btn bg-[var(--surface)] text-foreground hover:bg-[var(--raised)]",
         secondary: "soft-btn bg-[var(--surface)] text-foreground hover:bg-[var(--raised)]",
         ghost: "interactive hover:bg-[var(--raised)] hover:text-accent-foreground",
