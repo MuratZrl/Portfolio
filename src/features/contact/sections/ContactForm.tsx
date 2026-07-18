@@ -48,14 +48,11 @@ export default function ContactForm(): React.JSX.Element {
     touchedFields,
     submitCount,
     isSubmitting,
-    isValid,
-    isDirty,
   } = form.formState;
 
   const showError = (k: keyof ContactInput) =>
     Boolean(touchedFields[k] || submitCount > 0) && Boolean(errors[k]);
 
-  const canSubmit = isValid && isDirty && !isSubmitting;
 
   const [status, setStatus] = React.useState<SubmitStatus>("idle");
   const [errorMsg, setErrorMsg] = React.useState("");
@@ -185,7 +182,17 @@ export default function ContactForm(): React.JSX.Element {
           className="flex flex-1 flex-col gap-5"
           noValidate
           aria-busy={isSubmitting}
+          aria-describedby="contact-required-note"
         >
+          {/* 3.3.2 Labels or Instructions — every field in ContactSchema is
+              required, and nothing said so. */}
+          <p
+            id="contact-required-note"
+            className="text-[length:var(--text-body-sm)] text-[color:var(--patina)]"
+          >
+            Every field is required.
+          </p>
+
           {/* Honeypot */}
           <input
             type="text"
@@ -206,6 +213,8 @@ export default function ContactForm(): React.JSX.Element {
                   <FormLabel htmlFor="contact-name">Full Name</FormLabel>
                   <FormControl>
                     <Input
+                      required
+                      aria-required="true"
                       id="contact-name"
                       placeholder="Your name"
                       autoComplete="name"
@@ -228,6 +237,8 @@ export default function ContactForm(): React.JSX.Element {
                   <FormLabel htmlFor="contact-email">Email</FormLabel>
                   <FormControl>
                     <Input
+                      required
+                      aria-required="true"
                       id="contact-email"
                       type="email"
                       placeholder="you@example.com"
@@ -309,6 +320,8 @@ export default function ContactForm(): React.JSX.Element {
                 </div>
                 <FormControl>
                   <Textarea
+                    required
+                    aria-required="true"
                     id="contact-message"
                     placeholder="Tell me about your idea..."
                     aria-describedby="message-counter"
@@ -353,21 +366,15 @@ export default function ContactForm(): React.JSX.Element {
           <div className="mt-auto pt-1">
             <button
               type="submit"
-              disabled={!canSubmit}
-              aria-disabled={!canSubmit}
-              className={cn(
-                "inline-flex w-full select-none items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-medium transition-all duration-200",
-                canSubmit
-                  ? "cursor-pointer bg-primary text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/90"
-                  : "bg-muted text-muted-foreground cursor-not-allowed",
-              )}
+              disabled={isSubmitting}
+              className="btn-chamfer inline-flex w-full min-h-11 select-none items-center justify-center gap-2 rounded-[2px] bg-[var(--eloksal)] px-6 py-3 text-sm font-medium text-[color:var(--primary-foreground)] transition-colors duration-[var(--dur-fast)] ease-[var(--ease-standard)] hover:bg-[var(--eloksal-hover)] disabled:opacity-60"
             >
               {isSubmitting ? (
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
               ) : (
                 <Send className="h-4 w-4" aria-hidden />
               )}
-              {isSubmitting ? "Sending..." : "Send Message"}
+              {isSubmitting ? "Sending…" : "Send message"}
             </button>
           </div>
         </form>

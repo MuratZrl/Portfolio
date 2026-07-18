@@ -4,13 +4,13 @@ import type { ExperienceItem } from "@/features/about/types";
 export const EXPERIENCE_ITEMS = [
   {
     id: "exp-eupholias",
-    kind: "work",
-    org: "Eupholias",
+    kind: "freelance",
+    org: "Yenigün Emlak — via Eupholias",
     role: "Freelance Developer",
     location: "Istanbul",
     period: { start: "2026-01", end: "2026-03" },
     summary:
-      "Architected and delivered a production real estate platform for a Sakarya-based agency, listing properties across Turkey. Currently live at yenigunemlak.com with 240+ active property listings.",
+      "Architected and delivered a production real estate platform for a Sakarya-based agency, listing properties across Turkey. Currently live at yenigunemlak.com with hundreds of active property listings.",
     achievements: [
       "Designed advanced property search with filters for price, area, rooms, location, and amenities, plus interactive map-based search using Google Maps and Leaflet.",
       "Integrated Google Cloud Storage for image galleries, WhatsApp API for agent contact, and a complete admin panel for listing management, customer tracking, and contract handling.",
@@ -30,7 +30,7 @@ export const EXPERIENCE_ITEMS = [
   {
     id: "exp-alutem",
     kind: "work",
-    org: "Alutem",
+    org: "SZ Metal",
     role: "Full-Stack Developer",
     location: "Kocaeli",
     period: { start: "2025-04" },

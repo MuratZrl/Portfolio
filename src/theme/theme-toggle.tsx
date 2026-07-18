@@ -1,4 +1,4 @@
-// src/components/theme-toggle.tsx
+// src/theme/theme-toggle.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -6,7 +6,7 @@ import { useTheme } from "next-themes";
 import { Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export function ThemeToggle(): React.JSX.Element | null {
+export function ThemeToggle(): React.JSX.Element {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState<boolean>(false);
 
@@ -14,7 +14,11 @@ export function ThemeToggle(): React.JSX.Element | null {
     setMounted(true);
   }, []);
 
-  if (!mounted) return null; // SSR hydration sapıtmasın
+  // Render a fixed-size placeholder rather than null: returning null moves
+  // every sibling in the navbar on mount, which is a layout shift.
+  if (!mounted) {
+    return <div className="size-9" aria-hidden />;
+  }
 
   const isDark = resolvedTheme === "dark";
 
@@ -26,13 +30,13 @@ export function ThemeToggle(): React.JSX.Element | null {
     <Button
       variant="ghost"
       size="icon"
-      aria-label="Temayı değiştir"
+      /* The accessible name states what the control will DO, and changes with
+         state — so the change is announced without needing aria-pressed. */
+      aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
       onClick={handleToggle}
     >
-      {/* Işık ve karanlık ikonlarını CSS ile çapraz göster */}
-      <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-      <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-      <span className="sr-only">Temayı değiştir</span>
+      <Sun className="size-5 rotate-0 scale-100 transition-transform duration-[var(--dur-base)] ease-[var(--ease-standard)] dark:-rotate-90 dark:scale-0" />
+      <Moon className="absolute size-5 rotate-90 scale-0 transition-transform duration-[var(--dur-base)] ease-[var(--ease-standard)] dark:rotate-0 dark:scale-100" />
     </Button>
   );
 }

@@ -9,7 +9,7 @@ export default function ProjectsLoading() {
   return (
     <div className="w-full">
       {/* ── Page header ── */}
-      <header className="mb-6 md:mb-8" style={{ animation: "fade-in-up 0.4s ease-out both" }}>
+      <header className="mb-6 md:mb-8">
         <Shimmer className="h-10 w-40 mb-2" />
         <Shimmer className="h-5 w-80 max-w-full" />
       </header>
@@ -17,7 +17,6 @@ export default function ProjectsLoading() {
       {/* ── Filter bar ── */}
       <div
         className="flex flex-wrap gap-2 mb-6"
-        style={{ animation: "fade-in-up 0.4s ease-out 0.1s both" }}
       >
         {["w-14", "w-20", "w-16", "w-18", "w-16"].map((w, i) => (
           <PillSkeleton key={i} width={w} />
@@ -27,7 +26,7 @@ export default function ProjectsLoading() {
       {/* ── Projects grid ── */}
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          <CardSkeleton key={i} delay={0.15 + i * 0.08}>
+          <CardSkeleton key={i}>
             {/* Image */}
             <Shimmer className="mb-4 h-44 w-full" rounded="rounded-xl" />
 

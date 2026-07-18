@@ -96,7 +96,7 @@ function SheetContent({
           )}
         >
           <XIcon className="size-4" aria-hidden />
-          <span className="sr-only">Kapat</span>
+          <span className="sr-only">Close</span>
         </SheetPrimitive.Close>
       </SheetPrimitive.Content>
     </SheetPortal>

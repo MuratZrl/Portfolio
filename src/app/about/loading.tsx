@@ -10,13 +10,13 @@ export default function AboutLoading() {
   return (
     <div className="w-full">
       {/* ── Page header ── */}
-      <header className="mb-6 md:mb-8" style={{ animation: "fade-in-up 0.4s ease-out both" }}>
+      <header className="mb-6 md:mb-8">
         <Shimmer className="h-10 w-48 mb-2" />
         <Shimmer className="h-5 w-72" />
       </header>
 
       {/* ── Intro skeleton ── */}
-      <section className="mt-10" style={{ animation: "fade-in-up 0.5s ease-out 0.1s both" }}>
+      <section className="mt-10">
         <CardSkeleton>
           <div className="space-y-6">
             {/* Identity header */}
@@ -43,7 +43,7 @@ export default function AboutLoading() {
       </section>
 
       {/* ── Experience skeleton ── */}
-      <section className="mt-10 md:mt-12" style={{ animation: "fade-in-up 0.5s ease-out 0.2s both" }}>
+      <section className="mt-10 md:mt-12">
         <Shimmer className="h-7 w-52 mb-6" />
         <div className="flex gap-2 mb-6">
           {["w-14", "w-16", "w-20", "w-20"].map((w, i) => (
@@ -52,7 +52,7 @@ export default function AboutLoading() {
         </div>
         <div className="space-y-4">
           {Array.from({ length: 3 }).map((_, i) => (
-            <CardSkeleton key={i} delay={0.25 + i * 0.1}>
+            <CardSkeleton key={i}>
               <div className="flex items-center gap-3 mb-3">
                 <IconBoxSkeleton />
                 <div className="flex-1">

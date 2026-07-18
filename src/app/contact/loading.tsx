@@ -9,14 +9,14 @@ export default function ContactLoading() {
   return (
     <div className="w-full">
       {/* ── Page header ── */}
-      <header className="mb-6 md:mb-8" style={{ animation: "fade-in-up 0.4s ease-out both" }}>
+      <header className="mb-6 md:mb-8">
         <Shimmer className="h-10 w-36 mb-2" />
         <Shimmer className="h-5 w-96 max-w-full" />
       </header>
 
       <section className="grid w-full items-start gap-6 lg:grid-cols-[1fr_340px]">
         {/* ── Form skeleton ── */}
-        <CardSkeleton delay={0.1}>
+        <CardSkeleton>
           <div className="flex items-center gap-3 mb-6">
             <IconBoxSkeleton />
             <Shimmer className="h-5 w-36" />
@@ -60,7 +60,7 @@ export default function ContactLoading() {
         {/* ── Details sidebar skeleton ── */}
         <aside className="flex flex-col gap-4">
           {/* Direct */}
-          <CardSkeleton delay={0.2}>
+          <CardSkeleton>
             <div className="flex items-center gap-3 mb-5">
               <IconBoxSkeleton />
               <Shimmer className="h-5 w-16" />
@@ -89,7 +89,7 @@ export default function ContactLoading() {
           </CardSkeleton>
 
           {/* Elsewhere */}
-          <CardSkeleton delay={0.3}>
+          <CardSkeleton>
             <div className="flex items-center gap-3 mb-5">
               <IconBoxSkeleton />
               <Shimmer className="h-5 w-24" />
@@ -108,7 +108,7 @@ export default function ContactLoading() {
           </CardSkeleton>
 
           {/* Support */}
-          <CardSkeleton delay={0.4}>
+          <CardSkeleton>
             <div className="flex items-center gap-3 mb-4">
               <IconBoxSkeleton />
               <Shimmer className="h-5 w-20" />

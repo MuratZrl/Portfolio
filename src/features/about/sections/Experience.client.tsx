@@ -21,13 +21,13 @@ const KIND_CONFIG: Record<Kind, {
   badge: string;
 }> = {
   work: {
-    label: "Work",
+    label: "Employment",
     icon: Building2,
     dot: "bg-primary border-primary/30 text-white",
     badge: "bg-primary/10 text-primary",
   },
   freelance: {
-    label: "Freelance",
+    label: "Client project",
     icon: Briefcase,
     dot: "bg-amber-500 border-amber-500/30 text-neutral-900",
     badge: "bg-amber-500/10 text-amber-500",
@@ -43,19 +43,21 @@ const KIND_CONFIG: Record<Kind, {
 /* ────────────────────────────── Component ───────────────────────────────── */
 
 type ExperienceTimelineProps = {
-  heading?: string;
-  subheading?: string;
   items?: readonly ExperienceItem[];
   className?: string;
 };
 
+/**
+ * The section heading and subheading are deleted, not rewritten. This sits
+ * under the /about h1, so the timeline is self-describing, and the old
+ * subhead ("Product-focused processes, measurable outcomes.") was exactly the
+ * unfalsifiable register the copy rules ban. The section is named for
+ * assistive tech by aria-label instead.
+ */
 export default function ExperienceTimeline({
-  heading = "Experience & Education",
-  subheading = "Product-focused processes, measurable outcomes.",
   items = EXPERIENCE_ITEMS,
   className,
 }: ExperienceTimelineProps): React.JSX.Element {
-  const headingId = React.useId();
   const [activeKind, setActiveKind] = React.useState<Kind | "all">("all");
 
   const sorted = React.useMemo(() => {
@@ -67,16 +69,18 @@ export default function ExperienceTimeline({
   const kinds: Kind[] = ["work", "freelance", "education"];
 
   return (
-    <section aria-labelledby={headingId} className={cn("py-12 sm:py-16", className)}>
-      <div className="mb-8 flex flex-col gap-2">
-        <h2 id={headingId} className="text-xl font-semibold tracking-tight sm:text-2xl">
-          {heading}
-        </h2>
-        <p className="text-sm text-muted-foreground">{subheading}</p>
-      </div>
-
-      {/* Filter pills */}
-      <div className="mb-8 flex flex-wrap gap-2">
+    <section
+      aria-label="Experience and education"
+      className={cn("py-12 sm:py-16", className)}
+    >
+      {/* Contract B: a group of toggle buttons, all tabbable, no arrow keys.
+          The group needs its own accessible name — without one the pills are
+          five unexplained controls to a screen-reader user. */}
+      <div
+        role="group"
+        aria-label="Filter experience by type"
+        className="mb-8 flex flex-wrap gap-2"
+      >
         <button
           type="button"
           onClick={() => setActiveKind("all")}
