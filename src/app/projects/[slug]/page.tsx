@@ -7,9 +7,7 @@ import type { Metadata } from "next";
 
 import { Page } from "@/components/layout/Page";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import {
   ExternalLink, Github, ArrowLeft, Calendar, Gauge, Star, Lock,
 } from "lucide-react";
@@ -84,22 +82,10 @@ export default async function ProjectDetailPage({ params }: Props) {
             ) : null}
             {repo ? (
               repoIsPrivate ? (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span
-                        tabIndex={0}
-                        role="note"
-                        aria-label={`${project.title} repository is private and not publicly available`}
-                        className="inline-flex select-none items-center gap-2 h-9 rounded-md bg-muted px-4 text-sm font-medium text-muted-foreground cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-                      >
-                        <Lock className="h-4 w-4" aria-hidden />
-                        {repo.label}
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent>Repository is private</TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <span className="inline-flex items-center gap-1.5 text-[length:var(--text-body-sm)] text-patina">
+                  <Lock className="size-4" aria-hidden />
+                  Private repo
+                </span>
               ) : (
                 <Button asChild variant="outline">
                   <a href={repo.href} target="_blank" rel="noreferrer">
@@ -245,13 +231,11 @@ function StatCard({
   value: string;
 }) {
   return (
-    <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-      <CardContent className="flex flex-col items-center gap-1 py-4 px-3 text-center">
+    <div className="plate flex flex-col items-center gap-1 px-3 py-4 text-center">
         <span className="text-primary">{icon}</span>
         <span className="text-xs text-muted-foreground">{label}</span>
         <span className="text-sm font-semibold">{value}</span>
-      </CardContent>
-    </Card>
+    </div>
   );
 }
 

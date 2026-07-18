@@ -1,16 +1,18 @@
 // src/features/home/types/value-props.ts
-import type { LucideIcon } from "lucide-react";
 
 export type Href = "/" | `/${string}`;
 
 export type ValueItem = {
   title: string;
   description: string;
-  icon: LucideIcon;
   highlights?: readonly string[];
-  stat?: { label: string; value: string };
   tags?: readonly string[];
-  cta?: { href: Href; label: string; ariaLabel?: string };
+  /**
+   * An instruction the reader can act on to verify the claim themselves.
+   * Replaces the old `stat` slot, which carried self-reported numbers
+   * ("A11y score 90+/100", "Bug rate ↓") that nothing could substantiate.
+   */
+  check: string;
 };
 
 export type ValuePropsProps = {

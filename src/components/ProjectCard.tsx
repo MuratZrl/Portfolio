@@ -1,188 +1,169 @@
 // src/components/ProjectCard.tsx
-"use client";
 
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
-
-import {
-  Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ExternalLink, Github, Gauge, Star, Lock } from "lucide-react";
-import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
+import { ExternalLink, Github, Lock } from "lucide-react";
 
 import type { Project } from "@/constants/projects";
 import { placeholder } from "@/lib/media";
 
 const MAX_VISIBLE_TAGS = 4;
 
-export function ProjectCard({ project }: { project: Project }): React.JSX.Element {
-  const [broken, setBroken] = React.useState(false);
+/** Sector drives the top edge only. A two-sided override destroys the bevel read. */
+const SECTOR_EDGE: Record<Project["sector"], string> = {
+  metal: "border-t-[--eloksal]",
+  property: "border-t-[--jade]",
+  commerce: "border-t-[--azure]",
+  personal: "", // no chromatic edge — a coloured edge means somebody paid for this
+};
+
+type ProjectCardProps = {
+  project: Project;
+  /**
+   * Required. On `/` the cards sit under a section h2, so they are h3.
+   * On `/projects` the page h1 is the only ancestor, so they are h2.
+   */
+  headingLevel: 2 | 3;
+};
+
+/**
+ * Server component. This matters: the withheld slab's claim that the
+ * confidential data "is not sent to your browser" is only true if nothing
+ * serialises it. The values are never authored into `data.ts` at all, and
+ * keeping this component off the client means the props are not in the
+ * flight payload either.
+ */
+export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.JSX.Element {
+  const Heading = (headingLevel === 2 ? "h2" : "h3") as "h2" | "h3";
 
   const desired = (project.image?.src ?? "").trim() || null;
-  const imgSrc = broken || !desired ? placeholder(1280, 720, project.title) : desired;
-  const imgAlt = project.image?.alt ?? `${project.title} placeholder`;
-  const isRemote = typeof imgSrc === "string" && imgSrc.startsWith("http");
+  const imgSrc = desired ?? placeholder(1280, 720, project.title);
+  const imgAlt = project.image?.alt ?? `${project.title} screenshot`;
+  const isRemote = imgSrc.startsWith("http");
 
   const demo = project.links?.demo;
   const repo = project.links?.repo;
-  const isInternalDemo = Boolean(demo?.href?.startsWith("/"));
   const repoIsPrivate = Boolean(repo?.isPrivate);
 
   const visibleTags = project.tags.slice(0, MAX_VISIBLE_TAGS);
   const hiddenCount = project.tags.length - visibleTags.length;
+  const isPaid = project.sector !== "personal";
 
   return (
-    <Card className={cn(
-      "group flex h-full flex-col overflow-hidden",
-      "border-border/50 bg-card/80 backdrop-blur-sm",
-      "transition-all duration-300 ease-out",
-      "hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20",
-      "focus-within:shadow-lg focus-within:border-primary/20",
-    )}>
-
-      {/* Media */}
-      <div className="relative aspect-video w-full overflow-hidden bg-muted">
+    <article
+      className={cn(
+        "plate group flex flex-col overflow-hidden transition-colors duration-[--dur-base] ease-[--ease-standard]",
+        "hover:bg-[--accent-surface] focus-within:bg-[--accent-surface]",
+        SECTOR_EDGE[project.sector],
+      )}
+    >
+      <div className="relative aspect-[16/9] overflow-hidden border-b-2 border-[--edge-hi] bg-[--muted]">
         <Image
           src={imgSrc}
           alt={imgAlt}
           fill
-          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-          className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
           unoptimized={isRemote}
-          onError={() => setBroken(true)}
+          sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw"
+          className="object-cover"
         />
-        {/* Gradient overlay */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
-
-        {/* Project-type badge on image (driven by project.badge) */}
-        <Badge
-          className={cn(
-            "absolute left-3 top-3 text-[10px] font-medium shadow-sm",
-            project.badge.variant === "accent"
-              ? "border-transparent bg-primary text-primary-foreground"
-              : "border-border/50 bg-background/80 text-foreground backdrop-blur-sm",
-          )}
-        >
-          {project.badge.label}
-        </Badge>
       </div>
 
-      {/* Body */}
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base font-semibold sm:text-lg">{project.title}</CardTitle>
-        <CardDescription className="line-clamp-2">{project.cardSummary ?? project.summary}</CardDescription>
-      </CardHeader>
-
-      <CardContent className="flex-1 pt-0">
-        {/* Tags */}
-        <div className="mb-3 flex flex-wrap gap-1.5">
-          {visibleTags.map((t) => (
-            <span
-              key={t}
-              className="rounded-md bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground"
-            >
-              {t}
-            </span>
-          ))}
-          {hiddenCount > 0 ? (
-            <span className="rounded-md bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
-              +{hiddenCount}
+      <div className="flex flex-1 flex-col gap-4 p-5">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          {/* The non-colour channel for the sector edge. Without this the
+              colour would be carrying industry on its own — WCAG 1.4.1. */}
+          <span className="text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-patina">
+            {project.sectorLabel}
+          </span>
+          {isPaid ? (
+            <span className="flex items-center gap-2 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-patina">
+              <span aria-hidden className="h-0.5 w-4 bg-[--brass]" />
+              Client work
             </span>
           ) : null}
         </div>
 
-        {/* Metrics */}
-        {project.metrics ? (
-          <div className="flex items-center gap-4 text-sm">
-            {project.metrics.lighthouse ? (
-              <Metric icon={<Gauge className="h-3.5 w-3.5" aria-hidden />} label="Lighthouse" value={project.metrics.lighthouse} />
-            ) : null}
-            {project.metrics.stars ? (
-              <Metric icon={<Star className="h-3.5 w-3.5" aria-hidden />} label="Stars" value={project.metrics.stars} />
-            ) : null}
-          </div>
-        ) : null}
-      </CardContent>
+        <Heading className="text-[length:var(--text-display-xs)] font-bold leading-[1.2] text-scribe">
+          <Link
+            href={project.slug}
+            className="outline-none after:absolute after:inset-0 after:content-[''] group-focus-within:underline group-hover:underline"
+          >
+            {project.title}
+          </Link>
+        </Heading>
 
-      <CardFooter className="mt-auto gap-2 pt-0" withDivider={false}>
-        {demo ? (
-          <Button asChild size="sm">
-            {isInternalDemo ? (
-              <Link href={demo.href} aria-label={demo.ariaLabel ?? `Open ${project.title} demo`}>
-                <ExternalLink className="mr-1.5 h-3.5 w-3.5" aria-hidden />
-                {demo.label}
-              </Link>
-            ) : (
-              <a href={demo.href} target="_blank" rel="noreferrer" aria-label={demo.ariaLabel ?? `Open ${project.title} demo`}>
-                <ExternalLink className="mr-1.5 h-3.5 w-3.5" aria-hidden />
-                {demo.label}
-              </a>
-            )}
-          </Button>
+        <p className="text-[length:var(--text-body-sm)] leading-[1.5] text-patina">
+          {project.cardSummary ?? project.summary}
+        </p>
+
+        {/* The withheld slab, or the caption that replaces it. */}
+        {project.withheld ? (
+          <p
+            className="withheld"
+            style={{ "--wh-rows": project.withheld.rows } as React.CSSProperties}
+          >
+            {project.withheld.reason}
+          </p>
+        ) : project.caption ? (
+          <p className="text-[length:var(--text-body-sm)] text-patina">{project.caption}</p>
         ) : null}
 
-        {repo ? (
-          repoIsPrivate ? (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span
-                    tabIndex={0}
-                    role="note"
-                    aria-label={`${project.title} repository is private and not publicly available`}
-                    className="inline-flex select-none items-center gap-1.5 h-8 rounded-md bg-muted px-3 text-sm font-medium text-muted-foreground cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-                  >
-                    <Lock className="h-3.5 w-3.5" aria-hidden />
-                    {repo.label}
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>Repository is private</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          ) : (
-            <Button asChild size="sm" variant="ghost" className="text-muted-foreground hover:text-foreground">
-              <a href={repo.href} target="_blank" rel="noreferrer" aria-label={repo.ariaLabel ?? `Open ${project.title} repository`}>
-                <Github className="mr-1.5 h-3.5 w-3.5" aria-hidden />
-                {repo.label}
-              </a>
-            </Button>
-          )
-        ) : null}
+        <ul className="mt-auto flex flex-wrap gap-1.5 pt-1">
+          {visibleTags.map((tag) => (
+            <li
+              key={tag}
+              className="recessed px-2 py-0.5 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-patina"
+            >
+              {tag}
+            </li>
+          ))}
+          {hiddenCount > 0 ? (
+            <li className="px-2 py-0.5 text-[length:var(--text-body-xs)] text-patina">
+              +{hiddenCount} more
+            </li>
+          ) : null}
+        </ul>
 
-        {/* Details — always right-aligned */}
-        <Button
-          asChild
-          variant="ghost"
-          size="sm"
-          className="ml-auto text-muted-foreground hover:text-foreground"
-          aria-label={`View ${project.title} details`}
-        >
-          <Link href={project.slug}>Details</Link>
-        </Button>
-      </CardFooter>
-    </Card>
+        <div className="relative z-10 flex flex-wrap items-center gap-4 border-t-2 border-[--edge-hi] pt-4 text-[length:var(--text-body-sm)]">
+          {demo ? (
+            <a
+              href={demo.href}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="inline-flex items-center gap-1.5 font-medium text-eloksal underline-offset-4 hover:underline"
+            >
+              <ExternalLink className="size-4" aria-hidden />
+              {demo.label}
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
+          ) : null}
+
+          {repo && !repoIsPrivate ? (
+            <a
+              href={repo.href}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="inline-flex items-center gap-1.5 font-medium text-eloksal underline-offset-4 hover:underline"
+            >
+              <Github className="size-4" aria-hidden />
+              {repo.label}
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
+          ) : null}
+
+          {repoIsPrivate ? (
+            <span className="inline-flex items-center gap-1.5 text-patina">
+              <Lock className="size-4" aria-hidden />
+              Private repo
+            </span>
+          ) : null}
+        </div>
+      </div>
+    </article>
   );
 }
 
-function Metric({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}): React.JSX.Element {
-  return (
-    <div className="flex items-center gap-1.5">
-      <span className="text-primary">{icon}</span>
-      <span className="text-xs text-muted-foreground">{label}</span>
-      <span className="text-xs font-semibold text-primary">{value}</span>
-    </div>
-  );
-}
+export default ProjectCard;

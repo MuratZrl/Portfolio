@@ -1,107 +1,92 @@
 // src/features/home/sections/ValueProps.tsx
-"use client";
 
 import React from "react";
+
 import { cn } from "@/lib/utils";
+import { DEFAULT_ITEMS } from "@/features/home/data/value-props";
+import type { ValuePropsProps } from "@/features/home/types/value-props";
 
-import type { ValueItem, ValuePropsProps } from "@/features/home/types/value-props";
-import { DEFAULT_ITEMS } from "@/features/home/data";
-
-export default function ValueProps({
+/**
+ * "How I build" — one plate, three rows separated by a rule.
+ *
+ * Not three cards: three chamfered plates in a row compete with the hero
+ * coupon for attention, and a rule reads better than a box when the content
+ * is three parallel claims rather than three separate objects.
+ *
+ * Server component — nothing here is interactive.
+ */
+export default function HowIBuild({
   items = DEFAULT_ITEMS,
-  heading = "Value Propositions",
-  subheading = "Measurable quality, low-maintenance solutions.",
+  heading = "How I build",
+  subheading = "Three claims. You can check all three without leaving this page.",
   className,
 }: ValuePropsProps): React.JSX.Element {
-  return (
-    <section aria-labelledby="value-props-heading" className={cn("py-12 sm:py-16", className)}>
-      <div
-        className="mb-10 flex flex-col gap-2 text-center"
-        style={{ animation: "fade-in-up 0.5s ease-out both" }}
-      >
-        <h2
-          id="value-props-heading"
-          className="text-xl font-semibold tracking-tight sm:text-2xl"
-        >
-          {heading}
-        </h2>
-        <p className="mx-auto max-w-lg text-sm text-muted-foreground">{subheading}</p>
-      </div>
+  const headingId = React.useId();
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+  return (
+    <section className={cn("w-full py-12 sm:py-16", className)} aria-labelledby={headingId}>
+      <h2
+        id={headingId}
+        className="text-[length:var(--text-display-md)] font-bold leading-[1.05] text-scribe"
+      >
+        {heading}
+      </h2>
+      <p className="mt-2 text-[length:var(--text-body-base)] text-patina">{subheading}</p>
+
+      <div className="plate mt-6">
         {items.map((item, i) => (
-          <ValueCard key={item.title} item={item} index={i} />
+          <div
+            key={item.title}
+            className={cn("px-6 py-7 sm:px-8", i > 0 && "border-t-2 border-[--edge-hi]")}
+          >
+            <div className="grid gap-4 lg:grid-cols-[minmax(220px,1fr)_2fr] lg:gap-12">
+              <div>
+                <h3 className="text-[length:var(--text-display-sm)] font-bold leading-[1.15] text-scribe">
+                  {item.title}
+                </h3>
+                <p className="mt-3 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-eloksal">
+                  {item.check}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-[length:var(--text-body-base)] leading-[1.6] text-patina">
+                  {item.description}
+                </p>
+
+                {item.highlights?.length ? (
+                  <ul className="mt-4 grid gap-2">
+                    {item.highlights.map((h) => (
+                      <li
+                        key={h}
+                        className="flex gap-2 text-[length:var(--text-body-sm)] text-scribe"
+                      >
+                        <span aria-hidden className="text-eloksal">
+                          —
+                        </span>
+                        {h}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+
+                {item.tags?.length ? (
+                  <ul className="mt-4 flex flex-wrap gap-2">
+                    {item.tags.map((tag) => (
+                      <li
+                        key={tag}
+                        className="recessed px-2 py-1 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-patina"
+                      >
+                        {tag}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
+            </div>
+          </div>
         ))}
       </div>
     </section>
-  );
-}
-
-/* ------------------------------ Subcomponent ----------------------------- */
-
-function ValueCard({ item, index }: { item: ValueItem; index: number }): React.JSX.Element {
-  const Icon = item.icon;
-
-  return (
-    <div
-      className={cn(
-        "group relative flex h-full flex-col overflow-hidden rounded-xl border p-6",
-        "border-border/50 bg-card/80 backdrop-blur-sm",
-        "transition-all duration-300 ease-out",
-        "hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20",
-      )}
-      style={{ animation: `fade-in-up 0.5s ease-out ${0.1 + index * 0.1}s both` }}
-    >
-      {/* Icon */}
-      <div className="mb-5">
-        <div className="inline-flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/10">
-          <Icon className="h-5 w-5" aria-hidden />
-        </div>
-      </div>
-
-      {/* Title */}
-      <h3 className="mb-2 text-base font-semibold tracking-tight sm:text-lg">{item.title}</h3>
-
-      {/* Description */}
-      <p className="mb-4 text-sm leading-relaxed text-muted-foreground">{item.description}</p>
-
-      {/* Highlights */}
-      {item.highlights?.length ? (
-        <ul className="mb-5 space-y-2 text-sm text-muted-foreground">
-          {item.highlights.map((h) => (
-            <li key={h} className="flex items-center gap-2.5">
-              <span className="inline-flex size-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <svg className="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-              </span>
-              <span>{h}</span>
-            </li>
-          ))}
-        </ul>
-      ) : null}
-
-      {/* Tags */}
-      {item.tags?.length ? (
-        <div className="mb-4 flex flex-wrap gap-1.5">
-          {item.tags.map((t) => (
-            <span
-              key={t}
-              className="rounded-full border border-border/50 bg-muted/50 px-2 py-0.5 text-[11px] font-medium text-muted-foreground"
-            >
-              {t}
-            </span>
-          ))}
-        </div>
-      ) : null}
-
-      {/* Stat */}
-      {item.stat ? (
-        <div className="mt-auto flex items-baseline gap-2 border-t border-border/40 pt-4">
-          <span className="text-xl font-bold text-primary">{item.stat.value}</span>
-          <span className="text-xs text-muted-foreground">{item.stat.label}</span>
-        </div>
-      ) : null}
-    </div>
   );
 }

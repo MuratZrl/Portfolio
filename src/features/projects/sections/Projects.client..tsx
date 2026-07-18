@@ -104,7 +104,7 @@ export default function Projects({
       {paginatedProjects.length > 0 ? (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {paginatedProjects.map((p) => (
-            <ProjectCard key={p.slug} project={p} />
+            <ProjectCard key={p.slug} project={p} headingLevel={2} />
           ))}
         </div>
       ) : (
