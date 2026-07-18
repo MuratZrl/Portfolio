@@ -74,7 +74,7 @@ export default function Hero({
           <Link
             href={primary.href}
             aria-label={primary.ariaLabel}
-            className="btn-chamfer inline-flex min-h-11 items-center gap-2 rounded-[--radius-1] bg-eloksal px-5 text-[length:var(--text-body-sm)] font-medium text-[color:var(--primary-foreground)] transition-colors duration-[--dur-fast] ease-[--ease-standard] hover:bg-[--eloksal-hover]"
+            className="btn-chamfer inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-1)] bg-eloksal px-5 text-[length:var(--text-body-sm)] font-medium text-[color:var(--primary-foreground)] transition-colors duration-[var(--dur-fast)] ease-[var(--ease-standard)] hover:bg-[var(--eloksal-hover)]"
           >
             {primary.label}
             <ArrowRight className="size-4" aria-hidden />
@@ -85,7 +85,7 @@ export default function Hero({
               href={secondary.href}
               download={secondary.download}
               aria-label={secondary.ariaLabel}
-              className="plate inline-flex min-h-11 items-center rounded-[--radius-1] px-5 text-[length:var(--text-body-sm)] font-medium text-scribe transition-colors duration-[--dur-fast] ease-[--ease-standard] hover:bg-[--accent-surface]"
+              className="plate inline-flex min-h-11 items-center rounded-[var(--radius-1)] px-5 text-[length:var(--text-body-sm)] font-medium text-scribe transition-colors duration-[var(--dur-fast)] ease-[var(--ease-standard)] hover:bg-[var(--accent-surface)]"
             >
               {secondary.label}
             </a>
@@ -98,7 +98,7 @@ export default function Hero({
           <p
             data-enter
             style={{ "--i": 3 } as React.CSSProperties}
-            className="mt-7 border-t border-[--edge-hi] pt-4 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-patina"
+            className="mt-7 border-t border-[var(--edge-hi)] pt-4 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-patina"
           >
             {availability}
           </p>

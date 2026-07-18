@@ -14,9 +14,9 @@ const MAX_VISIBLE_TAGS = 4;
 
 /** Sector drives the top edge only. A two-sided override destroys the bevel read. */
 const SECTOR_EDGE: Record<Project["sector"], string> = {
-  metal: "border-t-[--eloksal]",
-  property: "border-t-[--jade]",
-  commerce: "border-t-[--azure]",
+  metal: "border-t-[var(--eloksal)]",
+  property: "border-t-[var(--jade)]",
+  commerce: "border-t-[var(--azure)]",
   personal: "", // no chromatic edge — a coloured edge means somebody paid for this
 };
 
@@ -55,12 +55,12 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
   return (
     <article
       className={cn(
-        "plate group flex flex-col overflow-hidden transition-colors duration-[--dur-base] ease-[--ease-standard]",
-        "hover:bg-[--accent-surface] focus-within:bg-[--accent-surface]",
+        "plate group flex flex-col overflow-hidden transition-colors duration-[var(--dur-base)] ease-[var(--ease-standard)]",
+        "hover:bg-[var(--accent-surface)] focus-within:bg-[var(--accent-surface)]",
         SECTOR_EDGE[project.sector],
       )}
     >
-      <div className="relative aspect-[16/9] overflow-hidden border-b-2 border-[--edge-hi] bg-[--muted]">
+      <div className="relative aspect-[16/9] overflow-hidden border-b-2 border-[var(--edge-hi)] bg-[var(--muted)]">
         <Image
           src={imgSrc}
           alt={imgAlt}
@@ -80,7 +80,7 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
           </span>
           {isPaid ? (
             <span className="flex items-center gap-2 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-patina">
-              <span aria-hidden className="h-0.5 w-4 bg-[--brass]" />
+              <span aria-hidden className="h-0.5 w-4 bg-[var(--brass)]" />
               Client work
             </span>
           ) : null}
@@ -127,7 +127,7 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
           ) : null}
         </ul>
 
-        <div className="relative z-10 flex flex-wrap items-center gap-4 border-t-2 border-[--edge-hi] pt-4 text-[length:var(--text-body-sm)]">
+        <div className="relative z-10 flex flex-wrap items-center gap-4 border-t-2 border-[var(--edge-hi)] pt-4 text-[length:var(--text-body-sm)]">
           {demo ? (
             <a
               href={demo.href}

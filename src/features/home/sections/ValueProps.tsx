@@ -37,7 +37,7 @@ export default function HowIBuild({
         {items.map((item, i) => (
           <div
             key={item.title}
-            className={cn("px-6 py-7 sm:px-8", i > 0 && "border-t-2 border-[--edge-hi]")}
+            className={cn("px-6 py-7 sm:px-8", i > 0 && "border-t-2 border-[var(--edge-hi)]")}
           >
             <div className="grid gap-4 lg:grid-cols-[minmax(220px,1fr)_2fr] lg:gap-12">
               <div>
