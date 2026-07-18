@@ -109,6 +109,12 @@
   --dur-hover-in:  200ms;
   --dur-hover-out: 120ms;
   --dur-press:      80ms;
+  /* Release is asymmetric with press. A CSS transition reads its duration
+     from the DESTINATION state, so press-in is governed by :active (80ms)
+     but release is governed by whatever the element returns TO — rest or
+     :hover. Those blocks give transform and filter this longer value so
+     the button settles back instead of snapping. */
+  --dur-press-out: 180ms;
   /* A focus indicator is a functional cue, not decoration. Long enough not
      to snap, short enough that it never lags the Tab key. */
   --dur-focus:     140ms;
@@ -411,7 +417,8 @@
       box-shadow, transform, filter, outline-color;
     transition-duration:
       var(--dur-hover-out), var(--dur-hover-out), var(--dur-hover-out),
-      var(--dur-hover-out), var(--dur-hover-out), var(--dur-hover-out),
+      var(--dur-hover-out),
+      var(--dur-press-out), var(--dur-press-out),
       var(--dur-focus);
     transition-timing-function: var(--ease-out);
     will-change: transform;
@@ -426,7 +433,8 @@
     z-index: 1;
     transition-duration:
       var(--dur-hover-in), var(--dur-hover-in), var(--dur-hover-in),
-      var(--dur-hover-in), var(--dur-hover-in), var(--dur-hover-in),
+      var(--dur-hover-in),
+      var(--dur-press-out), var(--dur-press-out),
       var(--dur-focus);
   }
 
