@@ -58,8 +58,8 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
         // no positioned ancestor that pseudo-element resolves against the
         // initial containing block and covers the entire document, so every
         // click on the page lands on the last card in DOM order.
-        "plate group relative flex flex-col overflow-hidden transition-shadow duration-[var(--dur-base)] ease-[var(--ease-standard)]",
-        "hover:shadow-[var(--shadow-raised-lg)] focus-within:shadow-[var(--shadow-raised-lg)]",
+        "plate interactive group relative flex flex-col overflow-hidden",
+        "focus-within:shadow-[var(--shadow-raised-lg)]",
       )}
     >
       <div className="relative aspect-[16/9] overflow-hidden border-b border-[var(--edge-soft)] bg-[var(--muted)]">
@@ -101,12 +101,13 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
           {project.cardSummary ?? project.summary}
         </p>
 
-        {/* The withheld slab, or the caption that replaces it. */}
+        {/* The withheld note, or the caption that replaces it. A footnote,
+            not a panel — the device works by being quiet. The reason string
+            is the whole payload; the confidential values are never authored
+            into data.ts, so there is nothing here to inspect. */}
         {project.withheld ? (
-          <p
-            className="withheld"
-            style={{ "--wh-rows": project.withheld.rows } as React.CSSProperties}
-          >
+          <p className="withheld">
+            <Lock className="size-3.5" aria-hidden />
             {project.withheld.reason}
           </p>
         ) : project.caption ? (
@@ -135,7 +136,7 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
               href={demo.href}
               target="_blank"
               rel="noreferrer noopener"
-              className="inline-flex items-center gap-1.5 font-medium text-[var(--accent)] underline-offset-4 hover:underline"
+              className="link-soft inline-flex items-center gap-1.5 font-medium text-[var(--accent)]"
             >
               <ExternalLink className="size-4" aria-hidden />
               {demo.label}
@@ -148,7 +149,7 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
               href={repo.href}
               target="_blank"
               rel="noreferrer noopener"
-              className="inline-flex items-center gap-1.5 font-medium text-[var(--accent)] underline-offset-4 hover:underline"
+              className="link-soft inline-flex items-center gap-1.5 font-medium text-[var(--accent)]"
             >
               <Github className="size-4" aria-hidden />
               {repo.label}
