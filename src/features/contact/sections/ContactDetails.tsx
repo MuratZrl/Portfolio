@@ -95,7 +95,8 @@ export default function ContactDetails({
               <Link
                 href={`mailto:${email}`}
                 className="break-all text-sm font-medium text-foreground hover:text-primary transition-colors"
-              >
+              draggable={false}
+            >
                 {email}
               </Link>
             </div>

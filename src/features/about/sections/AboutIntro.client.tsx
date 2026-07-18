@@ -76,7 +76,7 @@ export default function AboutIntro(props: AboutIntroProps): React.JSX.Element {
           {/* CTAs + social */}
           <div className="flex flex-wrap items-center gap-3">
             <Button asChild size="sm" aria-label={primary.ariaLabel ?? primary.label}>
-              <Link href={primary.href}>
+              <Link href={primary.href} draggable={false}>
                 {primary.label}
                 <ArrowRight className="ml-1.5 h-3.5 w-3.5" aria-hidden />
               </Link>
@@ -88,7 +88,7 @@ export default function AboutIntro(props: AboutIntroProps): React.JSX.Element {
               variant="outline"
               aria-label={secondary.ariaLabel ?? secondary.label}
             >
-              <a href={secondary.href} {...(secondary.download ? { download: true } : {})}>
+              <a href={secondary.href} {...(secondary.download ? { download: true } : {})} draggable={false}>
                 <Download className="mr-1.5 h-3.5 w-3.5" aria-hidden />
                 {secondary.label}
               </a>

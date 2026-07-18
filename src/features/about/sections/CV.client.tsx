@@ -120,11 +120,11 @@ export default function CvSection({
         <noscript>
           <p className="mt-4 text-sm text-muted-foreground">
             JavaScript is disabled.{" "}
-            <a className="text-primary underline" href={pdfSrc} target="_blank" rel="noreferrer">
+            <a className="text-primary underline" href={pdfSrc} target="_blank" rel="noreferrer" draggable={false}>
               Open CV in a new tab
             </a>{" "}
             or{" "}
-            <a className="text-primary underline" href={pdfSrc} download>
+            <a className="text-primary underline" href={pdfSrc} download draggable={false}>
               download it
             </a>
             .

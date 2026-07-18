@@ -238,6 +238,34 @@
     background: var(--accent);
     color: var(--on-accent);
   }
+
+  /* --- drag suppression -------------------------------------------------
+     Click-dragging an anchor, a control or an image produces a browser drag
+     ghost, which on a stretched-link card means dragging anywhere on the
+     card tears off a translucent copy of it. `-webkit-user-drag` is
+     non-standard and Firefox ignores it, so every element that matters also
+     carries draggable={false} in the markup — this rule is the Chromium
+     half of the fix, not the whole of it. */
+  a[href],
+  button,
+  [role="button"],
+  .interactive,
+  img {
+    -webkit-user-drag: none;
+  }
+
+  /* Text selection is killed ONLY on things you press, never on prose.
+     Paragraphs, headings, list copy and code stay fully selectable —
+     a recruiter copying a stack list or an email address must not be
+     fighting the stylesheet. Note this deliberately excludes a[href]:
+     inline links live inside sentences and have to select with them. */
+  button,
+  [role="button"],
+  .soft-btn,
+  .skip-link {
+    user-select: none;
+    -webkit-user-select: none;
+  }
 }
 
 /* ==========================================================================

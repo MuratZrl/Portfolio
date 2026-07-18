@@ -74,7 +74,7 @@ export default async function ProjectDetailPage({ params }: Props) {
           <div className="flex items-center gap-2 shrink-0">
             {demo ? (
               <Button asChild>
-                <a href={demo.href} target="_blank" rel="noreferrer">
+                <a href={demo.href} target="_blank" rel="noreferrer" draggable={false}>
                   <ExternalLink className="mr-2 h-4 w-4" />
                   {demo.label}
                 </a>
@@ -88,7 +88,7 @@ export default async function ProjectDetailPage({ params }: Props) {
                 </span>
               ) : (
                 <Button asChild variant="outline">
-                  <a href={repo.href} target="_blank" rel="noreferrer">
+                  <a href={repo.href} target="_blank" rel="noreferrer" draggable={false}>
                     <Github className="mr-2 h-4 w-4" />
                     {repo.label}
                   </a>
@@ -210,6 +210,7 @@ function BrowserFrame({
             src={src}
             alt={alt}
             fill
+            draggable={false}
             priority={priority}
             sizes="(min-width: 1024px) 72vw, 92vw"
             className="object-cover"

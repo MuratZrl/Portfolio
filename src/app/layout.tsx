@@ -84,7 +84,7 @@ export default function RootLayout({
       <body className="min-h-svh flex flex-col antialiased">
         {/* 2.4.1 Bypass Blocks. The site claims this in its own copy, so it
             has to exist and it has to be the first thing Tab reaches. */}
-        <a href="#main" className="skip-link">
+        <a href="#main" className="skip-link" draggable={false}>
           Skip to content
         </a>
 

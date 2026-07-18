@@ -46,7 +46,8 @@ export default function FeaturedProjects({
         <Link
           href="/projects"
           className="link-soft text-[length:var(--text-body-sm)] font-medium text-[var(--accent)]"
-        >
+              draggable={false}
+            >
           All five projects
         </Link>
       </div>

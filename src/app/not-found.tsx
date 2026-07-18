@@ -31,7 +31,7 @@ export default function NotFound(): React.JSX.Element {
 
         <div className="mt-6 flex items-center gap-3">
           <Button asChild>
-            <Link href="/">Go home</Link>
+            <Link href="/" draggable={false}>Go home</Link>
           </Button>
 
           <Link

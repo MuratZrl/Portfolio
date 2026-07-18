@@ -75,7 +75,8 @@ export default function Hero({
             href={primary.href}
             aria-label={primary.ariaLabel}
             className="soft-btn inline-flex min-h-11 items-center gap-2 bg-[var(--accent)] px-5 text-[length:var(--text-body-sm)] font-medium text-[color:var(--on-accent)] hover:bg-[var(--accent-hover)]"
-          >
+              draggable={false}
+            >
             {primary.label}
             <ArrowRight className="size-4" aria-hidden />
           </Link>
@@ -86,6 +87,7 @@ export default function Hero({
               download={secondary.download}
               aria-label={secondary.ariaLabel}
               className="soft-btn inline-flex min-h-11 items-center bg-[var(--surface)] px-5 text-[length:var(--text-body-sm)] font-medium text-[var(--text)] hover:bg-[var(--raised)]"
+              draggable={false}
             >
               {secondary.label}
             </a>

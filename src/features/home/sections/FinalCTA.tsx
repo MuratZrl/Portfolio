@@ -77,7 +77,7 @@ export default function FinalCta({
           {/* CTA button */}
           <div className="mx-auto mt-10 flex justify-center">
             <Button asChild size="lg" aria-label={primary.ariaLabel ?? primary.label}>
-              <Link href={primary.href}>
+              <Link href={primary.href} draggable={false}>
                 {primary.label}
                 <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
               </Link>

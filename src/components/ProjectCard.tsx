@@ -67,6 +67,7 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
           src={imgSrc}
           alt={imgAlt}
           fill
+          draggable={false}
           unoptimized={isRemote}
           sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw"
           className="object-cover"
@@ -91,6 +92,7 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
         <Heading className="text-[length:var(--text-display-xs)] font-bold leading-[1.2] text-[var(--text)]">
           <Link
             href={project.slug}
+            draggable={false}
             className="outline-none after:absolute after:inset-0 after:content-[''] group-focus-within:underline group-hover:underline"
           >
             {project.title}
@@ -137,6 +139,7 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
               target="_blank"
               rel="noreferrer noopener"
               className="link-soft inline-flex items-center gap-1.5 font-medium text-[var(--accent)]"
+              draggable={false}
             >
               <ExternalLink className="size-4" aria-hidden />
               {demo.label}
@@ -150,6 +153,7 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
               target="_blank"
               rel="noreferrer noopener"
               className="link-soft inline-flex items-center gap-1.5 font-medium text-[var(--accent)]"
+              draggable={false}
             >
               <Github className="size-4" aria-hidden />
               {repo.label}
