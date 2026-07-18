@@ -3,93 +3,91 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ==========================================================================
-   ELOKSAL — token layer
-   Canonical values. Hex is authoritative; every ratio in the spec was
-   computed from these exact values.
+   Soft-UI token layer
+   Neumorphic surfaces on a neutral ground.
+
+   THE RULE THAT MAKES THIS ACCESSIBLE: shadows are decorative. Every text
+   pair and every interactive boundary clears WCAG AA through colour or a
+   real border. Nothing in this system is identified by shadow alone — which
+   is the usual way neumorphism fails an audit. The fill delta between a card
+   and the ground is ~1.1:1 and is doing no accessibility work whatsoever.
    ========================================================================== */
 
 :root {
-  /* --- core palette --------------------------------------------------- */
-  --zinc:            #E6EAE9;  /* page ground */
-  --mill:            #F2F5F4;  /* raised surfaces: plates, cards, popovers */
-  --scribe:          #161C1E;  /* headings + body */
-  --patina:          #4A5658;  /* secondary text */
-  --eloksal:         #5B2E8C;  /* primary accent, metal sector */
-  --brass:           #7A5D12;  /* paid-client mark ONLY — never an edge */
+  /* --- ground and surfaces (classic neumorphism field) ----------------- */
+  --ground:      #E0E5EC;
+  --surface:     #E8ECF2;  /* cards, plates */
+  --raised:      #EDF1F6;  /* floating: sheet, popover */
 
-  /* --- derived surfaces ----------------------------------------------- */
-  --surface-2:       #F8FBFA;  /* floating (sheet) */
-  --muted:           #EBEFEE;  /* skeleton, disabled, quiet fill */
-  --accent-surface:  #E9E1F7;  /* eloksal-tinted hover fill */
+  /* --- text ------------------------------------------------------------ */
+  --text:        #1A1D21;  /* 13.36 on ground, 14.26 on surface */
+  --text-muted:  #565D66;  /* 5.26 / 5.62 */
 
-  /* --- the chamfer ---------------------------------------------------- */
-  /* Both edges sit on the same side of the surface luminance; the bevel is
-     the difference between them. top/left is always lighter than bottom/right.
-     Every edge clears 3:1 against both --zinc and --mill. */
-  --edge-hi:         #6F7A7D;  /* raised: top + left   (3.64 on zinc, 4.03 on mill) */
-  --edge-lo:         #3C4648;  /* raised: bottom + right (8.01 / 8.86) */
+  /* --- boundaries (these carry the accessibility, not the shadows) ----- */
+  --edge:        #7A8189;  /* interactive boundary: 3.11 ground, 3.32 surface */
+  --edge-soft:   #C8CFD8;  /* decorative card hairline — no a11y role */
 
-  /* --- the withheld slab (tonally inverts across themes) -------------- */
-  --slab:            #515A5B;
-  --slab-label:      #EAF0EF;
+  /* --- the single accent ---------------------------------------------- */
+  /* Electric blue. Light theme needs the darker step: #3B82F6 is only
+     2.91:1 on this ground and fails body text. Same family, same job. */
+  --accent:      #1D4ED8;  /* 5.29 on ground */
+  --accent-hover:#1E40AF;
+  --on-accent:   #FFFFFF;  /* 6.70 on the accent fill */
+  --danger:      #B91C1C;
 
-  /* --- sector finishes ------------------------------------------------ */
-  --jade:            #026646;  /* property sector; also --success */
-  --azure:           #014F90;  /* commerce sector */
-  --success:         var(--jade);
-  --destructive:     #C33A34;
+  /* --- neumorphic depth (decorative only) ------------------------------ */
+  --shadow-dark:  rgb(163 177 198 / 0.60);
+  --shadow-light: rgb(255 255 255 / 0.90);
+  --shadow-raised:
+    6px 6px 14px var(--shadow-dark),
+    -6px -6px 14px var(--shadow-light);
+  --shadow-raised-lg:
+    10px 10px 24px var(--shadow-dark),
+    -10px -10px 24px var(--shadow-light);
+  --shadow-inset:
+    inset 4px 4px 10px var(--shadow-dark),
+    inset -4px -4px 10px var(--shadow-light);
 
-  /* --- primary button chamfer (the plain edges fail on an eloksal fill) */
-  --btn-edge-hi:     #CAB5EC;
-  --btn-edge-lo:     #9F8BBF;
-  --eloksal-hover:   #6D389F;
+  /* --- radii ----------------------------------------------------------- */
+  --radius-0:  0;
+  --radius-sm: 10px;
+  --radius-1:  16px;
+  --radius-lg: 20px;
 
-  /* --- the raked specular band --------------------------------------- */
-  --specular:        rgb(0 0 0 / .05);
-
-  /* --- type ----------------------------------------------------------- */
+  /* --- type ------------------------------------------------------------ */
   --font-display: var(--font-display-face), "Arial Narrow", Arial, sans-serif;
   --font-sans:    var(--font-sans-face),    ui-sans-serif, system-ui, sans-serif;
   --font-mono:    var(--font-mono-face),    ui-monospace, monospace;
 
-  --text-display-2xl: clamp(3.5rem,   2.6667rem + 3.7037vw, 6rem);      /* 56 → 96 */
-  --text-display-xl:  clamp(2.125rem, 1.6667rem + 2.0370vw, 3.5rem);    /* 34 → 56 */
-  --text-display-lg:  clamp(2rem,     1.6667rem + 1.4815vw, 3rem);      /* 32 → 48 */
-  --text-display-md:  clamp(1.625rem, 1.5rem    + 0.5556vw, 2rem);      /* 26 → 32 */
-  --text-display-sm:  clamp(1.25rem,  1.2083rem + 0.1852vw, 1.375rem);  /* 20 → 22 */
+  --text-display-2xl: clamp(3.5rem,   2.6667rem + 3.7037vw, 6rem);
+  --text-display-xl:  clamp(2.125rem, 1.6667rem + 2.0370vw, 3.5rem);
+  --text-display-lg:  clamp(2rem,     1.6667rem + 1.4815vw, 3rem);
+  --text-display-md:  clamp(1.625rem, 1.5rem    + 0.5556vw, 2rem);
+  --text-display-sm:  clamp(1.25rem,  1.2083rem + 0.1852vw, 1.375rem);
   --text-display-xs:  1.25rem;
   --text-display-2xs: 1.125rem;
 
-  --text-body-lead:   clamp(1rem,      0.9583rem + 0.1852vw, 1.125rem); /* 16 → 18 */
-  --text-body-base:   clamp(0.9375rem, 0.9167rem + 0.0926vw, 1rem);     /* 15 → 16 */
+  --text-body-lead:   clamp(1rem,      0.9583rem + 0.1852vw, 1.125rem);
+  --text-body-base:   clamp(0.9375rem, 0.9167rem + 0.0926vw, 1rem);
   --text-body-sm:     0.875rem;
   --text-body-xs:     0.75rem;
 
   --text-mono-inline: 0.8125rem;
   --text-mono-block:  0.875rem;
 
-  /* --- spacing (4px base) --------------------------------------------- */
-  --space-0: 0;      --space-8:  2rem;
-  --space-px: 1px;   --space-10: 2.5rem;
-  --space-0\.5: 0.125rem;
-  --space-1: 0.25rem;   --space-12: 3rem;
-  --space-1\.5: 0.375rem;
-  --space-2: 0.5rem;    --space-16: 4rem;
-  --space-3: 0.75rem;   --space-20: 5rem;
-  --space-4: 1rem;      --space-24: 6rem;
-  --space-5: 1.25rem;   --space-28: 7rem;
-  --space-6: 1.5rem;    --space-32: 8rem;
-  --space-7: 1.75rem;   --space-36: 9rem;
+  /* --- spacing --------------------------------------------------------- */
+  --space-1: 0.25rem;  --space-8:  2rem;
+  --space-2: 0.5rem;   --space-10: 2.5rem;
+  --space-3: 0.75rem;  --space-12: 3rem;
+  --space-4: 1rem;     --space-16: 4rem;
+  --space-5: 1.25rem;  --space-20: 5rem;
+  --space-6: 1.5rem;   --space-24: 6rem;
+  --space-7: 1.75rem;  --space-32: 8rem;
 
-  /* --- radii ----------------------------------------------------------- */
-  --radius-0: 0;
-  --radius-1: 2px;
-
-  /* --- containers ------------------------------------------------------ */
   --container-wide:  1200px;
   --container-prose: 68ch;
 
-  /* --- motion ---------------------------------------------------------- */
+  /* --- motion (timings unchanged from the previous system) ------------- */
   --dur-instant: 80ms;
   --dur-fast:    140ms;
   --dur-base:    220ms;
@@ -103,56 +101,46 @@
   --delay-enter:   120ms;
   --delay-stagger: 60ms;
 
-  /* --- shadcn compatibility (surviving primitives read these) ---------- */
-  --background: var(--zinc);
-  --foreground: var(--scribe);
-  --card: var(--mill);
-  --card-foreground: var(--scribe);
-  --popover: var(--mill);
-  --popover-foreground: var(--scribe);
-  --primary: var(--eloksal);
-  --primary-foreground: var(--mill);
-  --secondary: var(--muted);
-  --secondary-foreground: var(--scribe);
-  --muted-foreground: var(--patina);
-  --accent: var(--accent-surface);
-  --accent-foreground: var(--eloksal);
-  --border: var(--edge-hi);
-  --input: var(--edge-lo);
-  --ring: var(--eloksal);
+  /* --- shadcn compatibility -------------------------------------------- */
+  --background: var(--ground);
+  --foreground: var(--text);
+  --card: var(--surface);
+  --card-foreground: var(--text);
+  --popover: var(--raised);
+  --popover-foreground: var(--text);
+  --primary: var(--accent);
+  --primary-foreground: var(--on-accent);
+  --secondary: var(--surface);
+  --secondary-foreground: var(--text);
+  --muted: var(--surface);
+  --muted-foreground: var(--text-muted);
+  --accent-surface: var(--raised);
+  --accent-foreground: var(--accent);
+  --destructive: var(--danger);
+  --border: var(--edge);
+  --input: var(--edge);
+  --ring: var(--accent);
   --radius: var(--radius-1);
 }
 
 .dark {
-  --zinc:            #1A2224;
-  --mill:            #222C2E;
-  --scribe:          #DCE4E3;
-  --patina:          #94A3A2;
-  --eloksal:         #C9A5F2;
-  --brass:           #E0B95C;
+  --ground:      #0A0A0B;  /* pure neutral near-black, zero colour cast */
+  --surface:     #17171A;
+  --raised:      #1E1E22;
 
-  --surface-2:       #2C3739;
-  --muted:           #2A3436;
-  --accent-surface:  #3F374A;
+  --text:        #E8E8EA;  /* 16.17 on ground, 14.62 on surface */
+  --text-muted:  #9A9AA3;  /* 7.09 / 6.41 */
 
-  /* inverted: both edges lighter than the surface, top/left brightest */
-  --edge-hi:         #ACB9BA;  /* 8.01 on zinc, 7.09 on mill */
-  --edge-lo:         #7C888A;  /* 4.43 / 3.91 */
+  --edge:        #6C6C72;  /* 3.79 ground, 3.43 surface, 3.18 raised */
+  --edge-soft:   #2A2A30;
 
-  --slab:            #9DA7A8;  /* inverts — light slab on the dark theme */
-  --slab-label:      #161C1E;
+  --accent:      #3B82F6;  /* 5.38 ground, 4.86 surface */
+  --accent-hover:#60A5FA;
+  --on-accent:   #0A0A0B;  /* 5.38 on the fill — beats white's 3.68 */
+  --danger:      #F87171;
 
-  --jade:            #6CCFA3;
-  --azure:           #81BCFE;
-  --destructive:     #EA8177;
-
-  --btn-edge-hi:     #6B5585;
-  --btn-edge-lo:     #4C3563;
-  --eloksal-hover:   #D6B8F5;
-
-  --specular:        rgb(255 255 255 / .07);
-
-  --primary-foreground: var(--zinc);
+  --shadow-dark:  rgb(0 0 0 / 0.70);
+  --shadow-light: rgb(255 255 255 / 0.035);
 }
 
 @theme inline {
@@ -168,33 +156,28 @@
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
+  --color-accent: var(--accent-surface);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --color-zinc-plate: var(--zinc);
-  --color-mill: var(--mill);
-  --color-scribe: var(--scribe);
-  --color-patina: var(--patina);
-  --color-eloksal: var(--eloksal);
-  --color-brass: var(--brass);
-  --color-jade: var(--jade);
-  --color-azure: var(--azure);
-  --color-slab: var(--slab);
-  --color-slab-label: var(--slab-label);
-  --color-surface-2: var(--surface-2);
+  --color-ground: var(--ground);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-scribe: var(--text);
+  --color-patina: var(--text-muted);
+  --color-eloksal: var(--accent);
 
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-display: var(--font-display);
 
-  --radius-sm: var(--radius-1);
+  --radius-sm: var(--radius-sm);
   --radius-md: var(--radius-1);
   --radius-lg: var(--radius-1);
-  --radius-xl: var(--radius-1);
+  --radius-xl: var(--radius-lg);
 }
 
 /* ==========================================================================
@@ -203,17 +186,16 @@
 
 @layer base {
   * {
-    border-color: var(--edge-hi);
+    border-color: var(--edge-soft);
   }
 
   html {
-    /* 2.4.11 Focus Not Obscured — the header is sticky at 56px */
     scroll-padding-top: calc(3.5rem + 0.5rem);
   }
 
   body {
-    background: var(--zinc);
-    color: var(--scribe);
+    background: var(--ground);
+    color: var(--text);
     font-family: var(--font-sans);
     font-size: var(--text-body-base);
     line-height: 1.6;
@@ -223,62 +205,63 @@
   h1, h2, h3, h4 {
     font-family: var(--font-display);
     font-weight: 800;
-    /* sentence case, never uppercase, never negative tracking */
     letter-spacing: 0.002em;
     text-wrap: balance;
   }
 
+  /* High-contrast solid outline. Never a shadow, never a glow — this is the
+     one thing that must survive on every surface in the system. */
   :focus-visible {
-    outline: 2px solid var(--eloksal);
+    outline: 3px solid var(--accent);
     outline-offset: 2px;
-    border-radius: var(--radius-1);
+    border-radius: var(--radius-sm);
   }
 
-  [id] {
-    scroll-margin-top: calc(3.5rem + 0.5rem);
-  }
+  [id] { scroll-margin-top: calc(3.5rem + 0.5rem); }
 
   ::selection {
-    background: var(--accent-surface);
-    color: var(--scribe);
+    background: var(--accent);
+    color: var(--on-accent);
   }
 }
 
 /* ==========================================================================
-   the chamfer — the signature device
-   Every surface is a machined bevel, never a drop shadow. Both edges clear
-   3:1, so no component is ever defined by shadow alone.
+   soft-UI surfaces
    ========================================================================== */
 
 @layer components {
+  /* Raised card. The border is the accessible boundary; the dual shadow is
+     the look. Remove the shadows and this is still a legible interface. */
   .plate {
-    background: var(--mill);
-    border: 2px solid;
-    border-color: var(--edge-hi) var(--edge-lo) var(--edge-lo) var(--edge-hi);
+    background: var(--surface);
+    border: 1px solid var(--edge-soft);
     border-radius: var(--radius-1);
+    box-shadow: var(--shadow-raised);
   }
 
-  /* milled INTO the surface: inputs, code blocks, the withheld slab */
+  /* Pressed into the surface: inputs, code blocks, the withheld slab. */
   .recessed {
-    background: var(--zinc);
-    border: 2px solid;
-    border-color: var(--edge-lo) var(--edge-hi) var(--edge-hi) var(--edge-lo);
-    border-radius: var(--radius-1);
+    background: var(--surface);
+    border: 1px solid var(--edge-soft);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-inset);
   }
 
-  /* --- the hero coupon ------------------------------------------------ */
+  /* Controls carry the STRONG edge — 1.4.11 applies to them, not to cards. */
+  .control {
+    border-color: var(--edge);
+  }
+
   .coupon {
     position: relative;
     overflow: hidden;
-    max-inline-size: 40rem;         /* 640px at every breakpoint */
-    background: var(--mill);
-    border: 2px solid;
-    border-color: var(--edge-hi) var(--edge-lo) var(--edge-lo) var(--edge-hi);
-    border-radius: var(--radius-1);
+    max-inline-size: 40rem;
+    background: var(--surface);
+    border: 1px solid var(--edge-soft);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-raised-lg);
   }
 
-  /* the raked specular band — sweeps once on hover/focus, never on load,
-     never on a loop, and does not exist on touch (no hover). */
   .coupon::after {
     content: "";
     position: absolute;
@@ -289,7 +272,7 @@
     background: linear-gradient(
       105deg,
       transparent 30%,
-      var(--specular) 46%,
+      rgb(255 255 255 / 0.05) 46%,
       transparent 62%
     );
   }
@@ -302,7 +285,7 @@
   }
 
   /* --- the withheld slab ---------------------------------------------- */
-  /* Sized from a hand-authored row count. The confidential values are never
+  /* Still sized from a hand-authored row count; the values are never
      authored into the codebase, so there is nothing here to inspect. */
   .withheld {
     --wh-line: 1.5rem;
@@ -311,29 +294,29 @@
     display: flex;
     align-items: center;
     padding: var(--wh-gap);
-    background: var(--slab);
-    color: var(--slab-label);
-    border: 2px solid;
-    border-color: var(--edge-lo) var(--edge-hi) var(--edge-hi) var(--edge-lo);
-    border-radius: var(--radius-1);
+    background: var(--ground);
+    color: var(--text-muted);
+    border: 1px solid var(--edge);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-inset);
     font-size: var(--text-body-sm);
     font-weight: 500;
   }
 
-  /* The ring is invisible against the slab (1.34:1). Draw it inset, in the
-     label colour, which clears 6:1 on that fill in both themes. */
-  .withheld:focus-visible {
-    outline: 2px solid var(--slab-label);
-    outline-offset: -4px;
+  /* --- soft buttons ---------------------------------------------------- */
+  .soft-btn {
+    border: 1px solid var(--edge);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-raised);
+    transition:
+      box-shadow var(--dur-fast) var(--ease-standard),
+      background-color var(--dur-fast) var(--ease-standard);
   }
 
-  /* --- primary button chamfer ----------------------------------------- */
-  .btn-chamfer {
-    border: 2px solid;
-    border-color: var(--btn-edge-hi) var(--btn-edge-lo) var(--btn-edge-lo) var(--btn-edge-hi);
+  .soft-btn:active {
+    box-shadow: var(--shadow-inset);
   }
 
-  /* --- the skip link --------------------------------------------------- */
   .skip-link {
     position: fixed;
     inset-block-start: var(--space-2);
@@ -343,26 +326,21 @@
     display: inline-flex;
     align-items: center;
     padding-inline: var(--space-4);
-    background: var(--mill);
-    color: var(--scribe);
-    border: 2px solid;
-    border-color: var(--edge-hi) var(--edge-lo) var(--edge-lo) var(--edge-hi);
-    border-radius: var(--radius-1);
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--edge);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-raised);
     font-size: var(--text-body-sm);
     font-weight: 500;
     clip-path: inset(50%);
   }
 
-  .skip-link:focus-visible {
-    clip-path: none;
-  }
+  .skip-link:focus-visible { clip-path: none; }
 }
 
 /* ==========================================================================
-   motion
-   One orchestrated entrance, played once. The H1 carries no animation
-   property at all — it paints final on the first frame so it stays an
-   LCP candidate.
+   motion — timings unchanged
    ========================================================================== */
 
 @keyframes rake {
@@ -381,23 +359,18 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 1ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 1ms !important;
     scroll-behavior: auto !important;
   }
 
-  /* Substitution, not subtraction: entrance elements are simply present. */
   [data-enter] {
     animation: none;
     opacity: 1;
     transform: none;
   }
 
-  .coupon::after {
-    animation: none;
-  }
+  .coupon::after { animation: none; }
 }

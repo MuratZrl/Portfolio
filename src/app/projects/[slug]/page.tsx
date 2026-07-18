@@ -82,7 +82,7 @@ export default async function ProjectDetailPage({ params }: Props) {
             ) : null}
             {repo ? (
               repoIsPrivate ? (
-                <span className="inline-flex items-center gap-1.5 text-[length:var(--text-body-sm)] text-patina">
+                <span className="inline-flex items-center gap-1.5 text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
                   <Lock className="size-4" aria-hidden />
                   Private repo
                 </span>

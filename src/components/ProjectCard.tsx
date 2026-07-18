@@ -12,13 +12,11 @@ import { placeholder } from "@/lib/media";
 
 const MAX_VISIBLE_TAGS = 4;
 
-/** Sector drives the top edge only. A two-sided override destroys the bevel read. */
-const SECTOR_EDGE: Record<Project["sector"], string> = {
-  metal: "border-t-[var(--eloksal)]",
-  property: "border-t-[var(--jade)]",
-  commerce: "border-t-[var(--azure)]",
-  personal: "", // no chromatic edge — a coloured edge means somebody paid for this
-};
+/**
+ * Sector no longer carries a colour. The single accent is reserved for
+ * primary actions, links and focus, so industry is communicated by the
+ * `sectorLabel` text alone — which is what 1.4.1 wanted anyway.
+ */
 
 type ProjectCardProps = {
   project: Project;
@@ -55,12 +53,11 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
   return (
     <article
       className={cn(
-        "plate group flex flex-col overflow-hidden transition-colors duration-[var(--dur-base)] ease-[var(--ease-standard)]",
-        "hover:bg-[var(--accent-surface)] focus-within:bg-[var(--accent-surface)]",
-        SECTOR_EDGE[project.sector],
+        "plate group flex flex-col overflow-hidden transition-shadow duration-[var(--dur-base)] ease-[var(--ease-standard)]",
+        "hover:shadow-[var(--shadow-raised-lg)] focus-within:shadow-[var(--shadow-raised-lg)]",
       )}
     >
-      <div className="relative aspect-[16/9] overflow-hidden border-b-2 border-[var(--edge-hi)] bg-[var(--muted)]">
+      <div className="relative aspect-[16/9] overflow-hidden border-b border-[var(--edge-soft)] bg-[var(--muted)]">
         <Image
           src={imgSrc}
           alt={imgAlt}
@@ -75,18 +72,18 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
           {/* The non-colour channel for the sector edge. Without this the
               colour would be carrying industry on its own — WCAG 1.4.1. */}
-          <span className="text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-patina">
+          <span className="text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--text-muted)]">
             {project.sectorLabel}
           </span>
           {isPaid ? (
-            <span className="flex items-center gap-2 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-patina">
-              <span aria-hidden className="h-0.5 w-4 bg-[var(--brass)]" />
+            <span className="flex items-center gap-2 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--text-muted)]">
+              <span aria-hidden className="h-px w-4 bg-[var(--edge)]" />
               Client work
             </span>
           ) : null}
         </div>
 
-        <Heading className="text-[length:var(--text-display-xs)] font-bold leading-[1.2] text-scribe">
+        <Heading className="text-[length:var(--text-display-xs)] font-bold leading-[1.2] text-[var(--text)]">
           <Link
             href={project.slug}
             className="outline-none after:absolute after:inset-0 after:content-[''] group-focus-within:underline group-hover:underline"
@@ -95,7 +92,7 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
           </Link>
         </Heading>
 
-        <p className="text-[length:var(--text-body-sm)] leading-[1.5] text-patina">
+        <p className="text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--text-muted)]">
           {project.cardSummary ?? project.summary}
         </p>
 
@@ -108,32 +105,32 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
             {project.withheld.reason}
           </p>
         ) : project.caption ? (
-          <p className="text-[length:var(--text-body-sm)] text-patina">{project.caption}</p>
+          <p className="text-[length:var(--text-body-sm)] text-[var(--text-muted)]">{project.caption}</p>
         ) : null}
 
         <ul className="mt-auto flex flex-wrap gap-1.5 pt-1">
           {visibleTags.map((tag) => (
             <li
               key={tag}
-              className="recessed px-2 py-0.5 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-patina"
+              className="recessed px-2 py-0.5 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--text-muted)]"
             >
               {tag}
             </li>
           ))}
           {hiddenCount > 0 ? (
-            <li className="px-2 py-0.5 text-[length:var(--text-body-xs)] text-patina">
+            <li className="px-2 py-0.5 text-[length:var(--text-body-xs)] text-[var(--text-muted)]">
               +{hiddenCount} more
             </li>
           ) : null}
         </ul>
 
-        <div className="relative z-10 flex flex-wrap items-center gap-4 border-t-2 border-[var(--edge-hi)] pt-4 text-[length:var(--text-body-sm)]">
+        <div className="relative z-10 flex flex-wrap items-center gap-4 border-t border-[var(--edge-soft)] pt-4 text-[length:var(--text-body-sm)]">
           {demo ? (
             <a
               href={demo.href}
               target="_blank"
               rel="noreferrer noopener"
-              className="inline-flex items-center gap-1.5 font-medium text-eloksal underline-offset-4 hover:underline"
+              className="inline-flex items-center gap-1.5 font-medium text-[var(--accent)] underline-offset-4 hover:underline"
             >
               <ExternalLink className="size-4" aria-hidden />
               {demo.label}
@@ -146,7 +143,7 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
               href={repo.href}
               target="_blank"
               rel="noreferrer noopener"
-              className="inline-flex items-center gap-1.5 font-medium text-eloksal underline-offset-4 hover:underline"
+              className="inline-flex items-center gap-1.5 font-medium text-[var(--accent)] underline-offset-4 hover:underline"
             >
               <Github className="size-4" aria-hidden />
               {repo.label}
@@ -155,7 +152,7 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
           ) : null}
 
           {repoIsPrivate ? (
-            <span className="inline-flex items-center gap-1.5 text-patina">
+            <span className="inline-flex items-center gap-1.5 text-[var(--text-muted)]">
               <Lock className="size-4" aria-hidden />
               Private repo
             </span>

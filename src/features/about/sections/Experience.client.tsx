@@ -24,19 +24,19 @@ const KIND_CONFIG: Record<Kind, {
     label: "Employment",
     icon: Building2,
     dot: "bg-primary border-primary/30 text-primary-foreground",
-    badge: "text-[color:var(--eloksal)]",
+    badge: "text-[color:var(--accent)]",
   },
   freelance: {
     label: "Client project",
     icon: Briefcase,
-    dot: "bg-[var(--brass)] border-[var(--brass)] text-[color:var(--zinc)]",
-    badge: "text-[color:var(--brass)]",
+    dot: "bg-[var(--edge)] border-[var(--edge)] text-[color:var(--ground)]",
+    badge: "text-[color:var(--edge)]",
   },
   education: {
     label: "Education",
     icon: GraduationCap,
-    dot: "bg-[var(--azure)] border-[var(--azure)] text-primary-foreground",
-    badge: "text-[color:var(--azure)]",
+    dot: "bg-[var(--accent)] border-[var(--accent)] text-primary-foreground",
+    badge: "text-[color:var(--accent)]",
   },
 };
 

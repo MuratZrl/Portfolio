@@ -164,12 +164,11 @@ export default function ContactForm(): React.JSX.Element {
 
   return (
     <div className={cn(
-      "flex h-full flex-col rounded-2xl border p-5 sm:p-6",
-      "border-border/50 bg-card/80 backdrop-blur-sm",
+      "plate flex h-full flex-col p-5 sm:p-6",
     )}>
       <div className="mb-6">
         <div className="flex items-center gap-3">
-          <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <div className="flex size-9 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--raised)] text-[var(--accent)]">
             <Send className="h-4 w-4" aria-hidden />
           </div>
           <h3 className="text-base font-semibold">Send a message</h3>
@@ -188,7 +187,7 @@ export default function ContactForm(): React.JSX.Element {
               required, and nothing said so. */}
           <p
             id="contact-required-note"
-            className="text-[length:var(--text-body-sm)] text-[color:var(--patina)]"
+            className="text-[length:var(--text-body-sm)] text-[color:var(--text-muted)]"
           >
             Every field is required.
           </p>
@@ -219,7 +218,7 @@ export default function ContactForm(): React.JSX.Element {
                       placeholder="Your name"
                       autoComplete="name"
                       inputMode="text"
-                      className="rounded-lg border-border/50 bg-background/60 focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+                      className="recessed control"
                       {...field}
                       aria-invalid={showError("name")}
                     />
@@ -244,7 +243,7 @@ export default function ContactForm(): React.JSX.Element {
                       placeholder="you@example.com"
                       autoComplete="email"
                       inputMode="email"
-                      className="rounded-lg border-border/50 bg-background/60 focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+                      className="recessed control"
                       {...field}
                       aria-invalid={showError("email")}
                     />
@@ -367,7 +366,7 @@ export default function ContactForm(): React.JSX.Element {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="btn-chamfer inline-flex w-full min-h-11 select-none items-center justify-center gap-2 rounded-[2px] bg-[var(--eloksal)] px-6 py-3 text-sm font-medium text-[color:var(--primary-foreground)] transition-colors duration-[var(--dur-fast)] ease-[var(--ease-standard)] hover:bg-[var(--eloksal-hover)] disabled:opacity-60"
+              className="soft-btn inline-flex w-full min-h-11 select-none items-center justify-center gap-2 rounded-[var(--radius-sm)] bg-[var(--accent)] px-6 py-3 text-sm font-medium text-[color:var(--primary-foreground)] transition-colors duration-[var(--dur-fast)] ease-[var(--ease-standard)] hover:bg-[var(--accent-hover)] disabled:opacity-60"
             >
               {isSubmitting ? (
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden />

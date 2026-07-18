@@ -34,18 +34,18 @@ export default function FeaturedProjects({
         <div>
           <h2
             id="featured-projects-heading"
-            className="text-[length:var(--text-display-md)] font-bold leading-[1.05] text-scribe"
+            className="text-[length:var(--text-display-md)] font-bold leading-[1.05] text-[var(--text)]"
           >
             {heading}
           </h2>
-          <p className="mt-2 text-[length:var(--text-body-base)] text-patina">{subheading}</p>
+          <p className="mt-2 text-[length:var(--text-body-base)] text-[var(--text-muted)]">{subheading}</p>
         </div>
 
-        {/* A text link, not a bordered button — a chamfered button beside a row
-            of chamfered cards is edge noise. */}
+        {/* A text link, not a bordered button — a raised button beside a row of
+            raised cards is depth noise. */}
         <Link
           href="/projects"
-          className="text-[length:var(--text-body-sm)] font-medium text-eloksal underline-offset-4 hover:underline"
+          className="text-[length:var(--text-body-sm)] font-medium text-[var(--accent)] underline-offset-4 hover:underline"
         >
           All five projects
         </Link>

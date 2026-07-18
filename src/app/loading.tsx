@@ -31,7 +31,7 @@ export default function HomeLoading() {
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              className={i > 0 ? "border-t-2 border-[var(--edge-hi)] px-6 py-7 sm:px-8" : "px-6 py-7 sm:px-8"}
+              className={i > 0 ? "border-t border-[var(--edge-soft)] px-6 py-7 sm:px-8" : "px-6 py-7 sm:px-8"}
             >
               <div className="grid gap-4 lg:grid-cols-[minmax(220px,1fr)_2fr] lg:gap-12">
                 <div>

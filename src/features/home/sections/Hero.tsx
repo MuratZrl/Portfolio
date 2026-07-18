@@ -53,7 +53,7 @@ export default function Hero({
       <div className="coupon p-6 sm:p-8">
         <h1
           id={headingId}
-          className="max-w-[18ch] text-[length:var(--text-display-xl)] font-extrabold leading-[0.96] text-scribe"
+          className="max-w-[18ch] text-[length:var(--text-display-xl)] font-extrabold leading-[0.96] text-[var(--text)]"
         >
           {title}
         </h1>
@@ -61,7 +61,7 @@ export default function Hero({
         <p
           data-enter
           style={{ "--i": 1 } as React.CSSProperties}
-          className="mt-5 max-w-[52ch] text-[length:var(--text-body-lead)] leading-[1.55] text-patina"
+          className="mt-5 max-w-[52ch] text-[length:var(--text-body-lead)] leading-[1.55] text-[var(--text-muted)]"
         >
           {subtitle}
         </p>
@@ -74,7 +74,7 @@ export default function Hero({
           <Link
             href={primary.href}
             aria-label={primary.ariaLabel}
-            className="btn-chamfer inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-1)] bg-eloksal px-5 text-[length:var(--text-body-sm)] font-medium text-[color:var(--primary-foreground)] transition-colors duration-[var(--dur-fast)] ease-[var(--ease-standard)] hover:bg-[var(--eloksal-hover)]"
+            className="soft-btn inline-flex min-h-11 items-center gap-2 bg-[var(--accent)] px-5 text-[length:var(--text-body-sm)] font-medium text-[color:var(--on-accent)] hover:bg-[var(--accent-hover)]"
           >
             {primary.label}
             <ArrowRight className="size-4" aria-hidden />
@@ -85,7 +85,7 @@ export default function Hero({
               href={secondary.href}
               download={secondary.download}
               aria-label={secondary.ariaLabel}
-              className="plate inline-flex min-h-11 items-center rounded-[var(--radius-1)] px-5 text-[length:var(--text-body-sm)] font-medium text-scribe transition-colors duration-[var(--dur-fast)] ease-[var(--ease-standard)] hover:bg-[var(--accent-surface)]"
+              className="soft-btn inline-flex min-h-11 items-center bg-[var(--surface)] px-5 text-[length:var(--text-body-sm)] font-medium text-[var(--text)] hover:bg-[var(--raised)]"
             >
               {secondary.label}
             </a>
@@ -98,7 +98,7 @@ export default function Hero({
           <p
             data-enter
             style={{ "--i": 3 } as React.CSSProperties}
-            className="mt-7 border-t border-[var(--edge-hi)] pt-4 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-patina"
+            className="mt-7 border-t border-[var(--edge-soft)] pt-4 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--text-muted)]"
           >
             {availability}
           </p>

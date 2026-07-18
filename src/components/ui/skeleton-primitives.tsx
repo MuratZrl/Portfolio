@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
  */
 export function Shimmer({
   className,
-  rounded = "rounded-[2px]",
+  rounded = "rounded-[var(--radius-sm)]",
 }: {
   className?: string;
   rounded?: string;
@@ -21,7 +21,7 @@ export function Shimmer({
   return <div className={cn(rounded, "bg-[var(--muted)]", className)} />;
 }
 
-/** A chamfered plate placeholder, matching the real plate's geometry. */
+/** A soft-UI plate placeholder, matching the real plate's geometry. */
 export function CardSkeleton({
   className,
   children,
@@ -33,7 +33,7 @@ export function CardSkeleton({
 }
 
 export function IconBoxSkeleton() {
-  return <div className="size-9 rounded-[2px] bg-[var(--muted)]" />;
+  return <div className="size-9 rounded-[var(--radius-sm)] bg-[var(--muted)]" />;
 }
 
 export function PillSkeleton({ width = "w-16" }: { width?: string }) {

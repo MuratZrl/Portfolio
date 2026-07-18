@@ -27,30 +27,30 @@ export default function HowIBuild({
     <section className={cn("w-full py-12 sm:py-16", className)} aria-labelledby={headingId}>
       <h2
         id={headingId}
-        className="text-[length:var(--text-display-md)] font-bold leading-[1.05] text-scribe"
+        className="text-[length:var(--text-display-md)] font-bold leading-[1.05] text-[var(--text)]"
       >
         {heading}
       </h2>
-      <p className="mt-2 text-[length:var(--text-body-base)] text-patina">{subheading}</p>
+      <p className="mt-2 text-[length:var(--text-body-base)] text-[var(--text-muted)]">{subheading}</p>
 
       <div className="plate mt-6">
         {items.map((item, i) => (
           <div
             key={item.title}
-            className={cn("px-6 py-7 sm:px-8", i > 0 && "border-t-2 border-[var(--edge-hi)]")}
+            className={cn("px-6 py-7 sm:px-8", i > 0 && "border-t border-[var(--edge-soft)]")}
           >
             <div className="grid gap-4 lg:grid-cols-[minmax(220px,1fr)_2fr] lg:gap-12">
               <div>
-                <h3 className="text-[length:var(--text-display-sm)] font-bold leading-[1.15] text-scribe">
+                <h3 className="text-[length:var(--text-display-sm)] font-bold leading-[1.15] text-[var(--text)]">
                   {item.title}
                 </h3>
-                <p className="mt-3 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-eloksal">
+                <p className="mt-3 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--accent)]">
                   {item.check}
                 </p>
               </div>
 
               <div>
-                <p className="text-[length:var(--text-body-base)] leading-[1.6] text-patina">
+                <p className="text-[length:var(--text-body-base)] leading-[1.6] text-[var(--text-muted)]">
                   {item.description}
                 </p>
 
@@ -59,9 +59,9 @@ export default function HowIBuild({
                     {item.highlights.map((h) => (
                       <li
                         key={h}
-                        className="flex gap-2 text-[length:var(--text-body-sm)] text-scribe"
+                        className="flex gap-2 text-[length:var(--text-body-sm)] text-[var(--text)]"
                       >
-                        <span aria-hidden className="text-eloksal">
+                        <span aria-hidden className="text-[var(--accent)]">
                           —
                         </span>
                         {h}
@@ -75,7 +75,7 @@ export default function HowIBuild({
                     {item.tags.map((tag) => (
                       <li
                         key={tag}
-                        className="recessed px-2 py-1 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-patina"
+                        className="recessed px-2 py-1 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--text-muted)]"
                       >
                         {tag}
                       </li>
