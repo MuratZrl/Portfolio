@@ -42,6 +42,7 @@ export const DEFAULT_ITEMS = [
       "Private work labelled, not hidden",
     ],
     tags: ["TypeScript", "strict", "Public source"],
-    check: "Check it: github.com/MuratZrl",
+    check: "github.com/MuratZrl",
+    checkHref: "https://github.com/MuratZrl",
   },
 ] satisfies readonly ValueItem[];

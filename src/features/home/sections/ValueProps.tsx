@@ -44,8 +44,27 @@ export default function HowIBuild({
                 <h3 className="text-[length:var(--text-display-sm)] font-bold leading-[1.15] text-[var(--text)]">
                   {item.title}
                 </h3>
+                {/* A check that names a destination is actionable; one that
+                    names an action ("press Tab") stays text, because there
+                    is nothing for a link to navigate to. */}
                 <p className="mt-3 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--accent)]">
-                  {item.check}
+                  {item.checkHref ? (
+                    <>
+                      Check it:{" "}
+                      <a
+                        href={item.checkHref}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        draggable={false}
+                        className="link-soft text-[var(--accent)]"
+                      >
+                        {item.check}
+                        <span className="sr-only"> (opens in a new tab)</span>
+                      </a>
+                    </>
+                  ) : (
+                    item.check
+                  )}
                 </p>
               </div>
 

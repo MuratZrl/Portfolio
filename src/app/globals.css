@@ -48,6 +48,15 @@
     inset 4px 4px 10px var(--shadow-dark),
     inset -4px -4px 10px var(--shadow-light);
 
+  /* Hover elevation is DOWNWARD, not diagonal. The resting neumorphic
+     shadow is offset on both axes, which is correct for a static plate but
+     bleeds sideways onto whatever sits next to it the moment it grows.
+     Zero x-offset plus a negative spread keeps the growth under the element
+     instead of over its neighbour. */
+  --shadow-hover:
+    0 10px 22px -6px var(--shadow-dark),
+    0 -1px 6px var(--shadow-light);
+
   /* --- radii ----------------------------------------------------------- */
   --radius-0:  0;
   --radius-sm: 10px;
@@ -357,6 +366,11 @@
      the slow one so arriving is unhurried. Nothing snaps. */
   .soft-btn,
   .interactive {
+    /* `position` and a base z-index are load-bearing: without a stacking
+       position the hover z-index bump below does nothing, and a raised
+       element's shadow renders UNDER the sibling next to it. */
+    position: relative;
+    z-index: 0;
     transition:
       background-color var(--dur-hover-out) var(--ease-out),
       border-color     var(--dur-hover-out) var(--ease-out),
@@ -366,7 +380,12 @@
   }
 
   .soft-btn:hover,
-  .interactive:hover {
+  .soft-btn:focus-visible,
+  .interactive:hover,
+  .interactive:focus-within {
+    /* Above its siblings while raised, so the shadow lands on top of the
+       neighbour rather than being clipped beneath it. */
+    z-index: 1;
     transition-duration: var(--dur-hover-in);
   }
 
@@ -376,10 +395,11 @@
     box-shadow: var(--shadow-raised);
   }
 
-  /* Lift, not a colour snap. */
+  /* Lift, not a colour snap. Downward shadow so it does not smear onto
+     the button sitting beside it. */
   .soft-btn:hover {
     transform: translateY(-1px);
-    box-shadow: var(--shadow-raised-lg);
+    box-shadow: var(--shadow-hover);
   }
 
   /* Pressed: sinks into the surface, fill darkens a touch, shadow collapses
@@ -393,7 +413,7 @@
 
   .plate.interactive:hover {
     transform: translateY(-1px);
-    box-shadow: var(--shadow-raised-lg);
+    box-shadow: var(--shadow-hover);
   }
 
   .plate.interactive:active {
