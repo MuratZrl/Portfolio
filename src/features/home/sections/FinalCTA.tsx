@@ -107,7 +107,7 @@ export default function FinalCta({
                     <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
                       <StepIcon className="h-5 w-5" aria-hidden />
                     </div>
-                    <span className="absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
+                    <span className="absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
                       {i + 1}
                     </span>
                   </div>

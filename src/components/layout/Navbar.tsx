@@ -35,7 +35,7 @@ export default function Navbar(): React.JSX.Element {
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/" draggable={false} className="flex select-none items-center gap-2.5">
-          <span className="inline-flex size-7 items-center justify-center rounded-md bg-primary text-xs font-bold text-white">
+          <span className="inline-flex size-7 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">
             MZ
           </span>
           <span className="hidden text-sm font-semibold tracking-tight sm:inline">
