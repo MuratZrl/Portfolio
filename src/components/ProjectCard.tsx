@@ -93,7 +93,7 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
           <Link
             href={project.slug}
             draggable={false}
-            className="outline-none after:absolute after:inset-0 after:content-[''] group-focus-within:underline group-hover:underline"
+            className="after:absolute after:inset-0 after:content-[''] group-focus-within:underline group-hover:underline"
           >
             {project.title}
           </Link>

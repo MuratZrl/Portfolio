@@ -109,6 +109,9 @@
   --dur-hover-in:  200ms;
   --dur-hover-out: 120ms;
   --dur-press:      80ms;
+  /* A focus indicator is a functional cue, not decoration. Long enough not
+     to snap, short enough that it never lags the Tab key. */
+  --dur-focus:     140ms;
 
   --ease-standard: cubic-bezier(.2, 0, 0, 1);
   --ease-out:      cubic-bezier(0, 0, .2, 1);
@@ -236,16 +239,37 @@
      No border-radius here. `outline` already follows the element's own
      radius; setting it would reshape the element on focus, snapping a 16px
      card or the 20px coupon down to 10px the moment it is focused. */
-  :focus-visible {
-    outline: 2px solid var(--accent);
+  /* The ring exists AT REST, transparent. A property that only appears
+     inside the :focus-visible block has no start value and cannot animate —
+     it would snap. Outline never affects layout, so a transparent one costs
+     nothing and gives outline-color something to interpolate from.
+
+     outline-color rather than a box-shadow ring, deliberately: box-shadow
+     already carries the neumorphic depth AND the hover elevation, so a ring
+     living there would be forced to share one property and therefore one
+     duration with the 200ms hover lift. outline-color is a free lane, so
+     focus keeps its own 140ms regardless of what hover is doing. */
+  a[href],
+  button,
+  [role="button"],
+  input,
+  textarea,
+  select,
+  summary,
+  [tabindex]:not([tabindex="-1"]) {
+    outline: 2px solid transparent;
     outline-offset: 2px;
+    transition: outline-color var(--dur-focus) var(--ease-out);
+  }
+
+  :focus-visible {
+    outline-color: var(--accent);
   }
 
   /* Belt and braces: some shadcn primitives ship their own ring. One focus
      treatment only, and it is the outline above. */
   :focus:not(:focus-visible) {
-    outline: none;
-    box-shadow: none;
+    outline-color: transparent;
   }
 
   [id] { scroll-margin-top: calc(3.5rem + 0.5rem); }
@@ -378,11 +402,16 @@
        element's shadow renders UNDER the sibling next to it. */
     position: relative;
     z-index: 0;
-    transition:
-      background-color var(--dur-hover-out) var(--ease-out),
-      border-color     var(--dur-hover-out) var(--ease-out),
-      box-shadow       var(--dur-hover-out) var(--ease-out),
-      transform        var(--dur-hover-out) var(--ease-out);
+    /* Longhand, not the shorthand: a single `transition-duration` value
+       applies to EVERY property in the list, which would drag the focus
+       ring along with the hover timing. Listing durations positionally
+       keeps outline-color pinned to --dur-focus in every state. */
+    transition-property:
+      background-color, border-color, box-shadow, transform, outline-color;
+    transition-duration:
+      var(--dur-hover-out), var(--dur-hover-out), var(--dur-hover-out),
+      var(--dur-hover-out), var(--dur-focus);
+    transition-timing-function: var(--ease-out);
     will-change: transform;
   }
 
@@ -393,7 +422,9 @@
     /* Above its siblings while raised, so the shadow lands on top of the
        neighbour rather than being clipped beneath it. */
     z-index: 1;
-    transition-duration: var(--dur-hover-in);
+    transition-duration:
+      var(--dur-hover-in), var(--dur-hover-in), var(--dur-hover-in),
+      var(--dur-hover-in), var(--dur-focus);
   }
 
   .soft-btn {
@@ -412,7 +443,9 @@
   /* Pressed: sinks into the surface, fill darkens a touch, shadow collapses
      to the inset. Fast enough to feel connected to the click. */
   .soft-btn:active {
-    transition-duration: var(--dur-press);
+    transition-duration:
+      var(--dur-press), var(--dur-press), var(--dur-press),
+      var(--dur-press), var(--dur-focus);
     transform: translateY(0);
     box-shadow: var(--shadow-inset);
     filter: brightness(0.96);
@@ -424,7 +457,9 @@
   }
 
   .plate.interactive:active {
-    transition-duration: var(--dur-press);
+    transition-duration:
+      var(--dur-press), var(--dur-press), var(--dur-press),
+      var(--dur-press), var(--dur-focus);
     transform: translateY(0);
     box-shadow: var(--shadow-inset);
   }
@@ -433,13 +468,15 @@
   .link-soft {
     text-decoration-color: transparent;
     text-underline-offset: 4px;
-    transition:
-      color var(--dur-hover-out) var(--ease-out),
-      text-decoration-color var(--dur-hover-out) var(--ease-out);
+    transition-property: color, text-decoration-color, outline-color;
+    transition-duration:
+      var(--dur-hover-out), var(--dur-hover-out), var(--dur-focus);
+    transition-timing-function: var(--ease-out);
   }
 
   .link-soft:hover {
-    transition-duration: var(--dur-hover-in);
+    transition-duration:
+      var(--dur-hover-in), var(--dur-hover-in), var(--dur-focus);
     text-decoration-line: underline;
     text-decoration-color: currentColor;
   }

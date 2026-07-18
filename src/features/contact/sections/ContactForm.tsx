@@ -279,7 +279,6 @@ export default function ContactForm(): React.JSX.Element {
                           onClick={() => field.onChange(opt.value)}
                           className={cn(
                             "inline-flex select-none items-center justify-center rounded-lg px-3 py-2 text-sm font-medium interactive",
-                            "outline-none",
                             selected
                               ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
                               : "cursor-pointer border border-[var(--edge-soft)] bg-background/60 text-muted-foreground hover:bg-muted hover:text-foreground",
