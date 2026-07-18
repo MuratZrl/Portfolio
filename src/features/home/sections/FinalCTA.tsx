@@ -9,9 +9,9 @@ import type { FinalCtaProps } from "@/features/home/types/final-cta";
 import { FINAL_CTA_DEFAULTS } from "@/features/home/data";
 
 const PROCESS_STEPS = [
-  { icon: Mail, label: "Reach out", description: "Share your idea or problem" },
-  { icon: Clock, label: "Plan together", description: "Scope, timeline, stack" },
-  { icon: Zap, label: "Ship it", description: "Clean code, tested & deployed" },
+  { icon: Mail, label: "You describe the problem", description: "The current process, not the feature list." },
+  { icon: Clock, label: "I scope it in writing", description: "What gets built, what doesn't, how long." },
+  { icon: Zap, label: "Ship it", description: "Deployed and documented." },
 ] as const;
 
 export default function FinalCta({
@@ -83,7 +83,7 @@ export default function FinalCta({
           <div className="mx-auto max-w-2xl text-center">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
               <Sparkles className="h-3 w-3" aria-hidden />
-              Let&apos;s build something great
+              Two ways to work together
             </div>
 
             <h2

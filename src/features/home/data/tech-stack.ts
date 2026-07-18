@@ -6,7 +6,7 @@ import type { Group } from "@/features/home/types/tech-stack";
 
 export const DEFAULT_GROUPS = [
   {
-    title: "Languages & Frameworks",
+    title: "Languages and frameworks",
     icon: Code2,
     skills: [
       { name: "TypeScript", hint: "strict, generics, utility types" },
@@ -17,7 +17,7 @@ export const DEFAULT_GROUPS = [
     ],
   },
   {
-    title: "UI & Styling",
+    title: "Interface and state",
     icon: Palette,
     skills: [
       { name: "Tailwind CSS", hint: "utility-first, design tokens" },
@@ -27,7 +27,7 @@ export const DEFAULT_GROUPS = [
     ],
   },
   {
-    title: "Data & Infrastructure",
+    title: "Data and infrastructure",
     icon: Database,
     skills: [
       { name: "PostgreSQL", hint: "indexes, JSONB, CTE, RLS" },
@@ -41,7 +41,7 @@ export const DEFAULT_GROUPS = [
     ],
   },
   {
-    title: "DevOps & Testing",
+    title: "Build, deploy, test",
     icon: Wrench,
     skills: [
       { name: "Docker", hint: "compose, multi-stage, networking" },

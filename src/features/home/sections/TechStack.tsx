@@ -8,8 +8,8 @@ import { DEFAULT_GROUPS } from "@/features/home/data";
 import type { TechStackProps, Skill, Group } from "@/features/home/types/tech-stack";
 
 export default function TechStack({
-  heading = "Tech Stack",
-  subheading = "Technologies I work with day-to-day.",
+  heading = "Stack",
+  subheading = "What I reach for, and what I use it for.",
   groups = DEFAULT_GROUPS,
   className,
 }: TechStackProps): React.JSX.Element {
