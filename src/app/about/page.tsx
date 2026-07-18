@@ -5,7 +5,6 @@ import { Page } from "@/components/layout/Page";
 
 import AboutIntro from "@/features/about/sections/AboutIntro.client";
 import ExperienceTimeline from "@/features/about/sections/Experience.client";
-import Testimonials from "@/features/about/sections/Testimonials.client";
 import CvSection from "@/features/about/sections/CV.client";
 
 export const metadata: Metadata = {
@@ -33,7 +32,6 @@ export default function AboutPage(): React.JSX.Element {
       {/* Page artık H1 veriyor, o yüzden AboutIntro başlığını H2 yapıyoruz */}
       <AboutIntro />
       <ExperienceTimeline />
-      {/* <Testimonials /> */}
       <CvSection />
     </Page>
   );

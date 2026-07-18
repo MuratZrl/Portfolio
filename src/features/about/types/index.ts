@@ -2,5 +2,4 @@
 
 export * from "./common";
 export * from "./experience";
-export * from "./testimonials";
 export * from "./about-intro";

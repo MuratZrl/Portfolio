@@ -22,7 +22,6 @@ export const DEFAULT_GROUPS = [
     skills: [
       { name: "Tailwind CSS", hint: "utility-first, design tokens" },
       { name: "Material UI", hint: "theming, sx prop, custom variants" },
-      { name: "Framer Motion", hint: "page transitions, gestures" },
       { name: "Zustand", hint: "lightweight state management" },
       { name: "TanStack React Query", hint: "server state, caching" },
     ],

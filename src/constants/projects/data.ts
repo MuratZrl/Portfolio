@@ -50,7 +50,7 @@ export const PROJECTS: readonly Project[] = [
     slug: "/projects/ticimax-dashboard",
     title: "Ticimax Dashboard",
     summary:
-      "Ticimax e-commerce sync engine and admin dashboard for Temalu: realtime supplier scraping with Puppeteer, a Supabase backend, and live sync progress monitoring built on Next.js App Router.",
+      "Ticimax e-commerce sync engine and admin dashboard: realtime supplier scraping with Puppeteer, a Supabase backend, and live sync progress monitoring built on Next.js App Router.",
     cardSummary:
       "Ticimax e-commerce sync engine + admin dashboard — realtime supplier scraping and live sync progress monitoring.",
     tags: ["Next.js 16", "TypeScript", "Supabase", "Puppeteer", "Tailwind CSS"],
