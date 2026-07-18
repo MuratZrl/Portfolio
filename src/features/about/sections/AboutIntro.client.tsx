@@ -47,10 +47,7 @@ export default function AboutIntro(props: AboutIntroProps): React.JSX.Element {
 
   return (
     <section aria-labelledby={headingId} className={cn(className)}>
-      <div className={cn(
-        "rounded-2xl border p-6 sm:p-8",
-        "border-border/50 bg-card/80 backdrop-blur-sm",
-      )}>
+      <div className={cn("plate rounded-2xl border p-6 sm:p-8")}>
         <div className="space-y-8">
 
           {/* Identity header */}
@@ -108,7 +105,7 @@ export default function AboutIntro(props: AboutIntroProps): React.JSX.Element {
                     draggable={false}
                     aria-label={s.label}
                     className={cn(
-                      "inline-flex size-9 select-none items-center justify-center rounded-lg text-muted-foreground transition-all",
+                      "inline-flex size-9 select-none items-center justify-center rounded-lg text-muted-foreground interactive",
                       "hover:bg-primary/10 hover:text-primary",
                     )}
                   >
@@ -185,7 +182,7 @@ function StatCard({
 }): React.JSX.Element {
   return (
     <div className={cn(
-      "flex items-center gap-3 rounded-xl border border-border/50 px-4 py-3",
+      "flex items-center gap-3 rounded-xl border border-[var(--edge-soft)] px-4 py-3",
       "transition-colors hover:border-primary/20",
     )}>
       {Icon ? (

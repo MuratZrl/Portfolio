@@ -94,6 +94,13 @@
   --dur-slow:    320ms;
   --dur-sweep:   420ms;
 
+  /* Interaction feel. Asymmetric on purpose: settling in is slower than
+     backing out, which is what makes a hover read as deliberate rather
+     than twitchy. Press is near-immediate so the control feels connected. */
+  --dur-hover-in:  200ms;
+  --dur-hover-out: 120ms;
+  --dur-press:      80ms;
+
   --ease-standard: cubic-bezier(.2, 0, 0, 1);
   --ease-out:      cubic-bezier(0, 0, .2, 1);
   --ease-rake:     cubic-bezier(.33, 0, .15, 1);
@@ -210,11 +217,19 @@
   }
 
   /* High-contrast solid outline. Never a shadow, never a glow — this is the
-     one thing that must survive on every surface in the system. */
+     one thing that must survive on every surface in the system.
+     :focus-visible, never :focus, so it does not fire on mouse press. */
   :focus-visible {
     outline: 3px solid var(--accent);
     outline-offset: 2px;
     border-radius: var(--radius-sm);
+  }
+
+  /* Belt and braces: some shadcn primitives ship their own ring. One focus
+     treatment only, and it is the outline above. */
+  :focus:not(:focus-visible) {
+    outline: none;
+    box-shadow: none;
   }
 
   [id] { scroll-margin-top: calc(3.5rem + 0.5rem); }
@@ -287,34 +302,91 @@
   /* --- the withheld slab ---------------------------------------------- */
   /* Still sized from a hand-authored row count; the values are never
      authored into the codebase, so there is nothing here to inspect. */
+  /* A footnote, not a panel. The device works by being quiet — a heavy
+     bordered block competes with the card it sits inside. Barely off the
+     card surface, hairline edge, one line of muted text beside a lock. */
   .withheld {
-    --wh-line: 1.5rem;
-    --wh-gap: var(--space-3);
-    min-block-size: calc(var(--wh-rows, 3) * var(--wh-line) + var(--wh-gap) * 2);
     display: flex;
     align-items: center;
-    padding: var(--wh-gap);
-    background: var(--ground);
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: color-mix(in srgb, var(--ground) 45%, var(--surface));
     color: var(--text-muted);
-    border: 1px solid var(--edge);
+    border: 1px solid var(--edge-soft);
     border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-inset);
     font-size: var(--text-body-sm);
-    font-weight: 500;
+    font-weight: 400;
   }
 
-  /* --- soft buttons ---------------------------------------------------- */
+  .withheld svg {
+    flex: none;
+    opacity: 0.8;
+  }
+
+  /* --- interaction feel ------------------------------------------------
+     One shared recipe for every interactive surface. The base rule carries
+     the FAST duration so leaving a control settles quickly; :hover carries
+     the slow one so arriving is unhurried. Nothing snaps. */
+  .soft-btn,
+  .interactive {
+    transition:
+      background-color var(--dur-hover-out) var(--ease-out),
+      border-color     var(--dur-hover-out) var(--ease-out),
+      box-shadow       var(--dur-hover-out) var(--ease-out),
+      transform        var(--dur-hover-out) var(--ease-out);
+    will-change: transform;
+  }
+
+  .soft-btn:hover,
+  .interactive:hover {
+    transition-duration: var(--dur-hover-in);
+  }
+
   .soft-btn {
     border: 1px solid var(--edge);
     border-radius: var(--radius-sm);
     box-shadow: var(--shadow-raised);
-    transition:
-      box-shadow var(--dur-fast) var(--ease-standard),
-      background-color var(--dur-fast) var(--ease-standard);
   }
 
+  /* Lift, not a colour snap. */
+  .soft-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-raised-lg);
+  }
+
+  /* Pressed: sinks into the surface, fill darkens a touch, shadow collapses
+     to the inset. Fast enough to feel connected to the click. */
   .soft-btn:active {
+    transition-duration: var(--dur-press);
+    transform: translateY(0);
     box-shadow: var(--shadow-inset);
+    filter: brightness(0.96);
+  }
+
+  .plate.interactive:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-raised-lg);
+  }
+
+  .plate.interactive:active {
+    transition-duration: var(--dur-press);
+    transform: translateY(0);
+    box-shadow: var(--shadow-inset);
+  }
+
+  /* Inline links: underline grows in, no layout shift. */
+  .link-soft {
+    text-decoration-color: transparent;
+    text-underline-offset: 4px;
+    transition:
+      color var(--dur-hover-out) var(--ease-out),
+      text-decoration-color var(--dur-hover-out) var(--ease-out);
+  }
+
+  .link-soft:hover {
+    transition-duration: var(--dur-hover-in);
+    text-decoration-line: underline;
+    text-decoration-color: currentColor;
   }
 
   .skip-link {
@@ -373,4 +445,11 @@
   }
 
   .coupon::after { animation: none; }
+
+  /* State changes still happen — they just arrive instantly. The hover and
+     press states remain fully perceivable; only the tween is removed. */
+  .soft-btn:hover,
+  .plate.interactive:hover {
+    transform: none;
+  }
 }

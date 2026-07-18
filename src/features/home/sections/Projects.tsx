@@ -45,7 +45,7 @@ export default function FeaturedProjects({
             raised cards is depth noise. */}
         <Link
           href="/projects"
-          className="text-[length:var(--text-body-sm)] font-medium text-[var(--accent)] underline-offset-4 hover:underline"
+          className="link-soft text-[length:var(--text-body-sm)] font-medium text-[var(--accent)]"
         >
           All five projects
         </Link>

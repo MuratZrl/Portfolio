@@ -86,7 +86,7 @@ export default function ExperienceTimeline({
           onClick={() => setActiveKind("all")}
           aria-pressed={activeKind === "all"}
           className={cn(
-            "select-none rounded-full px-4 py-2 text-xs font-medium transition-all duration-200",
+            "select-none rounded-full px-4 py-2 text-xs font-medium interactive",
             activeKind === "all"
               ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
               : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground",
@@ -104,7 +104,7 @@ export default function ExperienceTimeline({
               onClick={() => setActiveKind(k)}
               aria-pressed={activeKind === k}
               className={cn(
-                "inline-flex select-none items-center gap-1.5 rounded-full px-4 py-2 text-xs font-medium transition-all duration-200",
+                "inline-flex select-none items-center gap-1.5 rounded-full px-4 py-2 text-xs font-medium interactive",
                 activeKind === k
                   ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
                   : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground",
@@ -135,7 +135,7 @@ export default function ExperienceTimeline({
       ) : (
         <div className={cn(
           "flex flex-col items-center justify-center rounded-2xl border py-16 text-center",
-          "border-border/50 bg-card/80",
+          "border-[var(--edge-soft)] bg-[var(--surface)]",
         )}>
           <p className="text-sm text-muted-foreground">No items match this filter.</p>
           <button
@@ -205,7 +205,7 @@ function TimelineCard({
       {/* Card */}
       <div className={cn(
         "group rounded-2xl border p-5 sm:p-6",
-        "border-border/50 bg-card/80",
+        "border-[var(--edge-soft)] bg-[var(--surface)]",
         "transition-[border-color,box-shadow] duration-200",
         "hover:border-primary/20 hover:shadow-md hover:shadow-primary/5",
       )}>
@@ -293,7 +293,7 @@ function TimelineCard({
 
         {/* Links */}
         {item.links?.length ? (
-          <div className="flex flex-wrap gap-2 border-t border-border/50 pt-4">
+          <div className="flex flex-wrap gap-2 border-t border-[var(--edge-soft)] pt-4">
             {item.links.map((l) => (
               <LinkPill key={l.href} href={l.href} label={l.label} />
             ))}
