@@ -111,7 +111,6 @@
   --dur-fast:    140ms;
   --dur-base:    220ms;
   --dur-slow:    320ms;
-  --dur-sweep:   420ms;
 
   /* Interaction feel. Asymmetric on purpose: settling in is slower than
      backing out, which is what makes a hover read as deliberate rather
@@ -131,7 +130,6 @@
 
   --ease-standard: cubic-bezier(.2, 0, 0, 1);
   --ease-out:      cubic-bezier(0, 0, .2, 1);
-  --ease-rake:     cubic-bezier(.33, 0, .15, 1);
 
   --delay-enter:   120ms;
   --delay-stagger: 60ms;
@@ -357,8 +355,6 @@
   }
 
   .coupon {
-    position: relative;
-    overflow: hidden;
     max-inline-size: 40rem;
     background: var(--surface);
     border: 1px solid var(--edge-soft);
@@ -366,27 +362,7 @@
     box-shadow: var(--shadow-raised-lg);
   }
 
-  .coupon::after {
-    content: "";
-    position: absolute;
-    inset-block: 0;
-    inline-size: 60%;
-    inset-inline-start: -60%;
-    pointer-events: none;
-    background: linear-gradient(
-      105deg,
-      transparent 30%,
-      rgb(255 255 255 / 0.05) 46%,
-      transparent 62%
-    );
-  }
 
-  @media (hover: hover) {
-    .coupon:hover::after,
-    .coupon:focus-within::after {
-      animation: rake var(--dur-sweep) var(--ease-rake) 1;
-    }
-  }
 
   /* --- the withheld slab ---------------------------------------------- */
   /* Still sized from a hand-authored row count; the values are never
@@ -562,10 +538,6 @@
    motion — timings unchanged
    ========================================================================== */
 
-@keyframes rake {
-  from { transform: translate3d(0, 0, 0); }
-  to   { transform: translate3d(360%, 0, 0); }
-}
 
 @keyframes enter {
   from { opacity: 0; transform: translate3d(0, 8px, 0); }
@@ -591,11 +563,4 @@
     transform: none;
   }
 
-  .coupon::after { animation: none; }
-
-  /* State changes still happen — they just arrive instantly. The hover and
-     press states remain fully perceivable; only the tween is removed. */
-  .plate.interactive:hover {
-    transform: none;
-  }
 }
