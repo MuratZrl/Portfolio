@@ -74,7 +74,7 @@ export default function Hero({
           <Link
             href={primary.href}
             aria-label={primary.ariaLabel}
-            className="soft-btn inline-flex min-h-11 items-center gap-2 bg-[var(--accent)] px-5 text-[length:var(--text-body-sm)] font-medium text-[color:var(--on-accent)] hover:bg-[var(--accent-hover)]"
+            className="soft-btn soft-btn-primary inline-flex min-h-11 items-center gap-2 px-5 text-[length:var(--text-body-sm)] font-medium"
               draggable={false}
             >
             {primary.label}
@@ -86,7 +86,7 @@ export default function Hero({
               href={secondary.href}
               download={secondary.download}
               aria-label={secondary.ariaLabel}
-              className="soft-btn inline-flex min-h-11 items-center bg-[var(--surface)] px-5 text-[length:var(--text-body-sm)] font-medium text-[var(--text)] hover:bg-[var(--raised)]"
+              className="soft-btn soft-btn-ghost inline-flex min-h-11 items-center px-5 text-[length:var(--text-body-sm)] font-medium"
               draggable={false}
             >
               {secondary.label}

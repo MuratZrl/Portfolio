@@ -33,6 +33,16 @@
   --accent:      #1D4ED8;  /* 5.29 on ground */
   --accent-hover:#1E40AF;
   --on-accent:   #FFFFFF;  /* 6.70 on the accent fill */
+
+  /* Buttons are FLAT. A dedicated fill token, never used as text, so it is
+     free to be dark enough to carry a white label — --accent itself must
+     stay light enough to pass as link text on the ground, and those two
+     jobs pull in opposite directions. Hover DARKENS in both themes:
+     lightening the dark fill drops white to 3.72:1. */
+  --btn-bg:        #1D4ED8;  /* white on it 6.70 */
+  --btn-bg-hover:  #1E40AF;  /* white on it 8.72 */
+  --btn-fg:        #FFFFFF;
+  --btn-ghost-hover: #D3D9E2;  /* label on it 11.91 */
   --danger:      #B91C1C;
 
   /* --- neumorphic depth (decorative only) ------------------------------ */
@@ -106,18 +116,18 @@
   /* Interaction feel. Asymmetric on purpose: settling in is slower than
      backing out, which is what makes a hover read as deliberate rather
      than twitchy. Press is near-immediate so the control feels connected. */
-  --dur-hover-in:  200ms;
-  --dur-hover-out: 120ms;
-  --dur-press:      80ms;
+  --dur-hover-in:  420ms;
+  --dur-hover-out: 300ms;
+  --dur-press:     240ms;
   /* Release is asymmetric with press. A CSS transition reads its duration
      from the DESTINATION state, so press-in is governed by :active (80ms)
      but release is governed by whatever the element returns TO — rest or
      :hover. Those blocks give transform and filter this longer value so
      the button settles back instead of snapping. */
-  --dur-press-out: 180ms;
+  --dur-press-out: 340ms;
   /* A focus indicator is a functional cue, not decoration. Long enough not
      to snap, short enough that it never lags the Tab key. */
-  --dur-focus:     140ms;
+  --dur-focus:     220ms;
 
   --ease-standard: cubic-bezier(.2, 0, 0, 1);
   --ease-out:      cubic-bezier(0, 0, .2, 1);
@@ -162,6 +172,11 @@
   --accent:      #3B82F6;  /* 5.38 ground, 4.86 surface */
   --accent-hover:#60A5FA;
   --on-accent:   #0A0A0B;  /* 5.38 on the fill — beats white's 3.68 */
+
+  --btn-bg:        #2563EB;  /* white on it 5.17, and 3.83 vs ground */
+  --btn-bg-hover:  #1D4ED8;  /* white on it 6.70 */
+  --btn-fg:        #FFFFFF;
+  --btn-ghost-hover: #1E1E22;  /* label on it 13.58 */
   --danger:      #F87171;
 
   --shadow-dark:  rgb(0 0 0 / 0.70);
@@ -401,7 +416,6 @@
      One shared recipe for every interactive surface. The base rule carries
      the FAST duration so leaving a control settles quickly; :hover carries
      the slow one so arriving is unhurried. Nothing snaps. */
-  .soft-btn,
   .interactive {
     /* `position` and a base z-index are load-bearing: without a stacking
        position the hover z-index bump below does nothing, and a raised
@@ -424,8 +438,6 @@
     will-change: transform;
   }
 
-  .soft-btn:hover,
-  .soft-btn:focus-visible,
   .interactive:hover,
   .interactive:focus-within {
     /* Above its siblings while raised, so the shadow lands on top of the
@@ -438,29 +450,56 @@
       var(--dur-focus);
   }
 
+  /* --- FLAT buttons ----------------------------------------------------
+     No box-shadow, no inset, no emboss. The neumorphic treatment turned
+     the light-theme primary into a glossy gradient pill — dual inset
+     shadows over a solid accent read as a 2003 button. Fill and border
+     do the work now.
+
+     Buttons carry their own transition list, separate from .interactive,
+     so cards keep their surface and their hover lift untouched. */
   .soft-btn {
-    border: 1px solid var(--edge);
+    border: 1px solid transparent;
     border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-raised);
-  }
-
-  /* Lift, not a colour snap. Downward shadow so it does not smear onto
-     the button sitting beside it. */
-  .soft-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-hover);
-  }
-
-  /* Pressed: sinks into the surface, fill darkens a touch, shadow collapses
-     to the inset. Fast enough to feel connected to the click. */
-  .soft-btn:active {
+    position: relative;
+    z-index: 0;
+    transition-property:
+      background-color, border-color, color, transform, outline-color;
     transition-duration:
-      var(--dur-press), var(--dur-press), var(--dur-press),
-      var(--dur-press), var(--dur-press), var(--dur-press),
-      var(--dur-focus);
-    transform: translateY(0);
-    box-shadow: var(--shadow-inset);
-    filter: brightness(0.96);
+      var(--dur-hover-out), var(--dur-hover-out), var(--dur-hover-out),
+      var(--dur-press), var(--dur-focus);
+    transition-timing-function: var(--ease-out);
+  }
+
+  .soft-btn:hover {
+    transition-duration:
+      var(--dur-hover-in), var(--dur-hover-in), var(--dur-hover-in),
+      var(--dur-press), var(--dur-focus);
+  }
+
+  /* Press is scale only — 120ms in and out, because transform carries the
+     same duration in every block. */
+  .soft-btn:active {
+    transform: scale(0.98);
+  }
+
+  /* Primary: flat accent fill, white label. */
+  .soft-btn-primary {
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+  }
+  .soft-btn-primary:hover {
+    background: var(--btn-bg-hover);
+  }
+
+  /* Ghost: transparent, hairline border, label colour. */
+  .soft-btn-ghost {
+    background: transparent;
+    border-color: var(--edge);
+    color: var(--text);
+  }
+  .soft-btn-ghost:hover {
+    background: var(--btn-ghost-hover);
   }
 
   .plate.interactive:hover {
@@ -556,7 +595,6 @@
 
   /* State changes still happen — they just arrive instantly. The hover and
      press states remain fully perceivable; only the tween is removed. */
-  .soft-btn:hover,
   .plate.interactive:hover {
     transform: none;
   }
