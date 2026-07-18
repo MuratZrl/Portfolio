@@ -407,10 +407,12 @@
        ring along with the hover timing. Listing durations positionally
        keeps outline-color pinned to --dur-focus in every state. */
     transition-property:
-      background-color, border-color, box-shadow, transform, outline-color;
+      background-color, border-color, color,
+      box-shadow, transform, filter, outline-color;
     transition-duration:
       var(--dur-hover-out), var(--dur-hover-out), var(--dur-hover-out),
-      var(--dur-hover-out), var(--dur-focus);
+      var(--dur-hover-out), var(--dur-hover-out), var(--dur-hover-out),
+      var(--dur-focus);
     transition-timing-function: var(--ease-out);
     will-change: transform;
   }
@@ -424,7 +426,8 @@
     z-index: 1;
     transition-duration:
       var(--dur-hover-in), var(--dur-hover-in), var(--dur-hover-in),
-      var(--dur-hover-in), var(--dur-focus);
+      var(--dur-hover-in), var(--dur-hover-in), var(--dur-hover-in),
+      var(--dur-focus);
   }
 
   .soft-btn {
@@ -445,7 +448,8 @@
   .soft-btn:active {
     transition-duration:
       var(--dur-press), var(--dur-press), var(--dur-press),
-      var(--dur-press), var(--dur-focus);
+      var(--dur-press), var(--dur-press), var(--dur-press),
+      var(--dur-focus);
     transform: translateY(0);
     box-shadow: var(--shadow-inset);
     filter: brightness(0.96);
@@ -459,7 +463,8 @@
   .plate.interactive:active {
     transition-duration:
       var(--dur-press), var(--dur-press), var(--dur-press),
-      var(--dur-press), var(--dur-focus);
+      var(--dur-press), var(--dur-press), var(--dur-press),
+      var(--dur-focus);
     transform: translateY(0);
     box-shadow: var(--shadow-inset);
   }
@@ -468,15 +473,18 @@
   .link-soft {
     text-decoration-color: transparent;
     text-underline-offset: 4px;
-    transition-property: color, text-decoration-color, outline-color;
+    transition-property:
+      color, background-color, text-decoration-color, outline-color;
     transition-duration:
-      var(--dur-hover-out), var(--dur-hover-out), var(--dur-focus);
+      var(--dur-hover-out), var(--dur-hover-out), var(--dur-hover-out),
+      var(--dur-focus);
     transition-timing-function: var(--ease-out);
   }
 
   .link-soft:hover {
     transition-duration:
-      var(--dur-hover-in), var(--dur-hover-in), var(--dur-focus);
+      var(--dur-hover-in), var(--dur-hover-in), var(--dur-hover-in),
+      var(--dur-focus);
     text-decoration-line: underline;
     text-decoration-color: currentColor;
   }
