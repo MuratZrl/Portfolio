@@ -43,12 +43,7 @@ function SkillGroup({ group }: { group: Group }): React.JSX.Element {
   const Icon = group.icon;
 
   return (
-    <div className={cn(
-      "rounded-xl border p-5",
-      "border-border/50 bg-card/80 backdrop-blur-sm",
-      "transition-all duration-300 ease-out",
-      "hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20",
-    )}>
+    <div className="plate interactive p-5">
       <div className="mb-4 flex items-center gap-3">
         {Icon ? (
           <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">

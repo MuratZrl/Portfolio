@@ -45,10 +45,7 @@ export default function CvSection({
         <p id={descId} className="text-sm text-muted-foreground">{description}</p>
       </div>
 
-      <div className={cn(
-        "rounded-2xl border p-5 sm:p-6",
-        "border-border/50 bg-card/80 backdrop-blur-sm",
-      )}>
+      <div className={cn("plate rounded-2xl border p-5 sm:p-6")}>
         {/* Action bar */}
         <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
@@ -96,7 +93,7 @@ export default function CvSection({
         </div>
 
         {/* PDF viewer */}
-        <div className="overflow-hidden rounded-xl border border-border/50">
+        <div className="overflow-hidden rounded-xl border border-[var(--edge-soft)]">
           {mounted ? (
             <iframe
               title="CV PDF viewer"

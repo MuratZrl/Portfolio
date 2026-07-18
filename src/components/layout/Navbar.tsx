@@ -31,7 +31,7 @@ export default function Navbar(): React.JSX.Element {
   }, [pathname]);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-[var(--edge-soft)] bg-[var(--surface)]">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/" draggable={false} className="flex select-none items-center gap-2.5">
@@ -78,7 +78,7 @@ export default function Navbar(): React.JSX.Element {
             aria-label="Download CV"
             className={cn(
               "hidden select-none items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors sm:inline-flex",
-              "border border-border/50 text-muted-foreground hover:bg-muted hover:text-foreground",
+              "border border-[var(--edge-soft)] text-muted-foreground hover:bg-muted hover:text-foreground",
             )}
           >
             <Download className="h-3.5 w-3.5" aria-hidden />
@@ -103,7 +103,7 @@ export default function Navbar(): React.JSX.Element {
 
       {/* Mobile nav panel */}
       {mobileOpen ? (
-        <nav className="border-t border-border/40 bg-background/95 backdrop-blur-md md:hidden">
+        <nav className="border-t border-[var(--edge-soft)] bg-[var(--surface)] md:hidden">
           <div className="mx-auto max-w-7xl space-y-1 px-4 py-3">
             {NAV_ITEMS.map(({ href, label }) => {
               const isActive =

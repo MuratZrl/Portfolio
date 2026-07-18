@@ -39,7 +39,7 @@ export default function Footer(): React.JSX.Element {
   const email = "me@muratzorlu.dev";
 
   return (
-    <footer role="contentinfo" className="mt-auto border-t border-border/50">
+    <footer role="contentinfo" className="mt-auto border-t border-[var(--edge-soft)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* ── Main row ── */}
         <div className="grid grid-cols-1 gap-8 py-10 md:grid-cols-3">
@@ -114,7 +114,7 @@ export default function Footer(): React.JSX.Element {
         </div>
 
         {/* ── Bottom bar ── */}
-        <div className="flex flex-col items-center gap-2 border-t border-border/50 py-5 text-xs text-muted-foreground sm:flex-row sm:justify-between">
+        <div className="flex flex-col items-center gap-2 border-t border-[var(--edge-soft)] py-5 text-xs text-muted-foreground sm:flex-row sm:justify-between">
           <p>
             © {year} Murat Zorlu. All rights reserved.
           </p>

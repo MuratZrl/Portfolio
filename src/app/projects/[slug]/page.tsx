@@ -194,11 +194,11 @@ function BrowserFrame({
     // reads as floating without shrinking the screenshot too much.
     <div className="rounded-2xl bg-gradient-to-br from-primary/15 via-muted/50 to-primary/5 p-3 sm:p-6 lg:p-8">
       {/* Window layer: Mac-style chrome + screenshot */}
-      <div className="overflow-hidden rounded-xl border border-border/50 bg-card shadow-xl">
+      <div className="overflow-hidden rounded-xl border border-[var(--edge-soft)] bg-card shadow-xl">
         {/* Title bar with macOS-style traffic-light dots */}
         <div
           aria-hidden
-          className="flex h-7 items-center gap-1.5 border-b border-border/50 bg-muted/60 px-3"
+          className="flex h-7 items-center gap-1.5 border-b border-[var(--edge-soft)] bg-muted/60 px-3"
         >
           <span className="size-2.5 rounded-full bg-[#ff5f57]" />
           <span className="size-2.5 rounded-full bg-[#febc2e]" />

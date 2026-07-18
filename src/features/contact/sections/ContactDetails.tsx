@@ -78,10 +78,7 @@ export default function ContactDetails({
     <aside className="flex h-full flex-col gap-4">
       {/* ── Direct Contact ── */}
       <div
-        className={cn(
-          "rounded-2xl border p-5 sm:p-6",
-          "border-border/50 bg-card/80 backdrop-blur-sm",
-        )}
+        className={cn("plate rounded-2xl border p-5 sm:p-6")}
       >
         <div className="mb-5 flex items-center gap-3">
           <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -151,10 +148,7 @@ export default function ContactDetails({
 
       {/* ── Elsewhere ── */}
       <div
-        className={cn(
-          "rounded-2xl border p-5 sm:p-6",
-          "border-border/50 bg-card/80 backdrop-blur-sm",
-        )}
+        className={cn("plate rounded-2xl border p-5 sm:p-6")}
       >
         <div className="mb-5 flex items-center gap-3">
           <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">

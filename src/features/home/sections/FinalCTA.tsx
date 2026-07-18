@@ -27,57 +27,13 @@ export default function FinalCta({
       aria-labelledby={headingId}
       className={cn("py-12 sm:py-16", className)}
     >
-      <div className={cn(
-        "relative overflow-hidden rounded-2xl border",
-        "border-border/50 bg-card/80 backdrop-blur-sm",
-      )}>
-        {/* Animated background */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-          {/* Blob 1 — drifts top-left ↔ bottom-right */}
-          <div
-            className="absolute h-[60%] w-[50%] rounded-full opacity-[0.07] blur-[80px]"
-            style={{
-              background: "oklch(0.62 0.17 235)",
-              animation: "cta-drift-1 12s ease-in-out infinite alternate",
-            }}
-          />
-          {/* Blob 2 — drifts top-right ↔ bottom-left */}
-          <div
-            className="absolute h-[50%] w-[45%] rounded-full opacity-[0.06] blur-[80px]"
-            style={{
-              background: "oklch(0.6 0.14 215)",
-              animation: "cta-drift-2 14s ease-in-out infinite alternate",
-            }}
-          />
-          {/* Blob 3 — center pulse */}
-          <div
-            className="absolute h-[40%] w-[40%] rounded-full opacity-[0.05] blur-[100px]"
-            style={{
-              background: "oklch(0.7 0.12 250)",
-              animation: "cta-drift-3 10s ease-in-out infinite alternate",
-            }}
-          />
-          {/* Top edge glow line */}
-          <div
-            className="absolute left-1/2 top-0 h-px w-3/4 -translate-x-1/2"
-            style={{ background: "linear-gradient(90deg, transparent, oklch(0.65 0.15 235 / 0.3), transparent)" }}
-          />
-        </div>
-        <style>{`
-          @keyframes cta-drift-1 {
-            0%   { top: -10%; left: -10%; }
-            100% { top: 40%;  left: 50%;  }
-          }
-          @keyframes cta-drift-2 {
-            0%   { top: -5%;  right: -10%; left: auto; }
-            100% { top: 50%;  right: 40%;  left: auto; }
-          }
-          @keyframes cta-drift-3 {
-            0%   { top: 20%;  left: 30%; }
-            100% { top: 50%;  left: 50%; }
-          }
-        `}</style>
-
+      {/* Soft-UI plate. The previous version layered three infinitely
+          animating blurred blobs behind frosted glass: they animated `top`
+          and `left` (layout-triggering, forever), used 80-100px blurs, and
+          were painted in the OLD accent blue. Removed rather than
+          repainted — an aurora-gradient wash is a different aesthetic from
+          soft-UI, and it was decoration costing real paint work. */}
+      <div className="plate overflow-hidden">
         <div className="px-6 py-12 sm:px-10 sm:py-16">
           {/* Header */}
           <div className="mx-auto max-w-2xl text-center">
