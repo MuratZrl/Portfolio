@@ -1,161 +1,403 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+
+/* ==========================================================================
+   ELOKSAL — token layer
+   Canonical values. Hex is authoritative; every ratio in the spec was
+   computed from these exact values.
+   ========================================================================== */
+
+:root {
+  /* --- core palette --------------------------------------------------- */
+  --zinc:            #E6EAE9;  /* page ground */
+  --mill:            #F2F5F4;  /* raised surfaces: plates, cards, popovers */
+  --scribe:          #161C1E;  /* headings + body */
+  --patina:          #4A5658;  /* secondary text */
+  --eloksal:         #5B2E8C;  /* primary accent, metal sector */
+  --brass:           #7A5D12;  /* paid-client mark ONLY — never an edge */
+
+  /* --- derived surfaces ----------------------------------------------- */
+  --surface-2:       #F8FBFA;  /* floating (sheet) */
+  --muted:           #EBEFEE;  /* skeleton, disabled, quiet fill */
+  --accent-surface:  #E9E1F7;  /* eloksal-tinted hover fill */
+
+  /* --- the chamfer ---------------------------------------------------- */
+  /* Both edges sit on the same side of the surface luminance; the bevel is
+     the difference between them. top/left is always lighter than bottom/right.
+     Every edge clears 3:1 against both --zinc and --mill. */
+  --edge-hi:         #6F7A7D;  /* raised: top + left   (3.64 on zinc, 4.03 on mill) */
+  --edge-lo:         #3C4648;  /* raised: bottom + right (8.01 / 8.86) */
+
+  /* --- the withheld slab (tonally inverts across themes) -------------- */
+  --slab:            #515A5B;
+  --slab-label:      #EAF0EF;
+
+  /* --- sector finishes ------------------------------------------------ */
+  --jade:            #026646;  /* property sector; also --success */
+  --azure:           #014F90;  /* commerce sector */
+  --success:         var(--jade);
+  --destructive:     #C33A34;
+
+  /* --- primary button chamfer (the plain edges fail on an eloksal fill) */
+  --btn-edge-hi:     #CAB5EC;
+  --btn-edge-lo:     #9F8BBF;
+  --eloksal-hover:   #6D389F;
+
+  /* --- the raked specular band --------------------------------------- */
+  --specular:        rgb(0 0 0 / .05);
+
+  /* --- type ----------------------------------------------------------- */
+  --font-display: var(--font-display-face), "Arial Narrow", Arial, sans-serif;
+  --font-sans:    var(--font-sans-face),    ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    var(--font-mono-face),    ui-monospace, monospace;
+
+  --text-display-2xl: clamp(3.5rem,   2.6667rem + 3.7037vw, 6rem);      /* 56 → 96 */
+  --text-display-xl:  clamp(2.125rem, 1.6667rem + 2.0370vw, 3.5rem);    /* 34 → 56 */
+  --text-display-lg:  clamp(2rem,     1.6667rem + 1.4815vw, 3rem);      /* 32 → 48 */
+  --text-display-md:  clamp(1.625rem, 1.5rem    + 0.5556vw, 2rem);      /* 26 → 32 */
+  --text-display-sm:  clamp(1.25rem,  1.2083rem + 0.1852vw, 1.375rem);  /* 20 → 22 */
+  --text-display-xs:  1.25rem;
+  --text-display-2xs: 1.125rem;
+
+  --text-body-lead:   clamp(1rem,      0.9583rem + 0.1852vw, 1.125rem); /* 16 → 18 */
+  --text-body-base:   clamp(0.9375rem, 0.9167rem + 0.0926vw, 1rem);     /* 15 → 16 */
+  --text-body-sm:     0.875rem;
+  --text-body-xs:     0.75rem;
+
+  --text-mono-inline: 0.8125rem;
+  --text-mono-block:  0.875rem;
+
+  /* --- spacing (4px base) --------------------------------------------- */
+  --space-0: 0;      --space-8:  2rem;
+  --space-px: 1px;   --space-10: 2.5rem;
+  --space-0\.5: 0.125rem;
+  --space-1: 0.25rem;   --space-12: 3rem;
+  --space-1\.5: 0.375rem;
+  --space-2: 0.5rem;    --space-16: 4rem;
+  --space-3: 0.75rem;   --space-20: 5rem;
+  --space-4: 1rem;      --space-24: 6rem;
+  --space-5: 1.25rem;   --space-28: 7rem;
+  --space-6: 1.5rem;    --space-32: 8rem;
+  --space-7: 1.75rem;   --space-36: 9rem;
+
+  /* --- radii ----------------------------------------------------------- */
+  --radius-0: 0;
+  --radius-1: 2px;
+
+  /* --- containers ------------------------------------------------------ */
+  --container-wide:  1200px;
+  --container-prose: 68ch;
+
+  /* --- motion ---------------------------------------------------------- */
+  --dur-instant: 80ms;
+  --dur-fast:    140ms;
+  --dur-base:    220ms;
+  --dur-slow:    320ms;
+  --dur-sweep:   420ms;
+
+  --ease-standard: cubic-bezier(.2, 0, 0, 1);
+  --ease-out:      cubic-bezier(0, 0, .2, 1);
+  --ease-rake:     cubic-bezier(.33, 0, .15, 1);
+
+  --delay-enter:   120ms;
+  --delay-stagger: 60ms;
+
+  /* --- shadcn compatibility (surviving primitives read these) ---------- */
+  --background: var(--zinc);
+  --foreground: var(--scribe);
+  --card: var(--mill);
+  --card-foreground: var(--scribe);
+  --popover: var(--mill);
+  --popover-foreground: var(--scribe);
+  --primary: var(--eloksal);
+  --primary-foreground: var(--mill);
+  --secondary: var(--muted);
+  --secondary-foreground: var(--scribe);
+  --muted-foreground: var(--patina);
+  --accent: var(--accent-surface);
+  --accent-foreground: var(--eloksal);
+  --border: var(--edge-hi);
+  --input: var(--edge-lo);
+  --ring: var(--eloksal);
+  --radius: var(--radius-1);
+}
+
+.dark {
+  --zinc:            #1A2224;
+  --mill:            #222C2E;
+  --scribe:          #DCE4E3;
+  --patina:          #94A3A2;
+  --eloksal:         #C9A5F2;
+  --brass:           #E0B95C;
+
+  --surface-2:       #2C3739;
+  --muted:           #2A3436;
+  --accent-surface:  #3F374A;
+
+  /* inverted: both edges lighter than the surface, top/left brightest */
+  --edge-hi:         #ACB9BA;  /* 8.01 on zinc, 7.09 on mill */
+  --edge-lo:         #7C888A;  /* 4.43 / 3.91 */
+
+  --slab:            #9DA7A8;  /* inverts — light slab on the dark theme */
+  --slab-label:      #161C1E;
+
+  --jade:            #6CCFA3;
+  --azure:           #81BCFE;
+  --destructive:     #EA8177;
+
+  --btn-edge-hi:     #6B5585;
+  --btn-edge-lo:     #4C3563;
+  --eloksal-hover:   #D6B8F5;
+
+  --specular:        rgb(255 255 255 / .07);
+
+  --primary-foreground: var(--zinc);
+}
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-zinc-plate: var(--zinc);
+  --color-mill: var(--mill);
+  --color-scribe: var(--scribe);
+  --color-patina: var(--patina);
+  --color-eloksal: var(--eloksal);
+  --color-brass: var(--brass);
+  --color-jade: var(--jade);
+  --color-azure: var(--azure);
+  --color-slab: var(--slab);
+  --color-slab-label: var(--slab-label);
+  --color-surface-2: var(--surface-2);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-display: var(--font-display);
+
+  --radius-sm: var(--radius-1);
+  --radius-md: var(--radius-1);
+  --radius-lg: var(--radius-1);
+  --radius-xl: var(--radius-1);
 }
 
-:root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.48 0.18 235);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.95 0.03 235);
-  --accent-foreground: oklch(0.25 0.08 235);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.48 0.18 235);
-  --chart-1: oklch(0.48 0.18 235);
-  --chart-2: oklch(0.6 0.118 220);
-  --chart-3: oklch(0.398 0.07 250);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.48 0.18 235);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.48 0.18 235);
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.65 0.15 235);
-  --primary-foreground: oklch(0.145 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.27 0.05 235);
-  --accent-foreground: oklch(0.65 0.15 235);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.65 0.15 235);
-  --chart-1: oklch(0.65 0.15 235);
-  --chart-2: oklch(0.7 0.15 220);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.65 0.15 235);
-  --sidebar-primary-foreground: oklch(0.145 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.65 0.15 235);
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-@keyframes fade-in-up {
-  0% { opacity: 0; transform: translateY(12px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 1; }
-}
+/* ==========================================================================
+   base
+   ========================================================================== */
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    border-color: var(--edge-hi);
   }
+
+  html {
+    /* 2.4.11 Focus Not Obscured — the header is sticky at 56px */
+    scroll-padding-top: calc(3.5rem + 0.5rem);
+  }
+
   body {
-    @apply bg-background text-foreground;
+    background: var(--zinc);
+    color: var(--scribe);
+    font-family: var(--font-sans);
+    font-size: var(--text-body-base);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
   }
-  body::before {
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    /* sentence case, never uppercase, never negative tracking */
+    letter-spacing: 0.002em;
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--eloksal);
+    outline-offset: 2px;
+    border-radius: var(--radius-1);
+  }
+
+  [id] {
+    scroll-margin-top: calc(3.5rem + 0.5rem);
+  }
+
+  ::selection {
+    background: var(--accent-surface);
+    color: var(--scribe);
+  }
+}
+
+/* ==========================================================================
+   the chamfer — the signature device
+   Every surface is a machined bevel, never a drop shadow. Both edges clear
+   3:1, so no component is ever defined by shadow alone.
+   ========================================================================== */
+
+@layer components {
+  .plate {
+    background: var(--mill);
+    border: 2px solid;
+    border-color: var(--edge-hi) var(--edge-lo) var(--edge-lo) var(--edge-hi);
+    border-radius: var(--radius-1);
+  }
+
+  /* milled INTO the surface: inputs, code blocks, the withheld slab */
+  .recessed {
+    background: var(--zinc);
+    border: 2px solid;
+    border-color: var(--edge-lo) var(--edge-hi) var(--edge-hi) var(--edge-lo);
+    border-radius: var(--radius-1);
+  }
+
+  /* --- the hero coupon ------------------------------------------------ */
+  .coupon {
+    position: relative;
+    overflow: hidden;
+    max-inline-size: 40rem;         /* 640px at every breakpoint */
+    background: var(--mill);
+    border: 2px solid;
+    border-color: var(--edge-hi) var(--edge-lo) var(--edge-lo) var(--edge-hi);
+    border-radius: var(--radius-1);
+  }
+
+  /* the raked specular band — sweeps once on hover/focus, never on load,
+     never on a loop, and does not exist on touch (no hover). */
+  .coupon::after {
     content: "";
-    position: fixed;
-    top: 0;
-    left: -20%;
-    width: 140%;
-    height: 70vh;
-    z-index: -1;
+    position: absolute;
+    inset-block: 0;
+    inline-size: 60%;
+    inset-inline-start: -60%;
     pointer-events: none;
-    background: radial-gradient(
-      ellipse 100% 100% at 50% 0%,
-      oklch(0.48 0.18 235 / 0.06) 0%,
-      oklch(0.48 0.18 235 / 0.02) 40%,
-      transparent 80%
+    background: linear-gradient(
+      105deg,
+      transparent 30%,
+      var(--specular) 46%,
+      transparent 62%
     );
   }
-  :is(.dark) body::before {
-    background: radial-gradient(
-      ellipse 100% 100% at 50% 0%,
-      oklch(0.65 0.15 235 / 0.08) 0%,
-      oklch(0.65 0.15 235 / 0.03) 40%,
-      transparent 80%
-    );
+
+  @media (hover: hover) {
+    .coupon:hover::after,
+    .coupon:focus-within::after {
+      animation: rake var(--dur-sweep) var(--ease-rake) 1;
+    }
+  }
+
+  /* --- the withheld slab ---------------------------------------------- */
+  /* Sized from a hand-authored row count. The confidential values are never
+     authored into the codebase, so there is nothing here to inspect. */
+  .withheld {
+    --wh-line: 1.5rem;
+    --wh-gap: var(--space-3);
+    min-block-size: calc(var(--wh-rows, 3) * var(--wh-line) + var(--wh-gap) * 2);
+    display: flex;
+    align-items: center;
+    padding: var(--wh-gap);
+    background: var(--slab);
+    color: var(--slab-label);
+    border: 2px solid;
+    border-color: var(--edge-lo) var(--edge-hi) var(--edge-hi) var(--edge-lo);
+    border-radius: var(--radius-1);
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+  }
+
+  /* The ring is invisible against the slab (1.34:1). Draw it inset, in the
+     label colour, which clears 6:1 on that fill in both themes. */
+  .withheld:focus-visible {
+    outline: 2px solid var(--slab-label);
+    outline-offset: -4px;
+  }
+
+  /* --- primary button chamfer ----------------------------------------- */
+  .btn-chamfer {
+    border: 2px solid;
+    border-color: var(--btn-edge-hi) var(--btn-edge-lo) var(--btn-edge-lo) var(--btn-edge-hi);
+  }
+
+  /* --- the skip link --------------------------------------------------- */
+  .skip-link {
+    position: fixed;
+    inset-block-start: var(--space-2);
+    inset-inline-start: var(--space-2);
+    z-index: 60;
+    min-block-size: 44px;
+    display: inline-flex;
+    align-items: center;
+    padding-inline: var(--space-4);
+    background: var(--mill);
+    color: var(--scribe);
+    border: 2px solid;
+    border-color: var(--edge-hi) var(--edge-lo) var(--edge-lo) var(--edge-hi);
+    border-radius: var(--radius-1);
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    clip-path: inset(50%);
+  }
+
+  .skip-link:focus-visible {
+    clip-path: none;
+  }
+}
+
+/* ==========================================================================
+   motion
+   One orchestrated entrance, played once. The H1 carries no animation
+   property at all — it paints final on the first frame so it stays an
+   LCP candidate.
+   ========================================================================== */
+
+@keyframes rake {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(360%, 0, 0); }
+}
+
+@keyframes enter {
+  from { opacity: 0; transform: translate3d(0, 8px, 0); }
+  to   { opacity: 1; transform: none; }
+}
+
+[data-enter] {
+  animation: enter var(--dur-base) var(--ease-out) both;
+  animation-delay: calc(var(--delay-enter) + var(--i, 0) * var(--delay-stagger));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Substitution, not subtraction: entrance elements are simply present. */
+  [data-enter] {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .coupon::after {
+    animation: none;
   }
 }
