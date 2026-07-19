@@ -29,7 +29,7 @@ export default function FeaturedProjects({
   const list = (projects ?? getFeaturedProjects(6)).slice(0, Math.min(maxVisible, HARD_CAP));
 
   return (
-    <section aria-labelledby="featured-projects-heading" className={cn("py-12 sm:py-16", className)}>
+    <section aria-labelledby="featured-projects-heading" className={cn("py-10 sm:py-12", className)}>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
           <h2

@@ -25,7 +25,7 @@ export default function FinalCta({
   return (
     <section
       aria-labelledby={headingId}
-      className={cn("py-12 sm:py-16", className)}
+      className={cn("py-10 sm:py-12", className)}
     >
       {/* Soft-UI plate. The previous version layered three infinitely
           animating blurred blobs behind frosted glass: they animated `top`

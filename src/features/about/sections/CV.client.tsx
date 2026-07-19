@@ -37,7 +37,7 @@ export default function CvSection({
   const iframeSrc = `${pdfSrc}#zoom=page-width`;
 
   return (
-    <section aria-labelledby={headingId} className={cn("py-12 sm:py-16", className)}>
+    <section aria-labelledby={headingId} className={cn("py-10 sm:py-12", className)}>
       <div className="mb-8 flex flex-col gap-2">
         <h2 id={headingId} className="text-xl font-semibold tracking-tight sm:text-2xl">
           {title}

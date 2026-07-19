@@ -71,7 +71,7 @@ export default function ExperienceTimeline({
   return (
     <section
       aria-label="Experience and education"
-      className={cn("py-12 sm:py-16", className)}
+      className={cn("py-10 sm:py-12", className)}
     >
       {/* Contract B: a group of toggle buttons, all tabbable, no arrow keys.
           The group needs its own accessible name — without one the pills are

@@ -24,7 +24,7 @@ export default function TechStack({
   className,
 }: TechStackProps): React.JSX.Element {
   return (
-    <section aria-labelledby="tech-stack-heading" className={cn("py-10", className)}>
+    <section aria-labelledby="tech-stack-heading" className={cn("py-10 sm:py-12", className)}>
       <h2
         id="tech-stack-heading"
         className="text-[length:var(--text-display-md)] font-bold leading-[1.05] text-[var(--text)]"

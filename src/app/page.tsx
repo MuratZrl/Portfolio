@@ -35,7 +35,7 @@ export default function HomePage(): React.JSX.Element {
     <Page>
       <Hero
         title="I build the internal tools companies run on"
-        subtitle="Next.js, NestJS, PostgreSQL. Three of these systems are in daily use: a metal manufacturer, a real estate agency, an e-commerce operation."
+        subtitle="Next.js, Node.js, PostgreSQL. Three of these systems are in daily use: a metal manufacturer, a real estate agency, an e-commerce operation."
         primary={{ href: "/projects", label: "See the projects" }}
         secondary={{
           href: "/cv/Murat_Zorlu_CV.pdf",
@@ -44,7 +44,7 @@ export default function HomePage(): React.JSX.Element {
           download: true,
         }}
         availability="Istanbul · UTC+3 · open to full-time roles and contract work"
-        className="pb-16 sm:pb-20"
+        className="pb-10 sm:pb-12"
       />
 
       <HowIBuild />

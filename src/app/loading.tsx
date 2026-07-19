@@ -24,7 +24,7 @@ export default function HomeLoading() {
       </div>
 
       {/* How I build — one plate, three rows */}
-      <div className="py-12 sm:py-16">
+      <div className="py-10 sm:py-12">
         <Shimmer className="h-8 w-48" />
         <Shimmer className="mt-2 h-5 w-96 max-w-full" />
         <div className="plate mt-6">
@@ -50,7 +50,7 @@ export default function HomeLoading() {
       </div>
 
       {/* Projects */}
-      <div className="py-12 sm:py-16">
+      <div className="py-10 sm:py-12">
         <Shimmer className="h-8 w-40" />
         <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {[0, 1, 2].map((i) => (

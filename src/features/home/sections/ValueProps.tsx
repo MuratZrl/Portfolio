@@ -24,7 +24,7 @@ export default function HowIBuild({
   const headingId = React.useId();
 
   return (
-    <section className={cn("w-full py-12 sm:py-16", className)} aria-labelledby={headingId}>
+    <section className={cn("w-full py-10 sm:py-12", className)} aria-labelledby={headingId}>
       <h2
         id={headingId}
         className="text-[length:var(--text-display-md)] font-bold leading-[1.05] text-[var(--text)]"
