@@ -67,29 +67,36 @@
     inset -4px -4px 10px var(--shadow-light);
 
   /* Chips are ~22px tall. The full --shadow-inset recipe above is authored
-     for input-sized boxes: a 4px offset with a 10px blur reaches past the
-     midline of a chip, so the "pressed edge" stops reading as an edge and
-     starts reading as a gradient fill. A chip gets a hairline instead —
-     1px offset, 2px blur, -1px spread — which lands the dark tone on the
-     top edge only and leaves the body a flat surface. */
-  --shadow-chip:
-    inset 0 1px 2px -1px var(--shadow-dark),
-    inset 0 -1px 1px -1px var(--shadow-light);
+    for input-sized boxes: a 4px offset with a 10px blur reaches past the
+    midline of a chip, so the "pressed edge" stops reading as an edge and
+    starts reading as a gradient fill. A chip gets a single hairline
+    instead — 1px offset down, 3px blur — which lands the dark tone on
+    the bottom edge only and leaves the body a flat surface. */
+  --shadow-chip: 
+    inset 0 -1px 3px 0 var(--shadow-dark);
 
-  /* Hover elevation is DOWNWARD, not diagonal. The resting neumorphic
-     shadow is offset on both axes, which is correct for a static plate but
-     bleeds sideways onto whatever sits next to it the moment it grows.
-     Zero x-offset plus a negative spread keeps the growth under the element
-     instead of over its neighbour.
+  /* Hover is BORDER-LED. The border carries the state change (--edge-soft
+     to --edge, a change you can actually see) and the shadow only deepens
+     underneath it, so this no longer needs the heavy dedicated recipe it
+     was carrying when shadow was the sole channel.
 
-     Hover is the ONLY feedback a card gets — nothing moves — so the shadow
-     has to carry the whole state change on its own. It gets a dedicated,
-     heavier tone: at the resting --shadow-dark the delta was too slight to
-     read without the translate propping it up. */
-  --shadow-hover-dark: rgb(120 136 160 / 0.75);
+     THE LAYER-COUNT RULE, which is what stops the white flash: this list
+     must have the SAME number of layers as --shadow-raised, in the SAME
+     order, with each layer moving monotonically toward its counterpart.
+     Layer 1 is the dark cast, and only its alpha and blur grow. Layer 2 is
+     byte-for-byte the resting light layer, so it is CONSTANT across the
+     transition and cannot interpolate through a brighter value.
+
+     The previous recipe broke both halves of that. Light theme went from
+     [dark, white@.90] to [tint, tint], so the white counter-highlight had
+     to travel across to a mid tone and lit up on the way. Dark theme had
+     three layers against the resting two, so the lists could not even pair
+     up. Whatever replaces this, keep the counts equal per theme and keep
+     the light layer identical on both ends. */
+  --shadow-hover-dark: rgb(163 177 198 / 0.75);
   --shadow-hover:
-    0 8px 20px -4px var(--shadow-hover-dark),
-    0 2px 6px -2px var(--shadow-hover-dark);
+    6px 6px 18px var(--shadow-hover-dark),
+    -6px -6px 14px var(--shadow-light);
 
   /* --- radii ----------------------------------------------------------- */
   --radius-0:  0;
@@ -145,13 +152,13 @@
      arrives gradually; a click is instantaneous and any delay between the
      mouse-down and the control moving reads as lag, not as polish. Keep this
      near the hover-in value and the button feels broken. */
-  --dur-press:     90ms;
+  --dur-press:     120ms;
   /* Release is asymmetric with press. A CSS transition reads its duration
      from the DESTINATION state, so press-in is governed by :active but
      release is governed by whatever the element returns TO — rest or
      :hover. Those blocks give transform and filter this slightly longer
      value so the button settles back instead of snapping. */
-  --dur-press-out: 140ms;
+  --dur-press-out: 180ms;
   /* A focus indicator is a functional cue, not decoration. Long enough not
      to snap, short enough that it never lags the Tab key. */
   --dur-focus:     220ms;
@@ -215,26 +222,17 @@
   --shadow-dark:  rgb(0 0 0 / 0.70);
   --shadow-light: rgb(255 255 255 / 0.035);
 
-  /* Dark theme needs the WHOLE hover recipe replaced, not just a colour
-     token, and the reason is worth writing down because the obvious fix is
-     wrong. On a #0A0A0B ground a black shadow has about ten levels of range
-     to work with: black at 0.70 alpha composites to rgb(3,3,3), black at
-     0.92 to rgb(1,1,1). That is a 2/255 delta before the blur spreads it —
-     invisible. So "raise the alpha" buys nothing here.
+  /* Dark theme overrides the TONE only, never the layer list. On a #0A0A0B
+     ground a black shadow has about ten levels of range to work with: black
+     at 0.70 alpha composites to rgb(3,3,3), at 0.85 to rgb(1,1,1). That
+     delta is close to invisible on its own, which is exactly why hover is
+     border-led now. --edge-soft #2A2A30 going to --edge #6C6C72 is a jump
+     of roughly 66 levels, and it does the work the shadow cannot do here.
 
-     What actually carries depth on a near-black ground is the white counter
-     highlight: --shadow-raised's `-6px -6px 14px rgb(255 255 255 / .035)`
-     composites to rgb(19,19,20) against a rgb(10,10,11) ground, and that
-     +9 rim is the most legible part of the resting shadow. A hover recipe
-     made of black layers alone DELETES it, so the card loses more modelling
-     than it gains and reads flatter — the exact inversion of the intent.
-
-     So hover keeps the rim and brightens it, and grows the cast underneath.
-     Deeper here means more separation from the ground, in both directions. */
-  --shadow-hover:
-    0 10px 26px -4px rgb(0 0 0 / 0.95),
-    0 3px 10px -3px rgb(0 0 0 / 0.90),
-    0 -1px 0 0 rgb(255 255 255 / 0.085);
+     The full three-layer recipe that used to live here is gone. It broke
+     the layer-count rule against the resting two, and the white rim it
+     added at position three had no counterpart to interpolate from. */
+  --shadow-hover-dark: rgb(0 0 0 / 0.85);
 }
 
 @theme inline {
@@ -381,6 +379,25 @@
     user-select: none;
     -webkit-user-select: none;
   }
+
+  /* Tailwind v4's Preflight dropped the v3 `button { cursor: pointer }`
+     default, so every BUTTON on this site was rendering the arrow cursor
+     while every anchor kept the hand. It was never specific to the theme
+     toggle: the filter pills, the pagination, the mobile menu trigger and
+     every .soft-btn had it too. One rule here rather than a utility bolted
+     onto each control. */
+  button,
+  [role="button"],
+  .soft-btn {
+    cursor: pointer;
+  }
+
+  /* A disabled control is not clickable, so it should not claim to be. */
+  button:disabled,
+  [role="button"][aria-disabled="true"],
+  .soft-btn:disabled {
+    cursor: default;
+  }
 }
 
 /* ==========================================================================
@@ -524,7 +541,7 @@
       var(--dur-press-out), var(--dur-focus);
   }
 
-  /* Press is scale only, and deliberately asymmetric: 90ms down, 140ms back.
+  /* Press is scale only, and deliberately asymmetric: 120ms down, 180ms back.
      Transform reads its duration from the DESTINATION block, so :active has
      to restate the whole list — the two blocks above govern the release, and
      without this one the press-in would inherit the slower release timing. */
@@ -574,11 +591,15 @@
 
   /* Cards do NOT move on hover. A 1px lift on a grid of cards is a jitter
      source — the pointer sits near a card edge, the lift pulls the boundary
-     out from under it, the card un-hovers, drops back, re-hovers. Shadow is
-     the entire hover channel, and it gets DEEPER, not lighter: a card that
-     lightens on hover reads as receding, which is backwards for the thing
-     you are pointing at. */
+     out from under it, the card un-hovers, drops back, re-hovers.
+
+     The border leads: --edge-soft to --edge is a change you can see at a
+     glance in both themes, and it needs no help from geometry. The shadow
+     only deepens underneath it. border-color is already positioned in
+     .interactive's transition list, so it animates on the hover timing
+     alongside box-shadow rather than snapping. */
   .plate.interactive:hover {
+    border-color: var(--edge);
     box-shadow: var(--shadow-hover);
   }
 
