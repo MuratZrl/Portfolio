@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import CodePanel from "@/features/home/sections/CodePanel";
 
 type Href = "/" | `/${string}`;
 
@@ -50,6 +51,7 @@ export default function Hero({
       className={cn("relative w-full", className)}
       aria-labelledby={headingId}
     >
+      <div className="lg:grid lg:grid-cols-[minmax(0,40rem)_minmax(0,1fr)] lg:items-start lg:gap-8">
       <div className="coupon p-6 sm:p-8">
         <h1
           id={headingId}
@@ -105,6 +107,13 @@ export default function Hero({
             {availability}
           </p>
         ) : null}
+      </div>
+
+        {/* Desktop only. It does not stack on smaller screens — a code block
+            below the CTAs on a phone is scroll cost, not information. */}
+        <div className="hidden lg:block">
+          <CodePanel />
+        </div>
       </div>
     </section>
   );

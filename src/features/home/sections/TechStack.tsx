@@ -1,77 +1,60 @@
 // src/features/home/sections/TechStack.tsx
-"use client";
 
 import React from "react";
 import { cn } from "@/lib/utils";
 
 import { DEFAULT_GROUPS } from "@/features/home/data";
-import type { TechStackProps, Skill, Group } from "@/features/home/types/tech-stack";
+import type { TechStackProps } from "@/features/home/types/tech-stack";
 
+/**
+ * A reference index, not a feature section.
+ *
+ * Four cards for 24 short strings was mostly padding. One flat block, one
+ * line per group, items inline. The per-item annotations are dropped rather
+ * than moved to `title` — a title attribute is invisible to keyboard and
+ * touch users, so it would be decoration pretending to be information, and
+ * the "what I use it for" depth already lives on the project pages.
+ *
+ * Server component — nothing here is interactive.
+ */
 export default function TechStack({
   heading = "Stack",
-  subheading = "What I reach for, and what I use it for.",
+  subheading = "What I reach for. The detail is on the project pages.",
   groups = DEFAULT_GROUPS,
   className,
 }: TechStackProps): React.JSX.Element {
   return (
-    <section
-      aria-labelledby="tech-stack-heading"
-      className={cn("py-12 sm:py-16", className)}
-    >
-      <div className="mb-8 flex flex-col gap-2">
-        <h2
-          id="tech-stack-heading"
-          className="text-xl font-semibold tracking-tight sm:text-2xl"
-        >
-          {heading}
-        </h2>
-        <p className="text-sm text-muted-foreground">{subheading}</p>
-      </div>
+    <section aria-labelledby="tech-stack-heading" className={cn("py-10", className)}>
+      <h2
+        id="tech-stack-heading"
+        className="text-[length:var(--text-display-md)] font-bold leading-[1.05] text-[var(--text)]"
+      >
+        {heading}
+      </h2>
+      <p className="mt-1 text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
+        {subheading}
+      </p>
 
-      <div className="grid items-stretch gap-6 md:grid-cols-2">
+      <dl className="mt-4 border-t border-[var(--edge-soft)]">
         {groups.map((group) => (
-          <SkillGroup key={group.title} group={group} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* --------------------------------- Parts -------------------------------- */
-
-function SkillGroup({ group }: { group: Group }): React.JSX.Element {
-  const Icon = group.icon;
-
-  return (
-    <div className="plate interactive p-5">
-      <div className="mb-4 flex items-center gap-3">
-        {Icon ? (
-          <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Icon className="h-4 w-4" aria-hidden />
+          <div
+            key={group.title}
+            className="grid gap-x-6 gap-y-1 border-b border-[var(--edge-soft)] py-2 sm:grid-cols-[minmax(170px,auto)_1fr]"
+          >
+            <dt className="text-[length:var(--text-body-sm)] font-medium text-[var(--text)]">
+              {group.title}
+            </dt>
+            <dd className="text-[length:var(--text-body-sm)] leading-relaxed text-[var(--text-muted)]">
+              {group.skills.map((s, i) => (
+                <React.Fragment key={s.name}>
+                  {i > 0 ? <span aria-hidden className="px-1.5 opacity-50">·</span> : null}
+                  {s.name}
+                </React.Fragment>
+              ))}
+            </dd>
           </div>
-        ) : null}
-        <h3 className="text-sm font-semibold">{group.title}</h3>
-        <span className="ml-auto text-[11px] text-muted-foreground">
-          {group.skills.length}
-        </span>
-      </div>
-
-      <ul className="space-y-2">
-        {group.skills.map((s) => (
-          <SkillRow key={s.name} skill={s} />
         ))}
-      </ul>
-    </div>
-  );
-}
-
-function SkillRow({ skill }: { skill: Skill }): React.JSX.Element {
-  return (
-    <li className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-      <span className="text-sm font-semibold">{skill.name}</span>
-      {skill.hint ? (
-        <span className="text-[12px] text-muted-foreground">— {skill.hint}</span>
-      ) : null}
-    </li>
+      </dl>
+    </section>
   );
 }

@@ -43,6 +43,14 @@
   --btn-bg-hover:  #1E40AF;  /* white on it 8.72 */
   --btn-fg:        #FFFFFF;
   --btn-ghost-hover: #D3D9E2;  /* label on it 11.91 */
+
+  /* Syntax tokens. Every one verified >=4.5:1 on --surface in both themes. */
+  --code-plain:   #1A1D21;  /* 14.26 */
+  --code-comment: #5C6470;  /*  5.04 */
+  --code-keyword: #7C3AED;  /*  4.81 */
+  --code-string:  #0F766E;  /*  4.62 */
+  --code-fn:      #1D4ED8;  /*  5.65 */
+  --code-number:  #9A3412;  /*  6.16 */
   --danger:      #B91C1C;
 
   /* --- neumorphic depth (decorative only) ------------------------------ */
@@ -175,6 +183,13 @@
   --btn-bg-hover:  #1D4ED8;  /* white on it 6.70 */
   --btn-fg:        #FFFFFF;
   --btn-ghost-hover: #1E1E22;  /* label on it 13.58 */
+
+  --code-plain:   #E8E8EA;  /* 14.62 */
+  --code-comment: #8A8F99;  /*  5.51 */
+  --code-keyword: #C4B5FD;  /*  9.69 */
+  --code-string:  #5EEAD4;  /* 12.09 */
+  --code-fn:      #93C5FD;  /*  9.92 */
+  --code-number:  #FDBA74;  /* 10.61 */
   --danger:      #F87171;
 
   --shadow-dark:  rgb(0 0 0 / 0.70);
