@@ -1,4 +1,4 @@
-// src/features/about/sections/ExperienceTimeline.tsx
+// src/features/about/sections/Experience.client.tsx
 "use client";
 
 import React from "react";
@@ -14,6 +14,15 @@ import { EXPERIENCE_ITEMS } from "@/features/about/data/experience";
 
 /* ────────────────────────────── Kind config ─────────────────────────────── */
 
+/**
+ * `badge` was text-[color:var(--edge)] for freelance, which is 3.32:1 on the
+ * card surface: a real AA failure on body-sized label text, not a near miss.
+ * --edge is a boundary token, sized for the 3:1 non-text threshold, and it was
+ * being used to colour words. Freelance takes --text-muted now.
+ *
+ * Losing the third colour costs nothing, because colour was never the channel
+ * here: every badge carries its own icon and its own label text.
+ */
 const KIND_CONFIG: Record<Kind, {
   label: string;
   icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
@@ -23,20 +32,20 @@ const KIND_CONFIG: Record<Kind, {
   work: {
     label: "Employment",
     icon: Building2,
-    dot: "bg-primary border-primary/30 text-primary-foreground",
-    badge: "text-[color:var(--accent)]",
+    dot: "bg-[var(--accent)] border-[var(--accent)] text-[var(--on-accent)]",
+    badge: "text-[var(--accent)]",
   },
   freelance: {
     label: "Client project",
     icon: Briefcase,
-    dot: "bg-[var(--edge)] border-[var(--edge)] text-[color:var(--ground)]",
-    badge: "text-[color:var(--edge)]",
+    dot: "bg-[var(--edge)] border-[var(--edge)] text-[var(--ground)]",
+    badge: "text-[var(--text-muted)]",
   },
   education: {
     label: "Education",
     icon: GraduationCap,
-    dot: "bg-[var(--accent)] border-[var(--accent)] text-primary-foreground",
-    badge: "text-[color:var(--accent)]",
+    dot: "bg-[var(--accent)] border-[var(--accent)] text-[var(--on-accent)]",
+    badge: "text-[var(--accent)]",
   },
 };
 
@@ -68,14 +77,23 @@ export default function ExperienceTimeline({
 
   const kinds: Kind[] = ["work", "freelance", "education"];
 
+  /* Same call as the /projects filter: these carry aria-pressed, so they are
+     controls and take the button recipe rather than .chip. */
+  const pillClass = (isActive: boolean): string =>
+    cn(
+      "soft-btn inline-flex min-h-9 select-none items-center gap-1.5 px-4",
+      "text-[length:var(--text-body-xs)] font-medium",
+      isActive ? "soft-btn-primary" : "soft-btn-ghost",
+    );
+
   return (
     <section
       aria-label="Experience and education"
       className={cn("py-10 sm:py-12", className)}
     >
       {/* Contract B: a group of toggle buttons, all tabbable, no arrow keys.
-          The group needs its own accessible name — without one the pills are
-          five unexplained controls to a screen-reader user. */}
+          The group needs its own accessible name, or the pills are five
+          unexplained controls to a screen-reader user. */}
       <div
         role="group"
         aria-label="Filter experience by type"
@@ -85,45 +103,36 @@ export default function ExperienceTimeline({
           type="button"
           onClick={() => setActiveKind("all")}
           aria-pressed={activeKind === "all"}
-          className={cn(
-            "select-none rounded-full px-4 py-2 text-xs font-medium interactive",
-            activeKind === "all"
-              ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
-              : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground",
-          )}
+          className={pillClass(activeKind === "all")}
         >
           All
         </button>
         {kinds.map((k) => {
           const cfg = KIND_CONFIG[k];
           const Icon = cfg.icon;
+          const isActive = activeKind === k;
           return (
             <button
               key={k}
               type="button"
               onClick={() => setActiveKind(k)}
-              aria-pressed={activeKind === k}
-              className={cn(
-                "inline-flex select-none items-center gap-1.5 rounded-full px-4 py-2 text-xs font-medium interactive",
-                activeKind === k
-                  ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
-                  : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground",
-              )}
+              aria-pressed={isActive}
+              className={pillClass(isActive)}
             >
-              <Icon className="h-3.5 w-3.5" aria-hidden />
+              <Icon className="size-3.5" aria-hidden />
               {cfg.label}
             </button>
           );
         })}
       </div>
 
-      {/* Timeline */}
       {sorted.length > 0 ? (
         <div className="relative">
-          {/* Vertical line */}
+          {/* Was a bg-gradient-to-b from-primary/30 via-border to-transparent.
+              A hairline rule is what --edge-soft is for. */}
           <div
             aria-hidden
-            className="pointer-events-none absolute left-[15px] top-2 bottom-2 w-px bg-gradient-to-b from-primary/30 via-border to-transparent"
+            className="pointer-events-none absolute bottom-2 left-[15px] top-2 w-px bg-[var(--edge-soft)]"
           />
 
           <div className="space-y-6">
@@ -133,15 +142,14 @@ export default function ExperienceTimeline({
           </div>
         </div>
       ) : (
-        <div className={cn(
-          "flex flex-col items-center justify-center rounded-2xl border py-16 text-center",
-          "border-[var(--edge-soft)] bg-[var(--surface)]",
-        )}>
-          <p className="text-sm text-muted-foreground">No items match this filter.</p>
+        <div className="plate flex flex-col items-center justify-center py-16 text-center">
+          <p className="text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
+            No items match this filter.
+          </p>
           <button
             type="button"
             onClick={() => setActiveKind("all")}
-            className="mt-3 select-none rounded-full bg-primary px-4 py-2 text-xs font-medium text-primary-foreground hover:bg-primary/90"
+            className="soft-btn soft-btn-primary mt-3 inline-flex min-h-9 select-none items-center px-4 text-[length:var(--text-body-xs)] font-medium"
           >
             Show all
           </button>
@@ -153,6 +161,16 @@ export default function ExperienceTimeline({
 
 /* ─────────────────────────── Timeline Card ──────────────────────────────── */
 
+/**
+ * The reveal is [data-enter], the system's entrance animation, driven by the
+ * --i stagger custom property.
+ *
+ * It replaces a per-card IntersectionObserver plus useState plus a
+ * transition-[opacity,transform] utility and a hand-computed transitionDelay.
+ * One behaviour change worth knowing: the old version waited until a card
+ * scrolled into view, this one runs on mount like every other entrance on the
+ * site. Both are covered by the prefers-reduced-motion block in globals.
+ */
 function TimelineCard({
   item,
   index,
@@ -160,101 +178,85 @@ function TimelineCard({
   item: ExperienceItem;
   index: number;
 }): React.JSX.Element {
-  const [visible, setVisible] = React.useState(false);
-  const ref = React.useRef<HTMLDivElement>(null);
   const cfg = KIND_CONFIG[item.kind];
   const Icon = cfg.icon;
   const duration = durationHuman(item.period);
 
-  React.useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.15 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
   return (
     <div
-      ref={ref}
-      className={cn(
-        "relative grid gap-4 pl-10 transition-[opacity,transform] duration-500 ease-out",
-        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4",
-      )}
-      style={{ transitionDelay: visible ? `${index * 120}ms` : "0ms" }}
+      data-enter
+      style={{ "--i": index } as React.CSSProperties}
+      className="relative grid gap-4 pl-10"
     >
-      {/* Timeline dot */}
       <span
         aria-hidden
         className={cn(
-          "absolute left-0 top-5 z-10 flex size-[31px] items-center justify-center rounded-full border-[3px] bg-background",
+          "absolute left-0 top-5 z-10 flex size-[31px] items-center justify-center rounded-full border-[3px] bg-[var(--ground)]",
           cfg.dot,
         )}
       >
-        <Icon className="h-3.5 w-3.5 text-inherit" aria-hidden />
+        <Icon className="size-3.5 text-inherit" aria-hidden />
       </span>
 
-      {/* Card */}
-      <div className={cn(
-        "group rounded-2xl border p-5 sm:p-6",
-        "border-[var(--edge-soft)] bg-[var(--surface)]",
-        "interactive",
-        "hover:border-primary/20 hover:shadow-md hover:shadow-primary/5",
-      )}>
-        {/* Header */}
+      {/* .plate, and deliberately NOT .interactive. This card is not a link
+          and not focusable; the old version carried `interactive` plus a
+          hover border and shadow, advertising a click target that does not
+          exist. The links inside it are the interactive parts. */}
+      <div className="plate p-5 sm:p-6">
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h3 className="text-base font-semibold sm:text-lg">{item.role}</h3>
-            <p className="mt-0.5 text-sm text-muted-foreground">{item.org}</p>
+            <h3 className="text-[length:var(--text-display-2xs)] leading-[1.3] text-[var(--text)]">
+              {item.role}
+            </h3>
+            <p className="mt-0.5 text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
+              {item.org}
+            </p>
           </div>
-          <span className={cn(
-            "inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium",
-            cfg.badge,
-          )}>
-            <Icon className="h-3.5 w-3.5" aria-hidden />
+          <span
+            className={cn(
+              "inline-flex w-fit items-center gap-1.5 text-[length:var(--text-body-xs)] font-medium",
+              cfg.badge,
+            )}
+          >
+            <Icon className="size-3.5" aria-hidden />
             {cfg.label}
           </span>
         </div>
 
-        {/* Meta row */}
-        <div className="mb-4 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+        <div className="mb-4 flex flex-wrap gap-x-4 gap-y-1 text-[length:var(--text-body-xs)] text-[var(--text-muted)]">
           <span className="inline-flex items-center gap-1.5">
-            <CalendarDays className="h-3.5 w-3.5" aria-hidden />
+            <CalendarDays className="size-3.5" aria-hidden />
             <PeriodText period={item.period} />
           </span>
           {item.location ? (
             <span className="inline-flex items-center gap-1.5">
-              <MapPin className="h-3.5 w-3.5" aria-hidden />
+              <MapPin className="size-3.5" aria-hidden />
               {item.location}
             </span>
           ) : null}
           <span className="inline-flex items-center gap-1.5">
-            <Timer className="h-3.5 w-3.5" aria-hidden />
+            <Timer className="size-3.5" aria-hidden />
             {duration}
           </span>
         </div>
 
-        {/* Summary */}
         {item.summary ? (
-          <p className="mb-4 text-sm leading-relaxed text-muted-foreground">{item.summary}</p>
+          <p className="mb-4 text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--text-muted)]">
+            {item.summary}
+          </p>
         ) : null}
 
-        {/* Achievements */}
         {item.achievements?.length ? (
           <div className="mb-4">
-            <p className="mb-2 text-xs font-semibold text-foreground/70">Key Achievements</p>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            {/* Was text-foreground/70, an opacity knock-back on text. The
+                system has a token for secondary text. */}
+            <p className="mb-2 text-[length:var(--text-body-xs)] font-semibold text-[var(--text)]">
+              Key Achievements
+            </p>
+            <ul className="space-y-2 text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
               {item.achievements.map((a) => (
                 <li key={a} className="flex items-start gap-2">
-                  <span className="mt-1.5 inline-block size-1.5 shrink-0 rounded-full bg-primary" />
+                  <span aria-hidden className="mt-1.5 inline-block size-1.5 shrink-0 rounded-full bg-[var(--accent)]" />
                   <span>{a}</span>
                 </li>
               ))}
@@ -262,14 +264,15 @@ function TimelineCard({
           </div>
         ) : null}
 
-        {/* Responsibilities */}
         {item.responsibilities?.length ? (
           <div className="mb-4">
-            <p className="mb-2 text-xs font-semibold text-foreground/70">Responsibilities</p>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <p className="mb-2 text-[length:var(--text-body-xs)] font-semibold text-[var(--text)]">
+              Responsibilities
+            </p>
+            <ul className="space-y-2 text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
               {item.responsibilities.map((r) => (
                 <li key={r} className="flex items-start gap-2">
-                  <span className="mt-1.5 inline-block size-1.5 shrink-0 rounded-full bg-muted-foreground/40" />
+                  <span aria-hidden className="mt-1.5 inline-block size-1.5 shrink-0 rounded-full bg-[var(--edge)]" />
                   <span>{r}</span>
                 </li>
               ))}
@@ -277,13 +280,12 @@ function TimelineCard({
           </div>
         ) : null}
 
-        {/* Tags */}
         {item.tags?.length ? (
           <div className="mb-4 flex flex-wrap gap-1.5">
             {item.tags.map((t) => (
               <span
                 key={t}
-                className="rounded-md bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground"
+                className="chip px-2 py-0.5 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--text-muted)]"
               >
                 {t}
               </span>
@@ -291,7 +293,6 @@ function TimelineCard({
           </div>
         ) : null}
 
-        {/* Links */}
         {item.links?.length ? (
           <div className="flex flex-wrap gap-2 border-t border-[var(--edge-soft)] pt-4">
             {item.links.map((l) => (
@@ -308,23 +309,29 @@ function TimelineCard({
 
 function LinkPill({ href, label }: ExtLink): React.JSX.Element {
   const classes = cn(
-    "inline-flex select-none items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium",
-    "text-muted-foreground interactive",
-    "hover:bg-primary/10 hover:text-primary",
+    "soft-btn soft-btn-ghost inline-flex min-h-9 select-none items-center gap-1.5 px-3",
+    "text-[length:var(--text-body-xs)] font-medium",
   );
 
   if (href.startsWith("/")) {
     return (
       <Link href={href} draggable={false} className={classes} aria-label={label}>
-        <ExternalLink className="h-3 w-3" aria-hidden />
+        <ExternalLink className="size-3" aria-hidden />
         {label}
       </Link>
     );
   }
 
   return (
-    <a href={href} target="_blank" rel="noreferrer" draggable={false} className={classes} aria-label={label}>
-      <ExternalLink className="h-3 w-3" aria-hidden />
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer noopener"
+      draggable={false}
+      className={classes}
+      aria-label={label}
+    >
+      <ExternalLink className="size-3" aria-hidden />
       {label}
     </a>
   );
