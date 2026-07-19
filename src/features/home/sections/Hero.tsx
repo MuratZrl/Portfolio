@@ -51,7 +51,7 @@ export default function Hero({
       className={cn("relative w-full", className)}
       aria-labelledby={headingId}
     >
-      <div className="lg:grid lg:grid-cols-[minmax(0,40rem)_minmax(0,1fr)] lg:items-start lg:gap-8">
+      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start lg:gap-8">
       <div className="coupon p-6 sm:p-8">
         <h1
           id={headingId}

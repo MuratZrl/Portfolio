@@ -8,6 +8,13 @@ import { cn } from "@/lib/utils";
  * the `connectToRedis` method. Not paraphrased, not reconstructed — this is
  * the code that ships, including its own comment about cross-replica
  * delivery, which is exactly what the caption claims.
+ *
+ * RE-WRAPPED ONLY. Three lines exceeded the panel width and pushed a
+ * horizontal scrollbar into the layout, so the comment is split across three
+ * lines and Promise.all takes one ping per line. Whitespace and line breaks
+ * are the only difference — every token, identifier and comment word is
+ * unchanged, including the absent trailing comma after the second ping.
+ * Longest line is now 60 chars.
  */
 const SNIPPET = `async connectToRedis(): Promise<void> {
   const url = process.env.REDIS_URL;
@@ -22,9 +29,13 @@ const SNIPPET = `async connectToRedis(): Promise<void> {
       });
   this.subClient = this.pubClient.duplicate();
 
-  // ioredis auto-connects lazily, but ping early so a misconfigured URL
-  // surfaces at boot instead of silently breaking cross-replica delivery.
-  await Promise.all([this.pubClient.ping(), this.subClient.ping()]);
+  // ioredis auto-connects lazily, but ping early so a
+  // misconfigured URL surfaces at boot instead of silently
+  // breaking cross-replica delivery.
+  await Promise.all([
+    this.pubClient.ping(),
+    this.subClient.ping()
+  ]);
 }`;
 
 type Tok = "plain" | "comment" | "keyword" | "string" | "fn" | "number";
@@ -74,7 +85,7 @@ export default function CodePanel({ className }: { className?: string }): React.
   return (
     <figure className={cn("flex min-w-0 flex-col", className)}>
       <div className="min-w-0 overflow-x-auto rounded-[var(--radius-sm)] border border-[var(--edge-soft)] bg-[var(--surface)] p-4">
-        <pre className="text-[length:var(--text-mono-inline)] leading-[1.7]">
+        <pre className="text-[length:var(--text-body-xs)] leading-[1.75]">
           <code className="font-mono">
             {lines.map((line, i) => (
               <span key={i} className="block whitespace-pre">
