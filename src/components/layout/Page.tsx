@@ -31,7 +31,17 @@ export function Page({
       {(title || description || actions) ? (
         <header className="mb-6 md:mb-8">
           {title ? (
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight">{title}</h1>
+            /* --text-display-md, chosen by measurement rather than by eye:
+               the old text-3xl / md:text-4xl pair rendered at 36px at 1440,
+               and the token steps either side are 32px (md) and 48px (lg).
+
+               font-bold and tracking-tight are gone with it. Both were
+               overriding the base layer, which already gives every h1 the
+               display face at weight 800 and a letter-spacing of 0.002em;
+               font-bold was quietly pulling that back down to 700. */
+            <h1 className="text-[length:var(--text-display-md)] leading-[1.15] text-[var(--text)]">
+              {title}
+            </h1>
           ) : null}
           {description ? (
             <p className="mt-2 text-muted-foreground">{description}</p>
