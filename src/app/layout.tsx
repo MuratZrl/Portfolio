@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     siteName: "Murat Zorlu",
     title: "Murat Zorlu | Portfolio",
     description:
-      "Fullstack TypeScript developer in Istanbul. Next.js, NestJS, PostgreSQL. Internal tools and admin panels in production.",
+      "Fullstack TypeScript developer in Istanbul. Next.js, Node.js, PostgreSQL. Internal tools and admin panels in production.",
     locale: "en_US",
     // The image is added automatically by src/app/opengraph-image.tsx.
   },
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Murat Zorlu | Portfolio",
     description:
-      "Fullstack TypeScript developer in Istanbul. Next.js, NestJS, PostgreSQL. Internal tools and admin panels in production.",
+      "Fullstack TypeScript developer in Istanbul. Next.js, Node.js, PostgreSQL. Internal tools and admin panels in production.",
     // The image is added automatically by src/app/twitter-image.tsx.
   },
 };

@@ -12,7 +12,7 @@ import FinalCta from "@/features/home/sections/FinalCTA";
 export const metadata: Metadata = {
   title: "Home",
   description:
-    "Admin panels, dashboards and sync engines running in production. Next.js, NestJS, PostgreSQL. Open to full-time and contract work.",
+    "Admin panels, dashboards and sync engines running in production. Next.js, Node.js, PostgreSQL. Open to full-time and contract work.",
   openGraph: {
     type: "website",
     url: "/",
@@ -20,13 +20,13 @@ export const metadata: Metadata = {
     locale: "en_US",
     title: "Murat Zorlu | Fullstack developer, Istanbul",
     description:
-      "I build the internal tools companies run on. Next.js, NestJS, PostgreSQL. Three client systems in daily production use.",
+      "I build the internal tools companies run on. Next.js, Node.js, PostgreSQL. Three client systems in daily production use.",
   },
   twitter: {
     card: "summary_large_image",
     title: "Murat Zorlu | Fullstack developer, Istanbul",
     description:
-      "I build the internal tools companies run on. Next.js, NestJS, PostgreSQL. Three client systems in daily production use.",
+      "I build the internal tools companies run on. Next.js, Node.js, PostgreSQL. Three client systems in daily production use.",
   },
 };
 
