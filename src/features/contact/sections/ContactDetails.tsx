@@ -78,10 +78,7 @@ export default function ContactDetails({
     <aside className="flex h-full flex-col gap-4">
       {/* ── Direct Contact ── */}
       <div
-        className={cn(
-          "rounded-2xl border p-5 sm:p-6",
-          "border-border/50 bg-card/80 backdrop-blur-sm",
-        )}
+        className={cn("plate rounded-2xl border p-5 sm:p-6")}
       >
         <div className="mb-5 flex items-center gap-3">
           <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -97,8 +94,9 @@ export default function ContactDetails({
               <div className="text-xs font-medium text-muted-foreground">Email</div>
               <Link
                 href={`mailto:${email}`}
-                className="break-all text-sm font-medium text-foreground hover:text-primary transition-colors"
-              >
+                className="break-all text-sm font-medium text-foreground hover:text-primary interactive"
+              draggable={false}
+            >
                 {email}
               </Link>
             </div>
@@ -107,7 +105,7 @@ export default function ContactDetails({
               aria-label="Copy email address"
               onClick={() => void copyToClipboard(email)}
               className={cn(
-                "flex size-8 shrink-0 cursor-pointer select-none items-center justify-center rounded-lg transition-colors",
+                "flex size-8 shrink-0 cursor-pointer select-none items-center justify-center rounded-lg interactive",
                 copied
                   ? "bg-green-600/10 text-green-600 dark:text-green-400"
                   : "bg-muted text-muted-foreground hover:text-foreground",
@@ -151,10 +149,7 @@ export default function ContactDetails({
 
       {/* ── Elsewhere ── */}
       <div
-        className={cn(
-          "rounded-2xl border p-5 sm:p-6",
-          "border-border/50 bg-card/80 backdrop-blur-sm",
-        )}
+        className={cn("plate rounded-2xl border p-5 sm:p-6")}
       >
         <div className="mb-5 flex items-center gap-3">
           <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -181,7 +176,7 @@ export default function ContactDetails({
                 <div className="truncate text-xs text-muted-foreground">{s.handle}</div>
               </div>
               <ExternalLink
-                className="h-3.5 w-3.5 shrink-0 text-muted-foreground transition-colors group-hover:text-primary"
+                className="h-3.5 w-3.5 shrink-0 text-muted-foreground interactive group-hover:text-primary"
                 aria-hidden
               />
             </a>

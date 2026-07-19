@@ -90,13 +90,12 @@ function SheetContent({
 
         <SheetPrimitive.Close
           className={cn(
-            "absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100",
-            "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ring-offset-background",
+            "absolute right-4 top-4 rounded-sm opacity-70 interactive hover:opacity-100",
             "disabled:pointer-events-none"
           )}
         >
           <XIcon className="size-4" aria-hidden />
-          <span className="sr-only">Kapat</span>
+          <span className="sr-only">Close</span>
         </SheetPrimitive.Close>
       </SheetPrimitive.Content>
     </SheetPortal>

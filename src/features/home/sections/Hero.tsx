@@ -2,12 +2,10 @@
 
 import React from "react";
 import Link from "next/link";
-
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { ArrowRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { ArrowRight } from "lucide-react";
+import CodePanel from "@/features/home/sections/CodePanel";
 
 type Href = "/" | `/${string}`;
 
@@ -15,119 +13,106 @@ type ActionLink = {
   href: Href;
   label: string;
   ariaLabel?: string;
+  download?: boolean;
 };
-
-type Align = "left" | "center";
 
 type HeroProps = {
   className?: string;
-  title?: string;
-  subtitle?: string;
-  primary?: ActionLink;
+  title: string;
+  subtitle: string;
+  primary: ActionLink;
   secondary?: ActionLink;
-  align?: Align;
-  narrow?: boolean;
-  statusText?: string;
+  /** Logistics line stamped at the foot of the plate. Location, timezone, availability. */
+  availability?: string;
 };
 
+/**
+ * The sample coupon: one chamfered plate carrying the headline, the way a
+ * milled sample carries its stamped grade.
+ *
+ * The H1 has NO animation property of any kind — not a fade, not a delay.
+ * Chrome excludes `opacity: 0` elements from LCP candidacy, so animating it
+ * would push the LCP timestamp to the first frame where opacity exceeds zero
+ * and make the measurement depend on frame scheduling. Everything else
+ * assembles around a headline that was already there.
+ */
 export default function Hero({
   className,
-  title = "Build clearly. Ship confidently.",
+  title,
   subtitle,
-  primary = { href: "/about", label: "About" },
-  secondary = { href: "/projects", label: "Projects" },
-  align = "center",
-  narrow = true,
-  statusText,
+  primary,
+  secondary,
+  availability,
 }: HeroProps): React.JSX.Element {
   const headingId = React.useId();
 
-  const textAlign = align === "center" ? "text-center mx-auto" : "text-left";
-  const rowJustify = align === "center" ? "justify-center" : "justify-start";
-  const containerItems = align === "center" ? "items-center" : "items-start";
-
   return (
     <section
-      className={cn("relative w-full overflow-hidden", className)}
+      className={cn("relative w-full", className)}
       aria-labelledby={headingId}
-      role="region"
     >
-      {/* Background glow */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <div className="h-[360px] w-[560px] rounded-full bg-primary/[0.07] blur-[100px]" />
-      </div>
-
-      <div className={cn("relative flex flex-col gap-6", containerItems)}>
-        {/* Status badge */}
-        {statusText ? (
-          <div style={{ animation: "fade-in-up 0.5s ease-out both" }}>
-            <Badge
-              variant="outline"
-              className="gap-1.5 px-3 py-1 text-xs font-normal text-muted-foreground border-border/50 backdrop-blur-sm"
-            >
-              <span className="relative flex size-2">
-                <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary/60" />
-                <span className="relative inline-flex size-2 rounded-full bg-primary" />
-              </span>
-              {statusText}
-            </Badge>
-          </div>
-        ) : null}
-
-        {/* Heading */}
+      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start lg:gap-8">
+      <div className="coupon p-6 sm:p-8">
         <h1
           id={headingId}
-          className={cn(
-            "text-balance text-3xl font-bold leading-[1.08] tracking-tight sm:text-4xl lg:text-5xl",
-            textAlign,
-            narrow ? "max-w-2xl" : "max-w-3xl",
-          )}
-          style={{ animation: "fade-in-up 0.6s ease-out 0.2s both" }}
+          className="max-w-[18ch] text-[length:var(--text-display-xl)] font-extrabold leading-[0.96] text-[var(--text)]"
         >
           {title}
         </h1>
 
-        {/* Subtitle (plain text) */}
-        {subtitle ? (
-          <p
-            className={cn(
-              "text-pretty text-base text-muted-foreground sm:text-lg lg:text-xl",
-              textAlign,
-              narrow ? "max-w-xl" : "max-w-2xl",
-            )}
-            style={{ animation: "fade-in-up 0.6s ease-out 0.3s both" }}
-          >
-            {subtitle}
-          </p>
-        ) : null}
-
-        {/* Actions */}
-        <div
-          className={cn("mt-2 flex flex-wrap items-center gap-3", rowJustify)}
-          style={{ animation: "fade-in-up 0.6s ease-out 0.45s both" }}
+        <p
+          data-enter
+          style={{ "--i": 1 } as React.CSSProperties}
+          className="mt-5 max-w-[52ch] text-[length:var(--text-body-lead)] leading-[1.55] text-[var(--text-muted)]"
         >
-          <Button
-            asChild
-            size="lg"
-            aria-label={primary.ariaLabel ?? `Go to ${primary.label} page`}
-          >
-            <Link href={primary.href}>
-              {primary.label}
-              <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
-            </Link>
-          </Button>
+          {subtitle}
+        </p>
+
+        <div
+          data-enter
+          style={{ "--i": 2 } as React.CSSProperties}
+          className="mt-7 flex flex-wrap items-center gap-3"
+        >
+          <Link
+            href={primary.href}
+            aria-label={primary.ariaLabel}
+            className="soft-btn soft-btn-primary inline-flex min-h-11 items-center gap-2 px-5 text-[length:var(--text-body-sm)] font-medium"
+              draggable={false}
+            >
+            {primary.label}
+            <ArrowRight className="size-4" aria-hidden />
+          </Link>
 
           {secondary ? (
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="border-border/50 backdrop-blur-sm"
-              aria-label={secondary.ariaLabel ?? `Go to ${secondary.label} page`}
+            <a
+              href={secondary.href}
+              download={secondary.download}
+              aria-label={secondary.ariaLabel}
+              className="soft-btn soft-btn-ghost inline-flex min-h-11 items-center px-5 text-[length:var(--text-body-sm)] font-medium"
+              draggable={false}
             >
-              <Link href={secondary.href}>{secondary.label}</Link>
-            </Button>
+              {secondary.label}
+            </a>
           ) : null}
+        </div>
+
+        {/* Stamped at the foot of the plate — where a coupon carries its
+            grade and batch. Text only: no dot, no marker. */}
+        {availability ? (
+          <p
+            data-enter
+            style={{ "--i": 3 } as React.CSSProperties}
+            className="mt-7 border-t border-[var(--edge-soft)] pt-4 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--text-muted)]"
+          >
+            {availability}
+          </p>
+        ) : null}
+      </div>
+
+        {/* Desktop only. It does not stack on smaller screens — a code block
+            below the CTAs on a phone is scroll cost, not information. */}
+        <div className="hidden lg:block">
+          <CodePanel />
         </div>
       </div>
     </section>

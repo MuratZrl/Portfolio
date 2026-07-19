@@ -48,14 +48,11 @@ export default function ContactForm(): React.JSX.Element {
     touchedFields,
     submitCount,
     isSubmitting,
-    isValid,
-    isDirty,
   } = form.formState;
 
   const showError = (k: keyof ContactInput) =>
     Boolean(touchedFields[k] || submitCount > 0) && Boolean(errors[k]);
 
-  const canSubmit = isValid && isDirty && !isSubmitting;
 
   const [status, setStatus] = React.useState<SubmitStatus>("idle");
   const [errorMsg, setErrorMsg] = React.useState("");
@@ -167,12 +164,11 @@ export default function ContactForm(): React.JSX.Element {
 
   return (
     <div className={cn(
-      "flex h-full flex-col rounded-2xl border p-5 sm:p-6",
-      "border-border/50 bg-card/80 backdrop-blur-sm",
+      "plate flex h-full flex-col p-5 sm:p-6",
     )}>
       <div className="mb-6">
         <div className="flex items-center gap-3">
-          <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <div className="flex size-9 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--raised)] text-[var(--accent)]">
             <Send className="h-4 w-4" aria-hidden />
           </div>
           <h3 className="text-base font-semibold">Send a message</h3>
@@ -185,7 +181,17 @@ export default function ContactForm(): React.JSX.Element {
           className="flex flex-1 flex-col gap-5"
           noValidate
           aria-busy={isSubmitting}
+          aria-describedby="contact-required-note"
         >
+          {/* 3.3.2 Labels or Instructions — every field in ContactSchema is
+              required, and nothing said so. */}
+          <p
+            id="contact-required-note"
+            className="text-[length:var(--text-body-sm)] text-[color:var(--text-muted)]"
+          >
+            Every field is required.
+          </p>
+
           {/* Honeypot */}
           <input
             type="text"
@@ -206,11 +212,13 @@ export default function ContactForm(): React.JSX.Element {
                   <FormLabel htmlFor="contact-name">Full Name</FormLabel>
                   <FormControl>
                     <Input
+                      required
+                      aria-required="true"
                       id="contact-name"
                       placeholder="Your name"
                       autoComplete="name"
                       inputMode="text"
-                      className="rounded-lg border-border/50 bg-background/60 focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+                      className="recessed control"
                       {...field}
                       aria-invalid={showError("name")}
                     />
@@ -228,12 +236,14 @@ export default function ContactForm(): React.JSX.Element {
                   <FormLabel htmlFor="contact-email">Email</FormLabel>
                   <FormControl>
                     <Input
+                      required
+                      aria-required="true"
                       id="contact-email"
                       type="email"
                       placeholder="you@example.com"
                       autoComplete="email"
                       inputMode="email"
-                      className="rounded-lg border-border/50 bg-background/60 focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+                      className="recessed control"
                       {...field}
                       aria-invalid={showError("email")}
                     />
@@ -268,11 +278,10 @@ export default function ContactForm(): React.JSX.Element {
                           aria-checked={selected}
                           onClick={() => field.onChange(opt.value)}
                           className={cn(
-                            "inline-flex select-none items-center justify-center rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200",
-                            "outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
+                            "inline-flex select-none items-center justify-center rounded-lg px-3 py-2 text-sm font-medium interactive",
                             selected
                               ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
-                              : "cursor-pointer border border-border/50 bg-background/60 text-muted-foreground hover:bg-muted hover:text-foreground",
+                              : "cursor-pointer border border-[var(--edge-soft)] bg-background/60 text-muted-foreground hover:bg-muted hover:text-foreground",
                           )}
                         >
                           {opt.label}
@@ -309,10 +318,12 @@ export default function ContactForm(): React.JSX.Element {
                 </div>
                 <FormControl>
                   <Textarea
+                    required
+                    aria-required="true"
                     id="contact-message"
                     placeholder="Tell me about your idea..."
                     aria-describedby="message-counter"
-                    className="flex-1 h-full min-h-[180px] md:min-h-[260px] resize-y rounded-lg border-border/50 bg-background/60 focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+                    className="flex-1 h-full min-h-[180px] md:min-h-[260px] resize-y rounded-lg border-[var(--edge-soft)] bg-background/60"
                     rows={10}
                     {...field}
                     onChange={(e) => {
@@ -353,21 +364,15 @@ export default function ContactForm(): React.JSX.Element {
           <div className="mt-auto pt-1">
             <button
               type="submit"
-              disabled={!canSubmit}
-              aria-disabled={!canSubmit}
-              className={cn(
-                "inline-flex w-full select-none items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-medium transition-all duration-200",
-                canSubmit
-                  ? "cursor-pointer bg-primary text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/90"
-                  : "bg-muted text-muted-foreground cursor-not-allowed",
-              )}
+              disabled={isSubmitting}
+              className="soft-btn soft-btn-primary inline-flex w-full min-h-11 select-none items-center justify-center gap-2 px-6 py-3 text-sm font-medium disabled:opacity-60"
             >
               {isSubmitting ? (
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
               ) : (
                 <Send className="h-4 w-4" aria-hidden />
               )}
-              {isSubmitting ? "Sending..." : "Send Message"}
+              {isSubmitting ? "Sending…" : "Send message"}
             </button>
           </div>
         </form>

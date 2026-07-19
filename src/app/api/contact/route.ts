@@ -103,7 +103,7 @@ function buildEmail(args: {
       </tr>
       <tr>
         <td style="padding:14px 24px;background:#fafafa;border-top:1px solid #e5e5e5;font-size:11px;color:#888;">
-          Sent from muratzorlu.dev — reply directly to respond to ${safeName}.
+          Sent from muratzorlu.dev. Reply directly to respond to ${safeName}.
         </td>
       </tr>
     </table>
@@ -111,7 +111,7 @@ function buildEmail(args: {
 </html>`;
 
   const text = [
-    `New contact message — ${subjectLabel}`,
+    `New contact message: ${subjectLabel}`,
     ``,
     `From:    ${name}`,
     `Email:   ${email}`,
@@ -187,7 +187,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<OkPayload | E
       from: "Portfolio Contact <contact@muratzorlu.dev>",
       to: "me@muratzorlu.dev",
       replyTo: cleanEmail,
-      subject: `[Portfolio] ${subjectLabel} — ${cleanName}`,
+      subject: `[Portfolio] ${subjectLabel}: ${cleanName}`,
       html,
       text,
     });

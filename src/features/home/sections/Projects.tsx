@@ -1,12 +1,9 @@
 // src/features/home/sections/Projects.tsx
-"use client";
 
 import React from "react";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-
 import { getFeaturedProjects, type Project } from "@/constants/projects";
 import { ProjectCard } from "@/components/ProjectCard";
 
@@ -21,41 +18,43 @@ type FeaturedProjectsProps = {
 
 const HARD_CAP = 3;
 
+/** Server component — nothing here is interactive. */
 export default function FeaturedProjects({
-  heading = "Featured projects",
-  subheading = "Built for real workloads, tested and reliable.",
+  heading = "Projects",
+  subheading = "Three built for paying clients, two built for me. The client ones are in daily use.",
   projects,
   className,
   maxVisible = HARD_CAP,
 }: FeaturedProjectsProps): React.JSX.Element {
-  const list = (projects ?? getFeaturedProjects(6)).slice(
-    0,
-    Math.min(maxVisible, HARD_CAP)
-  );
+  const list = (projects ?? getFeaturedProjects(6)).slice(0, Math.min(maxVisible, HARD_CAP));
 
   return (
-    <section
-      aria-labelledby="featured-projects-heading"
-      className={cn("py-12 sm:py-16", className)}
-    >
-      <div className="mb-6 flex items-end justify-between gap-4">
-        <div className="space-y-1">
+    <section aria-labelledby="featured-projects-heading" className={cn("py-10 sm:py-12", className)}>
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div>
           <h2
             id="featured-projects-heading"
-            className="text-xl font-semibold tracking-tight sm:text-2xl"
+            className="text-[length:var(--text-display-md)] font-bold leading-[1.05] text-[var(--text)]"
           >
             {heading}
           </h2>
-          <p className="text-sm text-muted-foreground">{subheading}</p>
+          <p className="mt-2 text-[length:var(--text-body-base)] text-[var(--text-muted)]">{subheading}</p>
         </div>
-        <Button asChild variant="outline" size="sm" aria-label="View all projects">
-          <Link href="/projects">View all</Link>
-        </Button>
+
+        {/* A text link, not a bordered button — a raised button beside a row of
+            raised cards is depth noise. */}
+        <Link
+          href="/projects"
+          className="link-soft text-[length:var(--text-body-sm)] font-medium text-[var(--accent)]"
+              draggable={false}
+            >
+          All five projects
+        </Link>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {list.map((p) => (
-          <ProjectCard key={p.slug} project={p} />
+          <ProjectCard key={p.slug} project={p} headingLevel={3} />
         ))}
       </div>
     </section>

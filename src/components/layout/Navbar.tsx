@@ -31,11 +31,11 @@ export default function Navbar(): React.JSX.Element {
   }, [pathname]);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-[var(--edge-soft)] bg-[var(--surface)]">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/" draggable={false} className="flex select-none items-center gap-2.5">
-          <span className="inline-flex size-7 items-center justify-center rounded-md bg-primary text-xs font-bold text-white">
+          <span className="inline-flex size-7 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">
             MZ
           </span>
           <span className="hidden text-sm font-semibold tracking-tight sm:inline">
@@ -55,7 +55,7 @@ export default function Navbar(): React.JSX.Element {
                 draggable={false}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "select-none rounded-md px-3 py-1.5 text-sm transition-colors",
+                  "select-none rounded-md px-3 py-1.5 text-sm interactive",
                   isActive
                     ? "font-medium text-primary"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -77,8 +77,8 @@ export default function Navbar(): React.JSX.Element {
             draggable={false}
             aria-label="Download CV"
             className={cn(
-              "hidden select-none items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors sm:inline-flex",
-              "border border-border/50 text-muted-foreground hover:bg-muted hover:text-foreground",
+              "hidden select-none items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium interactive sm:inline-flex",
+              "border border-[var(--edge-soft)] text-muted-foreground hover:bg-muted hover:text-foreground",
             )}
           >
             <Download className="h-3.5 w-3.5" aria-hidden />
@@ -90,7 +90,7 @@ export default function Navbar(): React.JSX.Element {
             type="button"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
-            className="inline-flex size-9 select-none items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground md:hidden"
+            className="inline-flex size-9 select-none items-center justify-center rounded-md text-muted-foreground interactive hover:bg-muted hover:text-foreground md:hidden"
           >
             {mobileOpen ? (
               <X className="h-5 w-5" aria-hidden />
@@ -103,7 +103,7 @@ export default function Navbar(): React.JSX.Element {
 
       {/* Mobile nav panel */}
       {mobileOpen ? (
-        <nav className="border-t border-border/40 bg-background/95 backdrop-blur-md md:hidden">
+        <nav className="border-t border-[var(--edge-soft)] bg-[var(--surface)] md:hidden">
           <div className="mx-auto max-w-7xl space-y-1 px-4 py-3">
             {NAV_ITEMS.map(({ href, label }) => {
               const isActive =
@@ -115,7 +115,7 @@ export default function Navbar(): React.JSX.Element {
                   draggable={false}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "block select-none rounded-md px-3 py-2 text-sm transition-colors",
+                    "block select-none rounded-md px-3 py-2 text-sm interactive",
                     isActive
                       ? "font-medium text-primary"
                       : "text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -130,7 +130,7 @@ export default function Navbar(): React.JSX.Element {
               href={CV_PATH}
               download
               draggable={false}
-              className="flex select-none items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="flex select-none items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground interactive hover:bg-muted hover:text-foreground"
             >
               <Download className="h-3.5 w-3.5" aria-hidden />
               Download CV

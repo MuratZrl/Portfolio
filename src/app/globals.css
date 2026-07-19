@@ -1,161 +1,685 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+
+/* ==========================================================================
+   Soft-UI token layer
+   Neumorphic surfaces on a neutral ground.
+
+   THE RULE THAT MAKES THIS ACCESSIBLE: shadows are decorative. Every text
+   pair and every interactive boundary clears WCAG AA through colour or a
+   real border. Nothing in this system is identified by shadow alone — which
+   is the usual way neumorphism fails an audit. The fill delta between a card
+   and the ground is ~1.1:1 and is doing no accessibility work whatsoever.
+   ========================================================================== */
+
+:root {
+  /* --- ground and surfaces (classic neumorphism field) ----------------- */
+  --ground:      #E0E5EC;
+  --surface:     #E8ECF2;  /* cards, plates */
+  --raised:      #EDF1F6;  /* floating: sheet, popover */
+
+  /* --- text ------------------------------------------------------------ */
+  --text:        #1A1D21;  /* 13.36 on ground, 14.26 on surface */
+  --text-muted:  #565D66;  /* 5.26 / 5.62 */
+
+  /* --- boundaries (these carry the accessibility, not the shadows) ----- */
+  --edge:        #7A8189;  /* interactive boundary: 3.11 ground, 3.32 surface */
+  --edge-soft:   #C8CFD8;  /* decorative card hairline — no a11y role */
+
+  /* --- the single accent ---------------------------------------------- */
+  /* Electric blue. Light theme needs the darker step: #3B82F6 is only
+     2.91:1 on this ground and fails body text. Same family, same job. */
+  --accent:      #1D4ED8;  /* 5.29 on ground */
+  --accent-hover:#1E40AF;
+  --on-accent:   #FFFFFF;  /* 6.70 on the accent fill */
+
+  /* Buttons are FLAT. A dedicated fill token, never used as text, so it is
+     free to be dark enough to carry a white label — --accent itself must
+     stay light enough to pass as link text on the ground, and those two
+     jobs pull in opposite directions. Hover DARKENS in both themes:
+     lightening the dark fill drops white to 3.72:1. */
+  --btn-bg:        #1D4ED8;  /* white on it 6.70 */
+  --btn-bg-hover:  #1E40AF;  /* white on it 8.72 */
+  --btn-fg:        #FFFFFF;
+  --btn-ghost-hover: #D3D9E2;  /* label on it 11.91 */
+
+  /* Syntax tokens. Every one verified >=4.5:1 on --surface in both themes. */
+  --code-plain:   #1A1D21;  /* 14.26 */
+  --code-comment: #5C6470;  /*  5.04 */
+  --code-keyword: #7C3AED;  /*  4.81 */
+  --code-string:  #0F766E;  /*  4.62 */
+  --code-fn:      #1D4ED8;  /*  5.65 */
+  --code-number:  #9A3412;  /*  6.16 */
+  --danger:      #B91C1C;
+
+  /* --- neumorphic depth (decorative only) ------------------------------ */
+  --shadow-dark:  rgb(163 177 198 / 0.60);
+  --shadow-light: rgb(255 255 255 / 0.90);
+  --shadow-raised:
+    6px 6px 14px var(--shadow-dark),
+    -6px -6px 14px var(--shadow-light);
+  --shadow-raised-lg:
+    10px 10px 24px var(--shadow-dark),
+    -10px -10px 24px var(--shadow-light);
+  --shadow-inset:
+    inset 4px 4px 10px var(--shadow-dark),
+    inset -4px -4px 10px var(--shadow-light);
+
+  /* Chips are ~22px tall. The full --shadow-inset recipe above is authored
+    for input-sized boxes: a 4px offset with a 10px blur reaches past the
+    midline of a chip, so the "pressed edge" stops reading as an edge and
+    starts reading as a gradient fill. A chip gets a single hairline
+    instead — 1px offset down, 3px blur — which lands the dark tone on
+    the bottom edge only and leaves the body a flat surface. */
+  --shadow-chip: 
+    inset 0 -1px 3px 0 var(--shadow-dark);
+
+  /* Hover is BORDER-LED. The border carries the state change (--edge-soft
+     to --edge, a change you can actually see) and the shadow only deepens
+     underneath it, so this no longer needs the heavy dedicated recipe it
+     was carrying when shadow was the sole channel.
+
+     THE LAYER-COUNT RULE, which is what stops the white flash: this list
+     must have the SAME number of layers as --shadow-raised, in the SAME
+     order, with each layer moving monotonically toward its counterpart.
+     Layer 1 is the dark cast, and only its alpha and blur grow. Layer 2 is
+     byte-for-byte the resting light layer, so it is CONSTANT across the
+     transition and cannot interpolate through a brighter value.
+
+     The previous recipe broke both halves of that. Light theme went from
+     [dark, white@.90] to [tint, tint], so the white counter-highlight had
+     to travel across to a mid tone and lit up on the way. Dark theme had
+     three layers against the resting two, so the lists could not even pair
+     up. Whatever replaces this, keep the counts equal per theme and keep
+     the light layer identical on both ends. */
+  --shadow-hover-dark: rgb(163 177 198 / 0.75);
+  --shadow-hover:
+    6px 6px 18px var(--shadow-hover-dark),
+    -6px -6px 14px var(--shadow-light);
+
+  /* --- radii ----------------------------------------------------------- */
+  --radius-0:  0;
+  --radius-sm: 10px;
+  --radius-1:  16px;
+  --radius-lg: 20px;
+
+  /* --- type ------------------------------------------------------------ */
+  --font-display: var(--font-display-face), "Arial Narrow", Arial, sans-serif;
+  --font-sans:    var(--font-sans-face),    ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    var(--font-geist-mono), ui-monospace, monospace;
+
+  --text-display-2xl: clamp(3.5rem,   2.6667rem + 3.7037vw, 6rem);
+  --text-display-xl:  clamp(2.125rem, 1.6667rem + 2.0370vw, 3.5rem);
+  --text-display-lg:  clamp(2rem,     1.6667rem + 1.4815vw, 3rem);
+  --text-display-md:  clamp(1.625rem, 1.5rem    + 0.5556vw, 2rem);
+  --text-display-sm:  clamp(1.25rem,  1.2083rem + 0.1852vw, 1.375rem);
+  --text-display-xs:  1.25rem;
+  --text-display-2xs: 1.125rem;
+
+  --text-body-lead:   clamp(1rem,      0.9583rem + 0.1852vw, 1.125rem);
+  --text-body-base:   clamp(0.9375rem, 0.9167rem + 0.0926vw, 1rem);
+  --text-body-sm:     0.875rem;
+  --text-body-xs:     0.75rem;
+
+  --text-mono-inline: 0.8125rem;
+  --text-mono-block:  0.875rem;
+
+  /* --- spacing --------------------------------------------------------- */
+  --space-1: 0.25rem;  --space-8:  2rem;
+  --space-2: 0.5rem;   --space-10: 2.5rem;
+  --space-3: 0.75rem;  --space-12: 3rem;
+  --space-4: 1rem;     --space-16: 4rem;
+  --space-5: 1.25rem;  --space-20: 5rem;
+  --space-6: 1.5rem;   --space-24: 6rem;
+  --space-7: 1.75rem;  --space-32: 8rem;
+
+  --container-wide:  1200px;
+  --container-prose: 68ch;
+
+  /* --- motion (timings unchanged from the previous system) ------------- */
+  --dur-instant: 80ms;
+  --dur-fast:    140ms;
+  --dur-base:    220ms;
+  --dur-slow:    320ms;
+
+  /* Interaction feel. Asymmetric on purpose: settling in is slower than
+     backing out, which is what makes a hover read as deliberate rather
+     than twitchy. Press is near-immediate so the control feels connected. */
+  --dur-hover-in:  420ms;
+  --dur-hover-out: 300ms;
+  /* Press is NOT hover. Hover can afford to be unhurried because the pointer
+     arrives gradually; a click is instantaneous and any delay between the
+     mouse-down and the control moving reads as lag, not as polish. Keep this
+     near the hover-in value and the button feels broken. */
+  --dur-press:     120ms;
+  /* Release is asymmetric with press. A CSS transition reads its duration
+     from the DESTINATION state, so press-in is governed by :active but
+     release is governed by whatever the element returns TO — rest or
+     :hover. Those blocks give transform and filter this slightly longer
+     value so the button settles back instead of snapping. */
+  --dur-press-out: 180ms;
+  /* A focus indicator is a functional cue, not decoration. Long enough not
+     to snap, short enough that it never lags the Tab key. */
+  --dur-focus:     220ms;
+
+  --ease-standard: cubic-bezier(.2, 0, 0, 1);
+  --ease-out:      cubic-bezier(0, 0, .2, 1);
+
+  --delay-enter:   120ms;
+  --delay-stagger: 60ms;
+
+  /* --- shadcn compatibility -------------------------------------------- */
+  --background: var(--ground);
+  --foreground: var(--text);
+  --card: var(--surface);
+  --card-foreground: var(--text);
+  --popover: var(--raised);
+  --popover-foreground: var(--text);
+  --primary: var(--accent);
+  --primary-foreground: var(--on-accent);
+  --secondary: var(--surface);
+  --secondary-foreground: var(--text);
+  --muted: var(--surface);
+  --muted-foreground: var(--text-muted);
+  --accent-surface: var(--raised);
+  --accent-foreground: var(--accent);
+  --destructive: var(--danger);
+  --border: var(--edge);
+  --input: var(--edge);
+  --ring: var(--accent);
+  --radius: var(--radius-1);
+}
+
+.dark {
+  --ground:      #0A0A0B;  /* pure neutral near-black, zero colour cast */
+  --surface:     #17171A;
+  --raised:      #1E1E22;
+
+  --text:        #E8E8EA;  /* 16.17 on ground, 14.62 on surface */
+  --text-muted:  #9A9AA3;  /* 7.09 / 6.41 */
+
+  --edge:        #6C6C72;  /* 3.79 ground, 3.43 surface, 3.18 raised */
+  --edge-soft:   #2A2A30;
+
+  --accent:      #3B82F6;  /* 5.38 ground, 4.86 surface */
+  --accent-hover:#60A5FA;
+  --on-accent:   #0A0A0B;  /* 5.38 on the fill — beats white's 3.68 */
+
+  --btn-bg:        #2563EB;  /* white on it 5.17, and 3.83 vs ground */
+  --btn-bg-hover:  #1D4ED8;  /* white on it 6.70 */
+  --btn-fg:        #FFFFFF;
+  --btn-ghost-hover: #1E1E22;  /* label on it 13.58 */
+
+  --code-plain:   #E8E8EA;  /* 14.62 */
+  --code-comment: #8A8F99;  /*  5.51 */
+  --code-keyword: #C4B5FD;  /*  9.69 */
+  --code-string:  #5EEAD4;  /* 12.09 */
+  --code-fn:      #93C5FD;  /*  9.92 */
+  --code-number:  #FDBA74;  /* 10.61 */
+  --danger:      #F87171;
+
+  --shadow-dark:  rgb(0 0 0 / 0.70);
+  --shadow-light: rgb(255 255 255 / 0.035);
+
+  /* Dark theme overrides the TONE only, never the layer list. On a #0A0A0B
+     ground a black shadow has about ten levels of range to work with: black
+     at 0.70 alpha composites to rgb(3,3,3), at 0.85 to rgb(1,1,1). That
+     delta is close to invisible on its own, which is exactly why hover is
+     border-led now. --edge-soft #2A2A30 going to --edge #6C6C72 is a jump
+     of roughly 66 levels, and it does the work the shadow cannot do here.
+
+     The full three-layer recipe that used to live here is gone. It broke
+     the layer-count rule against the resting two, and the white rim it
+     added at position three had no counterpart to interpolate from. */
+  --shadow-hover-dark: rgb(0 0 0 / 0.85);
+}
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent-surface);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-ground: var(--ground);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-scribe: var(--text);
+  --color-patina: var(--text-muted);
+  --color-eloksal: var(--accent);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-display: var(--font-display);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-1);
+  --radius-lg: var(--radius-1);
+  --radius-xl: var(--radius-lg);
 }
 
-:root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.48 0.18 235);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.95 0.03 235);
-  --accent-foreground: oklch(0.25 0.08 235);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.48 0.18 235);
-  --chart-1: oklch(0.48 0.18 235);
-  --chart-2: oklch(0.6 0.118 220);
-  --chart-3: oklch(0.398 0.07 250);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.48 0.18 235);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.48 0.18 235);
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.65 0.15 235);
-  --primary-foreground: oklch(0.145 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.27 0.05 235);
-  --accent-foreground: oklch(0.65 0.15 235);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.65 0.15 235);
-  --chart-1: oklch(0.65 0.15 235);
-  --chart-2: oklch(0.7 0.15 220);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.65 0.15 235);
-  --sidebar-primary-foreground: oklch(0.145 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.65 0.15 235);
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-@keyframes fade-in-up {
-  0% { opacity: 0; transform: translateY(12px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 1; }
-}
+/* ==========================================================================
+   base
+   ========================================================================== */
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    border-color: var(--edge-soft);
   }
+
+  html {
+    scroll-padding-top: calc(3.5rem + 0.5rem);
+  }
+
   body {
-    @apply bg-background text-foreground;
+    background: var(--ground);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: var(--text-body-base);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
   }
-  body::before {
-    content: "";
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: 0.002em;
+    text-wrap: balance;
+  }
+
+  /* Two-tone focus ring. Never a shadow, never a glow.
+     :focus-visible, never :focus, so it does not fire on mouse press.
+
+     The accent ring alone is 1:1 against the primary button, whose fill is
+     the same colour — so the offset gap is not cosmetic, it is the second
+     tone. It exposes the surface underneath and separates ring from fill:
+     5.29:1 light / 5.38:1 dark on BOTH boundaries.
+
+     No border-radius here. `outline` already follows the element's own
+     radius; setting it would reshape the element on focus, snapping a 16px
+     card or the 20px coupon down to 10px the moment it is focused. */
+  /* The ring exists AT REST, transparent. A property that only appears
+     inside the :focus-visible block has no start value and cannot animate —
+     it would snap. Outline never affects layout, so a transparent one costs
+     nothing and gives outline-color something to interpolate from.
+
+     outline-color rather than a box-shadow ring, deliberately: box-shadow
+     already carries the neumorphic depth AND the hover elevation, so a ring
+     living there would be forced to share one property and therefore one
+     duration with the 200ms hover lift. outline-color is a free lane, so
+     focus keeps its own 140ms regardless of what hover is doing. */
+  a[href],
+  button,
+  [role="button"],
+  input,
+  textarea,
+  select,
+  summary,
+  [tabindex]:not([tabindex="-1"]) {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    transition: outline-color var(--dur-focus) var(--ease-out);
+  }
+
+  :focus-visible {
+    outline-color: var(--accent);
+  }
+
+  /* Belt and braces: some shadcn primitives ship their own ring. One focus
+     treatment only, and it is the outline above. */
+  :focus:not(:focus-visible) {
+    outline-color: transparent;
+  }
+
+  [id] { scroll-margin-top: calc(3.5rem + 0.5rem); }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+
+  /* --- drag suppression -------------------------------------------------
+     Click-dragging an anchor, a control or an image produces a browser drag
+     ghost, which on a stretched-link card means dragging anywhere on the
+     card tears off a translucent copy of it. `-webkit-user-drag` is
+     non-standard and Firefox ignores it, so every element that matters also
+     carries draggable={false} in the markup — this rule is the Chromium
+     half of the fix, not the whole of it. */
+  a[href],
+  button,
+  [role="button"],
+  .interactive,
+  img {
+    -webkit-user-drag: none;
+  }
+
+  /* Text selection is killed ONLY on things you press, never on prose.
+     Paragraphs, headings, list copy and code stay fully selectable —
+     a recruiter copying a stack list or an email address must not be
+     fighting the stylesheet. Note this deliberately excludes a[href]:
+     inline links live inside sentences and have to select with them. */
+  button,
+  [role="button"],
+  .soft-btn,
+  .skip-link {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* Tailwind v4's Preflight dropped the v3 `button { cursor: pointer }`
+     default, so every BUTTON on this site was rendering the arrow cursor
+     while every anchor kept the hand. It was never specific to the theme
+     toggle: the filter pills, the pagination, the mobile menu trigger and
+     every .soft-btn had it too. One rule here rather than a utility bolted
+     onto each control. */
+  button,
+  [role="button"],
+  .soft-btn {
+    cursor: pointer;
+  }
+
+  /* A disabled control is not clickable, so it should not claim to be. */
+  button:disabled,
+  [role="button"][aria-disabled="true"],
+  .soft-btn:disabled {
+    cursor: default;
+  }
+}
+
+/* ==========================================================================
+   soft-UI surfaces
+   ========================================================================== */
+
+@layer components {
+  /* Raised card. The border is the accessible boundary; the dual shadow is
+     the look. Remove the shadows and this is still a legible interface. */
+  .plate {
+    background: var(--surface);
+    border: 1px solid var(--edge-soft);
+    border-radius: var(--radius-1);
+    box-shadow: var(--shadow-raised);
+  }
+
+  /* Pressed into the surface: inputs, code blocks, the withheld slab.
+     Box-sized things only — see .chip for the pill-sized variant. */
+  .recessed {
+    background: var(--surface);
+    border: 1px solid var(--edge-soft);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-inset);
+  }
+
+  /* Tag pills. Same family as .recessed and deliberately not the same rule:
+     the depth recipe that reads as "pressed" on a 44px input reads as a
+     gradient fill on a 22px pill, because the blur has nowhere to fall off.
+     A chip gets the top edge and nothing else. */
+  .chip {
+    background: var(--surface);
+    border: 1px solid var(--edge-soft);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-chip);
+  }
+
+  /* Controls carry the STRONG edge — 1.4.11 applies to them, not to cards. */
+  .control {
+    border-color: var(--edge);
+  }
+
+  .coupon {
+    max-inline-size: 40rem;
+    background: var(--surface);
+    border: 1px solid var(--edge-soft);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-raised-lg);
+  }
+
+
+
+  /* --- the withheld slab ---------------------------------------------- */
+  /* Still sized from a hand-authored row count; the values are never
+     authored into the codebase, so there is nothing here to inspect. */
+  /* A footnote, not a panel. The device works by being quiet — a heavy
+     bordered block competes with the card it sits inside. Barely off the
+     card surface, hairline edge, one line of muted text beside a lock. */
+  .withheld {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: color-mix(in srgb, var(--ground) 45%, var(--surface));
+    color: var(--text-muted);
+    border: 1px solid var(--edge-soft);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-body-sm);
+    font-weight: 400;
+  }
+
+  .withheld svg {
+    flex: none;
+    opacity: 0.8;
+  }
+
+  /* --- interaction feel ------------------------------------------------
+     One shared recipe for every interactive surface. The base rule carries
+     the FAST duration so leaving a control settles quickly; :hover carries
+     the slow one so arriving is unhurried. Nothing snaps. */
+  .interactive {
+    /* `position` and a base z-index are load-bearing: without a stacking
+       position the hover z-index bump below does nothing, and a raised
+       element's shadow renders UNDER the sibling next to it. */
+    position: relative;
+    z-index: 0;
+    /* Longhand, not the shorthand: a single `transition-duration` value
+       applies to EVERY property in the list, which would drag the focus
+       ring along with the hover timing. Listing durations positionally
+       keeps outline-color pinned to --dur-focus in every state. */
+    transition-property:
+      background-color, border-color, color,
+      box-shadow, transform, filter, outline-color;
+    transition-duration:
+      var(--dur-hover-out), var(--dur-hover-out), var(--dur-hover-out),
+      var(--dur-hover-out),
+      var(--dur-press-out), var(--dur-press-out),
+      var(--dur-focus);
+    transition-timing-function: var(--ease-out);
+    /* No `will-change: transform` any more. Nothing carrying .interactive
+       transforms on hover since the card lift was removed, and the hint was
+       promoting every card in the grid to its own compositor layer to
+       animate a property that never changes. */
+  }
+
+  .interactive:hover,
+  .interactive:focus-within {
+    /* Above its siblings while raised, so the shadow lands on top of the
+       neighbour rather than being clipped beneath it. */
+    z-index: 1;
+    transition-duration:
+      var(--dur-hover-in), var(--dur-hover-in), var(--dur-hover-in),
+      var(--dur-hover-in),
+      var(--dur-press-out), var(--dur-press-out),
+      var(--dur-focus);
+  }
+
+  /* --- FLAT buttons ----------------------------------------------------
+     No box-shadow, no inset, no emboss. The neumorphic treatment turned
+     the light-theme primary into a glossy gradient pill — dual inset
+     shadows over a solid accent read as a 2003 button. Fill and border
+     do the work now.
+
+     Buttons carry their own transition list, separate from .interactive,
+     so cards keep their surface and their hover lift untouched. */
+  .soft-btn {
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    position: relative;
+    z-index: 0;
+    transition-property:
+      background-color, border-color, color, transform, outline-color;
+    transition-duration:
+      var(--dur-hover-out), var(--dur-hover-out), var(--dur-hover-out),
+      var(--dur-press-out), var(--dur-focus);
+    transition-timing-function: var(--ease-out);
+  }
+
+  .soft-btn:hover {
+    transition-duration:
+      var(--dur-hover-in), var(--dur-hover-in), var(--dur-hover-in),
+      var(--dur-press-out), var(--dur-focus);
+  }
+
+  /* Press is scale only, and deliberately asymmetric: 120ms down, 180ms back.
+     Transform reads its duration from the DESTINATION block, so :active has
+     to restate the whole list — the two blocks above govern the release, and
+     without this one the press-in would inherit the slower release timing. */
+  .soft-btn:active {
+    transition-duration:
+      var(--dur-hover-out), var(--dur-hover-out), var(--dur-hover-out),
+      var(--dur-press), var(--dur-focus);
+    transform: scale(0.98);
+  }
+
+  /* Primary: flat accent fill, white label. */
+  .soft-btn-primary {
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+  }
+  .soft-btn-primary:hover {
+    background: var(--btn-bg-hover);
+  }
+
+  /* Ghost: transparent, hairline border, label colour. */
+  .soft-btn-ghost {
+    background: transparent;
+    border-color: var(--edge);
+    color: var(--text);
+  }
+  .soft-btn-ghost:hover {
+    background: var(--btn-ghost-hover);
+  }
+
+  /* Focus lives HERE, not as a `focus-within:shadow-[…]` utility on the
+     card. Tailwind v4 declares `@layer theme, base, components, utilities`,
+     so any utility beats this whole block on layer order alone, regardless
+     of specificity. A card keeps :focus-within after you click it (the
+     stretched title link takes focus), so the utility version meant that
+     from the first click onward, hovering that card resolved to
+     --shadow-raised-lg — larger AND lighter than the hover state, i.e. the
+     card visibly receded on hover, and the :active inset never rendered at
+     all. It went unnoticed while transform carried hover on its own
+     property lane; removing the lift left box-shadow as the sole channel
+     and exposed that the channel was already claimed.
+
+     Equal specificity to the two rules below, so source order decides:
+     pointer states are written after focus and therefore win. */
+  .plate.interactive:focus-within {
+    box-shadow: var(--shadow-raised-lg);
+  }
+
+  /* Cards do NOT move on hover. A 1px lift on a grid of cards is a jitter
+     source — the pointer sits near a card edge, the lift pulls the boundary
+     out from under it, the card un-hovers, drops back, re-hovers.
+
+     The border leads: --edge-soft to --edge is a change you can see at a
+     glance in both themes, and it needs no help from geometry. The shadow
+     only deepens underneath it. border-color is already positioned in
+     .interactive's transition list, so it animates on the hover timing
+     alongside box-shadow rather than snapping. */
+  .plate.interactive:hover {
+    border-color: var(--edge);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .plate.interactive:active {
+    transition-duration:
+      var(--dur-press), var(--dur-press), var(--dur-press),
+      var(--dur-press), var(--dur-press), var(--dur-press),
+      var(--dur-focus);
+    box-shadow: var(--shadow-inset);
+  }
+
+  /* Inline links: underline grows in, no layout shift. */
+  .link-soft {
+    text-decoration-color: transparent;
+    text-underline-offset: 4px;
+    transition-property:
+      color, background-color, text-decoration-color, outline-color;
+    transition-duration:
+      var(--dur-hover-out), var(--dur-hover-out), var(--dur-hover-out),
+      var(--dur-focus);
+    transition-timing-function: var(--ease-out);
+  }
+
+  .link-soft:hover {
+    transition-duration:
+      var(--dur-hover-in), var(--dur-hover-in), var(--dur-hover-in),
+      var(--dur-focus);
+    text-decoration-line: underline;
+    text-decoration-color: currentColor;
+  }
+
+  .skip-link {
     position: fixed;
-    top: 0;
-    left: -20%;
-    width: 140%;
-    height: 70vh;
-    z-index: -1;
-    pointer-events: none;
-    background: radial-gradient(
-      ellipse 100% 100% at 50% 0%,
-      oklch(0.48 0.18 235 / 0.06) 0%,
-      oklch(0.48 0.18 235 / 0.02) 40%,
-      transparent 80%
-    );
+    inset-block-start: var(--space-2);
+    inset-inline-start: var(--space-2);
+    z-index: 60;
+    min-block-size: 44px;
+    display: inline-flex;
+    align-items: center;
+    padding-inline: var(--space-4);
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--edge);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-raised);
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    clip-path: inset(50%);
   }
-  :is(.dark) body::before {
-    background: radial-gradient(
-      ellipse 100% 100% at 50% 0%,
-      oklch(0.65 0.15 235 / 0.08) 0%,
-      oklch(0.65 0.15 235 / 0.03) 40%,
-      transparent 80%
-    );
+
+  .skip-link:focus-visible { clip-path: none; }
+}
+
+/* ==========================================================================
+   motion — timings unchanged
+   ========================================================================== */
+
+
+@keyframes enter {
+  from { opacity: 0; transform: translate3d(0, 8px, 0); }
+  to   { opacity: 1; transform: none; }
+}
+
+[data-enter] {
+  animation: enter var(--dur-base) var(--ease-out) both;
+  animation-delay: calc(var(--delay-enter) + var(--i, 0) * var(--delay-stagger));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
   }
+
+  [data-enter] {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
 }

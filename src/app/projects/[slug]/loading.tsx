@@ -44,7 +44,7 @@ export default function ProjectDetailLoading() {
           {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
-              className="flex flex-col items-center gap-1 rounded-xl border border-border/50 bg-card/80 px-3 py-4 backdrop-blur-sm"
+              className="flex flex-col items-center gap-1 rounded-xl border border-[var(--edge-soft)] bg-[var(--surface)] px-3 py-4 "
             >
               <Shimmer className="h-4 w-4" rounded="rounded-md" />
               <Shimmer className="h-3 w-16" />
@@ -62,10 +62,10 @@ export default function ProjectDetailLoading() {
 function BrowserFrameSkeleton() {
   return (
     <div className="rounded-2xl bg-gradient-to-br from-primary/15 via-muted/50 to-primary/5 p-3 sm:p-6 lg:p-8">
-      <div className="overflow-hidden rounded-xl border border-border/50 bg-card shadow-xl">
+      <div className="overflow-hidden rounded-xl border border-[var(--edge-soft)] bg-card shadow-xl">
         <div
           aria-hidden
-          className="flex h-7 items-center gap-1.5 border-b border-border/50 bg-muted/60 px-3"
+          className="flex h-7 items-center gap-1.5 border-b border-[var(--edge-soft)] bg-muted/60 px-3"
         >
           <span className="size-2.5 rounded-full bg-[#ff5f57]" />
           <span className="size-2.5 rounded-full bg-[#febc2e]" />

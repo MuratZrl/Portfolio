@@ -56,14 +56,48 @@ export type TechnicalDecision = {
   body: string;
 };
 
+/**
+ * Which client sector a project belongs to. Drives the card's top-edge colour.
+ * `personal` takes no sector colour at all — that is what makes a coloured edge
+ * mean "somebody paid for this".
+ */
+export type ProjectSector = "metal" | "property" | "commerce" | "personal";
+
+/**
+ * The withheld slab. Present only on private client work.
+ *
+ * `rows` is HAND-AUTHORED — it is never derived from the shape of the real
+ * record. That is the whole point: the confidential values are not authored
+ * into this codebase in any form, so there is nothing in the payload to
+ * inspect. Deriving the size from real data would reintroduce exactly the leak
+ * the slab exists to prevent.
+ */
+export type ProjectWithheld = {
+  rows: number;
+  reason: string;
+};
+
 export type Project = {
   slug: InternalHref;
   title: string;
   summary: string;
   /** Optional short summary used on cards (line-clamp-2). Falls back to `summary` if absent. */
   cardSummary?: string;
+  /** Truncation-safe description for `generateMetadata`; `summary` runs past the SERP limit. */
+  metaDescription?: string;
   tags: readonly string[];
   category: ProjectCategory;
+  sector: ProjectSector;
+  /**
+   * REQUIRED. The visible text that carries the same information as the sector
+   * colour. Without it the coloured edge is colour-alone (WCAG 1.4.1), so the
+   * type makes a card with a sector but no label impossible to construct.
+   */
+  sectorLabel: string;
+  /** Present only on private client work. See ProjectWithheld. */
+  withheld?: ProjectWithheld;
+  /** Shown in the slab's slot on projects that have a public artifact instead. */
+  caption?: string;
   /** Badge rendered on the thumbnail — reflects project type, not tech category. */
   badge: ProjectBadge;
   /** Primary/hero image. Used on the card and as the first image on the detail page. */

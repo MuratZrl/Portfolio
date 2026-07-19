@@ -1,5 +1,4 @@
 // src/features/home/data/final-cta.ts
-import { Gauge, ShieldCheck } from "lucide-react";
 import type {
   CtaLink,
   Stat,
@@ -10,24 +9,23 @@ import type {
 
 /* ------------------------------- Defaults -------------------------------- */
 
-export const DEFAULT_PRIMARY: CtaLink = { href: "/contact", label: "Get in touch" };
+export const DEFAULT_PRIMARY: CtaLink = { href: "/contact", label: "Send a message" };
 
 export const DEFAULT_HIGHLIGHTS: readonly string[] = [
-  "Fast delivery",
-  "WCAG compliant",
-  "TypeScript strict",
+  "Istanbul, UTC+3",
+  "Turkish and English",
+  "Contract or full-time",
 ];
 
 export const DEFAULT_STATS: readonly Stat[] = [
-  { label: "Lighthouse", value: "95+", icon: Gauge },
-  { label: "Accessibility", value: "AA", icon: ShieldCheck },
 ];
 
 export const DEFAULT_MEDIA: Media = { type: "pattern" };
 
 export const FINAL_CTA_DEFAULTS = {
-  heading: "Got a project?",
-  subheading: "Production-ready full-stack apps. Built with Next.js, NestJS, and PostgreSQL.",
+  heading: "Hiring, or have a system that needs building?",
+  subheading:
+    "Full-time roles and contract work both. If you have a process running on a spreadsheet that four people are editing at once, that is the thing I build.",
   primary: DEFAULT_PRIMARY,
   highlights: DEFAULT_HIGHLIGHTS,
   stats: DEFAULT_STATS,

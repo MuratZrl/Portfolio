@@ -6,10 +6,6 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 import { Page } from "@/components/layout/Page";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import {
   ExternalLink, Github, ArrowLeft, Calendar, Gauge, Star, Lock,
 } from "lucide-react";
@@ -52,72 +48,75 @@ export default async function ProjectDetailPage({ params }: Props) {
   return (
     <Page>
       <section>
-        {/* Back link */}
+        {/* .link-soft, the same inline-link recipe the home Projects heading
+            uses. The old version paired `interactive` (a surface recipe that
+            transitions box-shadow and transform) with a bare colour swap. */}
         <Link
           href="/projects"
           draggable={false}
-          className="inline-flex select-none items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
+          className="link-soft mb-6 inline-flex select-none items-center gap-1.5 text-[length:var(--text-body-sm)] font-medium text-[var(--accent)]"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="size-4" aria-hidden />
           Back to Projects
         </Link>
 
-        {/* Title & actions */}
         <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
+            {/* Display face and weight arrive from the base layer; the size
+                token is the only thing this needs. */}
+            <h1 className="text-[length:var(--text-display-lg)] leading-[1.1] text-[var(--text)]">
               {project.title}
             </h1>
-            <p className="mt-2 text-lg text-muted-foreground max-w-2xl">
+            <p className="mt-2 max-w-2xl text-[length:var(--text-body-lead)] leading-[1.55] text-[var(--text-muted)]">
               {project.summary}
             </p>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex shrink-0 items-center gap-3">
             {demo ? (
-              <Button asChild>
-                <a href={demo.href} target="_blank" rel="noreferrer">
-                  <ExternalLink className="mr-2 h-4 w-4" />
-                  {demo.label}
-                </a>
-              </Button>
+              <a
+                href={demo.href}
+                target="_blank"
+                rel="noreferrer noopener"
+                draggable={false}
+                className="soft-btn soft-btn-primary inline-flex min-h-11 items-center gap-2 px-5 text-[length:var(--text-body-sm)] font-medium"
+              >
+                <ExternalLink className="size-4" aria-hidden />
+                {demo.label}
+                <span className="sr-only"> (opens in a new tab)</span>
+              </a>
             ) : null}
+
             {repo ? (
               repoIsPrivate ? (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span
-                        tabIndex={0}
-                        role="note"
-                        aria-label={`${project.title} repository is private and not publicly available`}
-                        className="inline-flex select-none items-center gap-2 h-9 rounded-md bg-muted px-4 text-sm font-medium text-muted-foreground cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-                      >
-                        <Lock className="h-4 w-4" aria-hidden />
-                        {repo.label}
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent>Repository is private</TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <span className="inline-flex items-center gap-1.5 text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
+                  <Lock className="size-4" aria-hidden />
+                  Private repo
+                </span>
               ) : (
-                <Button asChild variant="outline">
-                  <a href={repo.href} target="_blank" rel="noreferrer">
-                    <Github className="mr-2 h-4 w-4" />
-                    {repo.label}
-                  </a>
-                </Button>
+                <a
+                  href={repo.href}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  draggable={false}
+                  className="soft-btn soft-btn-ghost inline-flex min-h-11 items-center gap-2 px-5 text-[length:var(--text-body-sm)] font-medium"
+                >
+                  <Github className="size-4" aria-hidden />
+                  {repo.label}
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </a>
               )
             ) : null}
           </div>
         </div>
 
-        {/* Tags */}
+        {/* Static labels: .chip, matching the project cards and the About
+            intro. Replaces `rounded-md bg-muted`. */}
         <div className="mt-4 flex flex-wrap gap-1.5">
           {project.tags.map((t) => (
             <span
               key={t}
-              className="rounded-md bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground"
+              className="chip px-2.5 py-1 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--text-muted)]"
             >
               {t}
             </span>
@@ -133,53 +132,59 @@ export default async function ProjectDetailPage({ params }: Props) {
         </div>
       </section>
 
-      {/* Key technical decisions — only rendered when project data provides them */}
+      {/* Key technical decisions: only rendered when project data provides them */}
       {project.technicalDecisions && project.technicalDecisions.length > 0 ? (
         <section aria-labelledby="technical-decisions-heading">
           <h2
             id="technical-decisions-heading"
-            className="text-xl font-semibold tracking-tight sm:text-2xl"
+            className="text-[length:var(--text-display-sm)] leading-[1.2] text-[var(--text)]"
           >
             Key technical decisions
           </h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Trade-offs that shaped the build — what was chosen, and why over the alternative.
+          <p className="mt-1 text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
+            Trade-offs that shaped the build: what was chosen, and why over the alternative.
           </p>
 
           <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
             {project.technicalDecisions.map((d, i) => (
               <article key={`${d.title}-${i}`} className="space-y-2">
-                <h3 className="text-base font-semibold tracking-tight">{d.title}</h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">{d.body}</p>
+                <h3 className="text-[length:var(--text-display-2xs)] leading-[1.3] text-[var(--text)]">
+                  {d.title}
+                </h3>
+                <p className="text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--text-muted)]">
+                  {d.body}
+                </p>
               </article>
             ))}
           </div>
         </section>
       ) : null}
 
-      <Separator className="my-8" />
+      {/* Was a Radix <Separator>, a client component pulling JavaScript into
+          the page to draw a one-pixel line. The rest of the system draws
+          rules with a border on the element that needs one. */}
+      <div aria-hidden className="my-8 border-t border-[var(--edge-soft)]" />
 
-      {/* Stats grid */}
       {project.createdAt || project.metrics?.lighthouse || project.metrics?.stars ? (
         <section>
-          <div className="grid gap-4 grid-cols-2 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             {project.createdAt ? (
               <StatCard
-                icon={<Calendar className="h-4 w-4" />}
+                icon={<Calendar className="size-4" aria-hidden />}
                 label="Created"
                 value={formatDate(project.createdAt)}
               />
             ) : null}
             {project.metrics?.lighthouse ? (
               <StatCard
-                icon={<Gauge className="h-4 w-4" />}
+                icon={<Gauge className="size-4" aria-hidden />}
                 label="Lighthouse"
                 value={project.metrics.lighthouse}
               />
             ) : null}
             {project.metrics?.stars ? (
               <StatCard
-                icon={<Star className="h-4 w-4" />}
+                icon={<Star className="size-4" aria-hidden />}
                 label="Stars"
                 value={project.metrics.stars}
               />
@@ -193,6 +198,17 @@ export default async function ProjectDetailPage({ params }: Props) {
 
 /* -------------------------------- Helpers -------------------------------- */
 
+/**
+ * A raised window sitting in a recessed well: .plate inside .recessed, both
+ * straight out of the system.
+ *
+ * The backdrop used to be `bg-gradient-to-br from-primary/15 via-muted/50
+ * to-primary/5`, an accent-tinted gradient with no token behind any of its
+ * three stops, and the window carried Tailwind's shadow-xl rather than a
+ * shadow token. FinalCTA already records the position this contradicts:
+ * a gradient wash is a different aesthetic from the flat one everything
+ * else is cut to.
+ */
 function BrowserFrame({
   src,
   alt,
@@ -204,26 +220,27 @@ function BrowserFrame({
 }) {
   const isRemote = src.startsWith("http");
   return (
-    // Desktop layer: subtle gradient backdrop, modest padding so the window
-    // reads as floating without shrinking the screenshot too much.
-    <div className="rounded-2xl bg-gradient-to-br from-primary/15 via-muted/50 to-primary/5 p-3 sm:p-6 lg:p-8">
-      {/* Window layer: Mac-style chrome + screenshot */}
-      <div className="overflow-hidden rounded-xl border border-border/50 bg-card shadow-xl">
-        {/* Title bar with macOS-style traffic-light dots */}
+    <div className="recessed p-4 sm:p-6 lg:p-8">
+      <div className="plate overflow-hidden">
+        {/* Traffic lights stay the literal macOS palette. They are a
+            recognisable quotation of that chrome, not themed UI, and the
+            system has no token for them - so they are flagged and left
+            rather than mapped onto the accent. aria-hidden, decorative. */}
         <div
           aria-hidden
-          className="flex h-7 items-center gap-1.5 border-b border-border/50 bg-muted/60 px-3"
+          className="flex h-7 items-center gap-1.5 border-b border-[var(--edge-soft)] bg-[var(--ground)] px-3"
         >
           <span className="size-2.5 rounded-full bg-[#ff5f57]" />
           <span className="size-2.5 rounded-full bg-[#febc2e]" />
           <span className="size-2.5 rounded-full bg-[#28c840]" />
         </div>
-        {/* Image area — stays 16:9 for the screenshots */}
-        <div className="relative aspect-video w-full bg-muted">
+
+        <div className="relative aspect-video w-full bg-[var(--ground)]">
           <Image
             src={src}
             alt={alt}
             fill
+            draggable={false}
             priority={priority}
             sizes="(min-width: 1024px) 72vw, 92vw"
             className="object-cover"
@@ -245,13 +262,15 @@ function StatCard({
   value: string;
 }) {
   return (
-    <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-      <CardContent className="flex flex-col items-center gap-1 py-4 px-3 text-center">
-        <span className="text-primary">{icon}</span>
-        <span className="text-xs text-muted-foreground">{label}</span>
-        <span className="text-sm font-semibold">{value}</span>
-      </CardContent>
-    </Card>
+    <div className="plate flex flex-col items-center gap-1 px-3 py-4 text-center">
+      <span className="text-[var(--accent)]">{icon}</span>
+      <span className="text-[length:var(--text-body-xs)] text-[var(--text-muted)]">
+        {label}
+      </span>
+      <span className="text-[length:var(--text-body-sm)] font-semibold text-[var(--text)]">
+        {value}
+      </span>
+    </div>
   );
 }
 

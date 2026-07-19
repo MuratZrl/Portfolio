@@ -1,4 +1,4 @@
-// src/features/about/sections/CvSection.tsx
+// src/features/about/sections/CV.client.tsx
 "use client";
 
 import React from "react";
@@ -37,97 +37,112 @@ export default function CvSection({
   const iframeSrc = `${pdfSrc}#zoom=page-width`;
 
   return (
-    <section aria-labelledby={headingId} className={cn("py-12 sm:py-16", className)}>
+    <section aria-labelledby={headingId} className={cn("py-10 sm:py-12", className)}>
       <div className="mb-8 flex flex-col gap-2">
-        <h2 id={headingId} className="text-xl font-semibold tracking-tight sm:text-2xl">
+        {/* h2 takes the display face and weight from the base layer. */}
+        <h2
+          id={headingId}
+          className="text-[length:var(--text-display-sm)] leading-[1.2] text-[var(--text)]"
+        >
           {title}
         </h2>
-        <p id={descId} className="text-sm text-muted-foreground">{description}</p>
+        <p id={descId} className="text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
+          {description}
+        </p>
       </div>
 
-      <div className={cn(
-        "rounded-2xl border p-5 sm:p-6",
-        "border-border/50 bg-card/80 backdrop-blur-sm",
-      )}>
-        {/* Action bar */}
+      {/* .plate already carries the border and radius. */}
+      <div className="plate p-5 sm:p-6">
         <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
-            <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <FileText className="h-4 w-4" aria-hidden />
-            </div>
+            {/* The tinted bg-primary/10 square had no token behind it. Same
+                call as the About intro: the icon carries the accent, the
+                container goes away. */}
+            <FileText className="size-5 flex-none text-[var(--accent)]" aria-hidden />
             <div>
-              <div className="text-sm font-semibold">Murat_Zorlu_CV.pdf</div>
-              <div className="text-xs text-muted-foreground">PDF document</div>
+              <div className="text-[length:var(--text-body-sm)] font-semibold text-[var(--text)]">
+                Murat_Zorlu_CV.pdf
+              </div>
+              <div className="text-[length:var(--text-body-xs)] text-[var(--text-muted)]">
+                PDF document
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:ml-auto">
+          {/* Both are controls, so both take the button recipe: ghost for the
+              secondary action, filled primary for the main one. */}
+          <div className="flex items-center gap-3 sm:ml-auto">
             <a
               href={pdfSrc}
               download
               draggable={false}
               aria-label="Download CV"
-              className={cn(
-                "inline-flex select-none items-center gap-2 rounded-full px-4 py-2 text-xs font-medium",
-                "bg-muted text-muted-foreground transition-colors duration-200",
-                "hover:bg-muted/80 hover:text-foreground",
-              )}
+              className="soft-btn soft-btn-ghost inline-flex min-h-9 select-none items-center gap-2 px-4 text-[length:var(--text-body-xs)] font-medium"
             >
-              <FileDown className="h-3.5 w-3.5" aria-hidden />
+              <FileDown className="size-3.5" aria-hidden />
               Download
             </a>
 
             <a
               href={pdfSrc}
               target="_blank"
-              rel="noreferrer"
+              rel="noreferrer noopener"
               draggable={false}
               aria-label="Open CV in a new tab"
-              className={cn(
-                "inline-flex select-none items-center gap-2 rounded-full px-4 py-2 text-xs font-medium",
-                "bg-primary text-primary-foreground transition-colors duration-200",
-                "hover:bg-primary/90",
-              )}
+              className="soft-btn soft-btn-primary inline-flex min-h-9 select-none items-center gap-2 px-4 text-[length:var(--text-body-xs)] font-medium"
             >
-              <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+              <ExternalLink className="size-3.5" aria-hidden />
               Open
             </a>
           </div>
         </div>
 
-        {/* PDF viewer */}
-        <div className="overflow-hidden rounded-xl border border-border/50">
+        {/* An embedded document sits IN the plate, so the well it sits in is
+            .recessed: the same primitive the inputs and the browser frames
+            on the project pages use. */}
+        <div className="recessed overflow-hidden">
           {mounted ? (
             <iframe
               title="CV PDF viewer"
               aria-describedby={descId}
               src={iframeSrc}
-              className="block w-full bg-muted"
+              className="block w-full bg-[var(--ground)]"
               style={{ height }}
               loading="lazy"
             />
           ) : (
             <div
-              className="grid w-full place-items-center bg-muted text-muted-foreground"
+              className="grid w-full place-items-center bg-[var(--ground)] text-[var(--text-muted)]"
               style={{ height: INITIAL_HEIGHT }}
               aria-hidden
             >
               <div className="flex flex-col items-center gap-2">
-                <FileText className="h-8 w-8 opacity-40" aria-hidden />
-                <span className="text-xs">Loading viewer...</span>
+                <FileText className="size-8 text-[var(--edge)]" aria-hidden />
+                <span className="text-[length:var(--text-body-xs)]">Loading viewer...</span>
               </div>
             </div>
           )}
         </div>
 
         <noscript>
-          <p className="mt-4 text-sm text-muted-foreground">
+          <p className="mt-4 text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
             JavaScript is disabled.{" "}
-            <a className="text-primary underline" href={pdfSrc} target="_blank" rel="noreferrer">
+            <a
+              className="link-soft font-medium text-[var(--accent)] underline"
+              href={pdfSrc}
+              target="_blank"
+              rel="noreferrer noopener"
+              draggable={false}
+            >
               Open CV in a new tab
             </a>{" "}
             or{" "}
-            <a className="text-primary underline" href={pdfSrc} download>
+            <a
+              className="link-soft font-medium text-[var(--accent)] underline"
+              href={pdfSrc}
+              download
+              draggable={false}
+            >
               download it
             </a>
             .

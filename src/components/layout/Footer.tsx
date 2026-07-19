@@ -39,7 +39,7 @@ export default function Footer(): React.JSX.Element {
   const email = "me@muratzorlu.dev";
 
   return (
-    <footer role="contentinfo" className="mt-auto border-t border-border/50">
+    <footer role="contentinfo" className="mt-auto border-t border-[var(--edge-soft)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* ── Main row ── */}
         <div className="grid grid-cols-1 gap-8 py-10 md:grid-cols-3">
@@ -49,7 +49,7 @@ export default function Footer(): React.JSX.Element {
               Murat Zorlu
             </Link>
             <p className="mt-1 text-sm text-muted-foreground">
-              Full Stack Web Developer
+              Internal tools and admin panels. Istanbul.
             </p>
 
             <address className="mt-3 not-italic">
@@ -57,8 +57,8 @@ export default function Footer(): React.JSX.Element {
                 href={`mailto:${email}`}
                 draggable={false}
                 className={cn(
-                  "inline-flex select-none items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
-                  "bg-muted text-muted-foreground hover:text-foreground",
+                  "chip inline-flex min-h-6 select-none items-center gap-2 px-3 py-1.5 text-xs font-medium interactive",
+                  "text-muted-foreground hover:text-foreground",
                 )}
                 aria-label={`Email ${email}`}
               >
@@ -79,7 +79,7 @@ export default function Footer(): React.JSX.Element {
                   key={link.href}
                   href={link.href}
                   draggable={false}
-                  className="select-none text-sm text-muted-foreground transition-colors hover:text-primary"
+                  className="inline-flex min-h-6 select-none items-center text-sm text-muted-foreground interactive hover:text-primary"
                 >
                   {link.label}
                 </Link>
@@ -102,7 +102,7 @@ export default function Footer(): React.JSX.Element {
                   draggable={false}
                   aria-label={`${s.label} (opens in a new tab)`}
                   className={cn(
-                    "flex size-9 select-none items-center justify-center rounded-lg transition-colors",
+                    "flex size-9 select-none items-center justify-center rounded-lg interactive",
                     "bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary",
                   )}
                 >
@@ -114,7 +114,7 @@ export default function Footer(): React.JSX.Element {
         </div>
 
         {/* ── Bottom bar ── */}
-        <div className="flex flex-col items-center gap-2 border-t border-border/50 py-5 text-xs text-muted-foreground sm:flex-row sm:justify-between">
+        <div className="flex flex-col items-center gap-2 border-t border-[var(--edge-soft)] py-5 text-xs text-muted-foreground sm:flex-row sm:justify-between">
           <p>
             © {year} Murat Zorlu. All rights reserved.
           </p>

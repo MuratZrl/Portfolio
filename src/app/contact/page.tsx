@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     title: "Contact",
     description:
-      "Get in touch for project inquiries, collaborations, or hiring.",
+      "Project work, contract work, or a role. Istanbul, UTC+3.",
   },
 };
 
@@ -24,7 +24,7 @@ export default function ContactPage(): React.JSX.Element {
   return (
     <Page
       title="Contact"
-      description="Get in touch for project inquiries, collaborations, or hiring. I typically review and respond to every message within 1–2 business days."
+      description="Project work, contract work, or a role. Every message gets a reply."
     >
       <section className="grid w-full items-start gap-6 lg:grid-cols-[1fr_340px]">
         <ContactForm />

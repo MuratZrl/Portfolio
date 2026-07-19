@@ -1,73 +1,41 @@
 // src/components/ui/skeleton-primitives.tsx
 import { cn } from "@/lib/utils";
 
-/* ── Shimmer bar ── */
+/**
+ * Static skeletons, deliberately.
+ *
+ * The old shimmer ran an infinite 1.8s `background-position` cycle — a
+ * main-thread paint property, animating forever, inside a Suspense window
+ * that usually closes in well under 300ms. The cycle never completed once, so
+ * it cost paint work to communicate nothing. A flat block in `--muted` reads
+ * as "not loaded yet" just as well and costs nothing. It also removes three
+ * animations that had to be special-cased under prefers-reduced-motion.
+ */
 export function Shimmer({
   className,
-  rounded = "rounded-lg",
+  rounded = "rounded-[var(--radius-sm)]",
 }: {
   className?: string;
   rounded?: string;
 }) {
-  return (
-    <div
-      className={cn(
-        rounded,
-        "relative overflow-hidden bg-muted",
-        className,
-      )}
-    >
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(90deg, transparent 0%, oklch(0.65 0.15 235 / 0.08) 40%, oklch(0.65 0.15 235 / 0.14) 50%, oklch(0.65 0.15 235 / 0.08) 60%, transparent 100%)",
-          backgroundSize: "200% 100%",
-          animation: "shimmer 1.8s ease-in-out infinite",
-        }}
-      />
-    </div>
-  );
+  return <div className={cn(rounded, "bg-[var(--muted)]", className)} />;
 }
 
-/* ── Frosted glass card skeleton ── */
+/** A soft-UI plate placeholder, matching the real plate's geometry. */
 export function CardSkeleton({
   className,
   children,
-  delay = 0,
 }: {
   className?: string;
   children?: React.ReactNode;
-  delay?: number;
 }) {
-  return (
-    <div
-      className={cn(
-        "rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm p-5 sm:p-6",
-        className,
-      )}
-      style={{
-        animation: `fade-in-up 0.5s ease-out ${delay}s both`,
-      }}
-    >
-      {children}
-    </div>
-  );
+  return <div className={cn("plate p-5 sm:p-6", className)}>{children}</div>;
 }
 
-/* ── Icon box skeleton (the sky-blue squares) ── */
 export function IconBoxSkeleton() {
-  return (
-    <div
-      className="flex size-9 items-center justify-center rounded-lg bg-primary/10"
-      style={{ animation: "pulse-glow 2s ease-in-out infinite" }}
-    >
-      <div className="size-4 rounded bg-primary/20" />
-    </div>
-  );
+  return <div className="size-9 rounded-[var(--radius-sm)] bg-[var(--muted)]" />;
 }
 
-/* ── Pill skeleton ── */
 export function PillSkeleton({ width = "w-16" }: { width?: string }) {
-  return <Shimmer className={cn("h-8", width)} rounded="rounded-full" />;
+  return <Shimmer className={cn("h-11", width)} />;
 }

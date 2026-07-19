@@ -10,7 +10,7 @@ import CvSection from "@/features/about/sections/CV.client";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Who I am, how I work, and what I’ve built — experience timeline, skills, and a downloadable CV.",
+    "Experience, stack and CV. Fullstack TypeScript developer in Istanbul. Next.js, Node.js, PostgreSQL, three client systems in production.",
   alternates: { canonical: "/about" },
   openGraph: {
     type: "profile",
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     title: "About",
     description:
-      "Experience, skills, and CV — all in one place.",
+      "Experience, skills, and CV in one place.",
   },
 };
 
@@ -27,7 +27,7 @@ export default function AboutPage(): React.JSX.Element {
   return (
     <Page
       title="About"
-      description="Who I am, how I work, and what I’ve built."
+      description="Where I've worked, what I shipped, and the CV in full."
     >
       {/* Page artık H1 veriyor, o yüzden AboutIntro başlığını H2 yapıyoruz */}
       <AboutIntro />

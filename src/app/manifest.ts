@@ -10,7 +10,7 @@ export default function manifest(): MetadataRoute.Manifest {
   const base = getBaseUrl();
 
   return {
-    name: "Murat Zorlu — Portfolio",
+    name: "Murat Zorlu | Portfolio",
     short_name: "Portfolio",
     description: "Developer portfolio built with Next.js 16 and TypeScript.",
     start_url: "/",

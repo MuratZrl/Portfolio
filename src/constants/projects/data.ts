@@ -8,14 +8,17 @@ export const PROJECTS: readonly Project[] = [
     summary:
       "Custom admin dashboard for a metal manufacturer: product catalog, client management, role-based access (Admin/Manager/User) enforced via Postgres RLS, MUI X analytics charts, live notifications and user presence via Supabase Realtime, and in-browser PDF drawing previews.",
     cardSummary:
-      "Custom admin dashboard for a metal manufacturer — product catalog, client management, RLS roles, and live Realtime updates.",
+      "Custom admin dashboard for a metal manufacturer: product catalog, client management, RLS roles, and live Realtime updates.",
     tags: ["Next.js 16", "React 19", "TypeScript", "Supabase", "PostgreSQL", "MUI"],
     category: "Full-Stack",
+    sector: "metal",
+    sectorLabel: "Metal manufacturing",
+    withheld: { rows: 3, reason: "Withheld: this is SZMetal's operations data." },
     badge: { label: "Client work", variant: "accent" },
     image: { src: "/images/projects/szmetal-admin-panel.png", alt: "SZMetal admin panel dashboard" },
     gallery: [
-      { src: "/images/projects/szmetal-dashboard.png", alt: "SZMetal kontrol paneli — döviz, aktivite akışı ve grafikler" },
-      { src: "/images/projects/szmetal-users.png", alt: "SZMetal kullanıcı yönetimi — rol ve durum kontrolü" },
+      { src: "/images/projects/szmetal-dashboard.png", alt: "SZMetal dashboard with exchange rates, activity feed and charts" },
+      { src: "/images/projects/szmetal-users.png", alt: "SZMetal user management with role and status controls" },
     ],
     links: {
       repo: { href: "#", label: "Private repo", isPrivate: true },
@@ -33,10 +36,13 @@ export const PROJECTS: readonly Project[] = [
       "Real estate platform with Google Maps property search, a full admin panel, and a Google Search Console analytics integration.",
     tags: ["Next.js 16", "TypeScript", "Tailwind CSS", "Google Maps", "Axios", "JWT Auth"],
     category: "Full-Stack",
+    sector: "property",
+    sectorLabel: "Real estate",
+    caption: "The public site is live. The admin panel behind it isn't.",
     badge: { label: "Client work", variant: "accent" },
     image: { src: "/images/projects/yenigunemlak.png", alt: "Yenigün Emlak property listings with map search" },
     gallery: [
-      { src: "/images/projects/yenigun-istatistik.png", alt: "Yenigün Emlak istatistik paneli — Google Search Console CTR, sorgu ve ülke dağılımı" },
+      { src: "/images/projects/yenigun-istatistik.png", alt: "Yenigun Emlak analytics panel showing Search Console CTR, queries and country breakdown" },
     ],
     links: {
       demo: { href: "https://yenigunemlak.com", label: "Live" },
@@ -52,9 +58,12 @@ export const PROJECTS: readonly Project[] = [
     summary:
       "Ticimax e-commerce sync engine and admin dashboard: realtime supplier scraping with Puppeteer, a Supabase backend, and live sync progress monitoring built on Next.js App Router.",
     cardSummary:
-      "Ticimax e-commerce sync engine + admin dashboard — realtime supplier scraping and live sync progress monitoring.",
+      "Ticimax e-commerce sync engine + admin dashboard: realtime supplier scraping and live sync progress monitoring.",
     tags: ["Next.js 16", "TypeScript", "Supabase", "Puppeteer", "Tailwind CSS"],
     category: "Full-Stack",
+    sector: "commerce",
+    sectorLabel: "E-commerce",
+    withheld: { rows: 3, reason: "Withheld: supplier data for an e-commerce client." },
     badge: { label: "Client work", variant: "accent" },
     image: { src: "/images/projects/ticimax-dashboard.png", alt: "Ticimax sync dashboard" },
     links: {
@@ -71,6 +80,8 @@ export const PROJECTS: readonly Project[] = [
       "Multi-tenant project management SaaS with kanban boards, team workspaces, and Stripe subscription billing.",
     tags: ["Next.js 16", "NestJS 11", "TypeScript", "PostgreSQL", "Prisma", "Stripe"],
     category: "Full-Stack",
+    sector: "personal",
+    sectorLabel: "Personal project",
     badge: { label: "Personal project", variant: "muted" },
     image: { src: "/images/projects/teamboard.png", alt: "TeamBoard kanban dashboard" },
     links: {
@@ -88,6 +99,8 @@ export const PROJECTS: readonly Project[] = [
       "Real-time chat platform with WebSocket messaging, multi-room channels, and 10+ live features powered by Redis pub/sub.",
     tags: ["Next.js 16", "NestJS 11", "TypeScript", "PostgreSQL", "Prisma", "Redis", "Socket.io"],
     category: "Full-Stack",
+    sector: "personal",
+    sectorLabel: "Personal project",
     badge: { label: "Personal project", variant: "muted" },
     image: { src: "/images/projects/pulsechat.png", alt: "PulseChat real-time chat interface" },
     links: {
