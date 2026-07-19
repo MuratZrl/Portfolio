@@ -81,7 +81,7 @@ export default function HowIBuild({
                         className="flex gap-2 text-[length:var(--text-body-sm)] text-[var(--text)]"
                       >
                         <span aria-hidden className="text-[var(--accent)]">
-                          —
+                          –
                         </span>
                         {h}
                       </li>
@@ -94,7 +94,7 @@ export default function HowIBuild({
                     {item.tags.map((tag) => (
                       <li
                         key={tag}
-                        className="recessed px-2 py-1 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--text-muted)]"
+                        className="chip px-2 py-1 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--text-muted)]"
                       >
                         {tag}
                       </li>

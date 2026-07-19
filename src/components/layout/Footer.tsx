@@ -57,7 +57,7 @@ export default function Footer(): React.JSX.Element {
                 href={`mailto:${email}`}
                 draggable={false}
                 className={cn(
-                  "recessed inline-flex min-h-6 select-none items-center gap-2 px-3 py-1.5 text-xs font-medium interactive",
+                  "chip inline-flex min-h-6 select-none items-center gap-2 px-3 py-1.5 text-xs font-medium interactive",
                   "text-muted-foreground hover:text-foreground",
                 )}
                 aria-label={`Email ${email}`}

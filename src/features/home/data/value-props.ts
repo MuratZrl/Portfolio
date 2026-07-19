@@ -23,7 +23,7 @@ export const DEFAULT_ITEMS = [
   {
     title: "Nothing loads that doesn't have to",
     description:
-      "No animation library, no carousel, no hero video, no font CDN. One third-party script — Vercel Analytics — and nothing else. Fonts are self-hosted through next/font with a single file preloaded. Turn JavaScript off and the words on this page are still here; they are rendered on the server.",
+      "No animation library, no carousel, no hero video, no font CDN. One third-party script (Vercel Analytics) and nothing else. Fonts are self-hosted through next/font with a single file preloaded. Turn JavaScript off and the words on this page are still here; they are rendered on the server.",
     highlights: [
       "One third-party script: Vercel Analytics",
       "Self-hosted fonts, one file preloaded",
@@ -35,7 +35,7 @@ export const DEFAULT_ITEMS = [
   {
     title: "Open where it can be",
     description:
-      "TypeScript strict in every project, and no ts-ignore anywhere in the public repos. Two of the five projects below are public — read the source instead of taking my word for it. The client work is private, and the project cards say exactly what is being held back and why.",
+      "TypeScript strict in every project, and no ts-ignore anywhere in the public repos. Two of the five projects below are public. Read the source instead of taking my word for it. The client work is private, and the project cards say exactly what is being held back and why.",
     highlights: [
       "strict: true in every tsconfig",
       "Zero @ts-ignore in public repos",

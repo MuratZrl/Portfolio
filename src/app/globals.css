@@ -66,14 +66,30 @@
     inset 4px 4px 10px var(--shadow-dark),
     inset -4px -4px 10px var(--shadow-light);
 
+  /* Chips are ~22px tall. The full --shadow-inset recipe above is authored
+     for input-sized boxes: a 4px offset with a 10px blur reaches past the
+     midline of a chip, so the "pressed edge" stops reading as an edge and
+     starts reading as a gradient fill. A chip gets a hairline instead —
+     1px offset, 2px blur, -1px spread — which lands the dark tone on the
+     top edge only and leaves the body a flat surface. */
+  --shadow-chip:
+    inset 0 1px 2px -1px var(--shadow-dark),
+    inset 0 -1px 1px -1px var(--shadow-light);
+
   /* Hover elevation is DOWNWARD, not diagonal. The resting neumorphic
      shadow is offset on both axes, which is correct for a static plate but
      bleeds sideways onto whatever sits next to it the moment it grows.
      Zero x-offset plus a negative spread keeps the growth under the element
-     instead of over its neighbour. */
+     instead of over its neighbour.
+
+     Hover is the ONLY feedback a card gets — nothing moves — so the shadow
+     has to carry the whole state change on its own. It gets a dedicated,
+     heavier tone: at the resting --shadow-dark the delta was too slight to
+     read without the translate propping it up. */
+  --shadow-hover-dark: rgb(120 136 160 / 0.75);
   --shadow-hover:
-    0 10px 22px -6px var(--shadow-dark),
-    0 -1px 6px var(--shadow-light);
+    0 8px 20px -4px var(--shadow-hover-dark),
+    0 2px 6px -2px var(--shadow-hover-dark);
 
   /* --- radii ----------------------------------------------------------- */
   --radius-0:  0;
@@ -125,13 +141,17 @@
      than twitchy. Press is near-immediate so the control feels connected. */
   --dur-hover-in:  420ms;
   --dur-hover-out: 300ms;
-  --dur-press:     240ms;
+  /* Press is NOT hover. Hover can afford to be unhurried because the pointer
+     arrives gradually; a click is instantaneous and any delay between the
+     mouse-down and the control moving reads as lag, not as polish. Keep this
+     near the hover-in value and the button feels broken. */
+  --dur-press:     90ms;
   /* Release is asymmetric with press. A CSS transition reads its duration
-     from the DESTINATION state, so press-in is governed by :active (80ms)
-     but release is governed by whatever the element returns TO — rest or
-     :hover. Those blocks give transform and filter this longer value so
-     the button settles back instead of snapping. */
-  --dur-press-out: 340ms;
+     from the DESTINATION state, so press-in is governed by :active but
+     release is governed by whatever the element returns TO — rest or
+     :hover. Those blocks give transform and filter this slightly longer
+     value so the button settles back instead of snapping. */
+  --dur-press-out: 140ms;
   /* A focus indicator is a functional cue, not decoration. Long enough not
      to snap, short enough that it never lags the Tab key. */
   --dur-focus:     220ms;
@@ -194,6 +214,27 @@
 
   --shadow-dark:  rgb(0 0 0 / 0.70);
   --shadow-light: rgb(255 255 255 / 0.035);
+
+  /* Dark theme needs the WHOLE hover recipe replaced, not just a colour
+     token, and the reason is worth writing down because the obvious fix is
+     wrong. On a #0A0A0B ground a black shadow has about ten levels of range
+     to work with: black at 0.70 alpha composites to rgb(3,3,3), black at
+     0.92 to rgb(1,1,1). That is a 2/255 delta before the blur spreads it —
+     invisible. So "raise the alpha" buys nothing here.
+
+     What actually carries depth on a near-black ground is the white counter
+     highlight: --shadow-raised's `-6px -6px 14px rgb(255 255 255 / .035)`
+     composites to rgb(19,19,20) against a rgb(10,10,11) ground, and that
+     +9 rim is the most legible part of the resting shadow. A hover recipe
+     made of black layers alone DELETES it, so the card loses more modelling
+     than it gains and reads flatter — the exact inversion of the intent.
+
+     So hover keeps the rim and brightens it, and grows the cast underneath.
+     Deeper here means more separation from the ground, in both directions. */
+  --shadow-hover:
+    0 10px 26px -4px rgb(0 0 0 / 0.95),
+    0 3px 10px -3px rgb(0 0 0 / 0.90),
+    0 -1px 0 0 rgb(255 255 255 / 0.085);
 }
 
 @theme inline {
@@ -356,12 +397,24 @@
     box-shadow: var(--shadow-raised);
   }
 
-  /* Pressed into the surface: inputs, code blocks, the withheld slab. */
+  /* Pressed into the surface: inputs, code blocks, the withheld slab.
+     Box-sized things only — see .chip for the pill-sized variant. */
   .recessed {
     background: var(--surface);
     border: 1px solid var(--edge-soft);
     border-radius: var(--radius-sm);
     box-shadow: var(--shadow-inset);
+  }
+
+  /* Tag pills. Same family as .recessed and deliberately not the same rule:
+     the depth recipe that reads as "pressed" on a 44px input reads as a
+     gradient fill on a 22px pill, because the blur has nowhere to fall off.
+     A chip gets the top edge and nothing else. */
+  .chip {
+    background: var(--surface);
+    border: 1px solid var(--edge-soft);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-chip);
   }
 
   /* Controls carry the STRONG edge — 1.4.11 applies to them, not to cards. */
@@ -426,7 +479,10 @@
       var(--dur-press-out), var(--dur-press-out),
       var(--dur-focus);
     transition-timing-function: var(--ease-out);
-    will-change: transform;
+    /* No `will-change: transform` any more. Nothing carrying .interactive
+       transforms on hover since the card lift was removed, and the hint was
+       promoting every card in the grid to its own compositor layer to
+       animate a property that never changes. */
   }
 
   .interactive:hover,
@@ -458,19 +514,24 @@
       background-color, border-color, color, transform, outline-color;
     transition-duration:
       var(--dur-hover-out), var(--dur-hover-out), var(--dur-hover-out),
-      var(--dur-press), var(--dur-focus);
+      var(--dur-press-out), var(--dur-focus);
     transition-timing-function: var(--ease-out);
   }
 
   .soft-btn:hover {
     transition-duration:
       var(--dur-hover-in), var(--dur-hover-in), var(--dur-hover-in),
-      var(--dur-press), var(--dur-focus);
+      var(--dur-press-out), var(--dur-focus);
   }
 
-  /* Press is scale only — 120ms in and out, because transform carries the
-     same duration in every block. */
+  /* Press is scale only, and deliberately asymmetric: 90ms down, 140ms back.
+     Transform reads its duration from the DESTINATION block, so :active has
+     to restate the whole list — the two blocks above govern the release, and
+     without this one the press-in would inherit the slower release timing. */
   .soft-btn:active {
+    transition-duration:
+      var(--dur-hover-out), var(--dur-hover-out), var(--dur-hover-out),
+      var(--dur-press), var(--dur-focus);
     transform: scale(0.98);
   }
 
@@ -493,8 +554,31 @@
     background: var(--btn-ghost-hover);
   }
 
+  /* Focus lives HERE, not as a `focus-within:shadow-[…]` utility on the
+     card. Tailwind v4 declares `@layer theme, base, components, utilities`,
+     so any utility beats this whole block on layer order alone, regardless
+     of specificity. A card keeps :focus-within after you click it (the
+     stretched title link takes focus), so the utility version meant that
+     from the first click onward, hovering that card resolved to
+     --shadow-raised-lg — larger AND lighter than the hover state, i.e. the
+     card visibly receded on hover, and the :active inset never rendered at
+     all. It went unnoticed while transform carried hover on its own
+     property lane; removing the lift left box-shadow as the sole channel
+     and exposed that the channel was already claimed.
+
+     Equal specificity to the two rules below, so source order decides:
+     pointer states are written after focus and therefore win. */
+  .plate.interactive:focus-within {
+    box-shadow: var(--shadow-raised-lg);
+  }
+
+  /* Cards do NOT move on hover. A 1px lift on a grid of cards is a jitter
+     source — the pointer sits near a card edge, the lift pulls the boundary
+     out from under it, the card un-hovers, drops back, re-hovers. Shadow is
+     the entire hover channel, and it gets DEEPER, not lighter: a card that
+     lightens on hover reads as receding, which is backwards for the thing
+     you are pointing at. */
   .plate.interactive:hover {
-    transform: translateY(-1px);
     box-shadow: var(--shadow-hover);
   }
 
@@ -503,7 +587,6 @@
       var(--dur-press), var(--dur-press), var(--dur-press),
       var(--dur-press), var(--dur-press), var(--dur-press),
       var(--dur-focus);
-    transform: translateY(0);
     box-shadow: var(--shadow-inset);
   }
 

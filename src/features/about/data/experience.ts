@@ -5,7 +5,7 @@ export const EXPERIENCE_ITEMS = [
   {
     id: "exp-eupholias",
     kind: "freelance",
-    org: "Yenigün Emlak — via Eupholias",
+    org: "Yenigün Emlak (via Eupholias)",
     role: "Freelance Developer",
     location: "Istanbul",
     period: { start: "2026-01", end: "2026-03" },

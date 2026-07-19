@@ -102,7 +102,7 @@ export default function CodePanel({ className }: { className?: string }): React.
       </div>
 
       <figcaption className="mt-3 text-[length:var(--text-body-xs)] text-[var(--text-muted)]">
-        PulseChat — Socket.io scaling across replicas
+        PulseChat · Socket.io scaling across replicas
       </figcaption>
     </figure>
   );

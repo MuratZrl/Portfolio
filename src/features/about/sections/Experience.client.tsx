@@ -333,7 +333,10 @@ function LinkPill({ href, label }: ExtLink): React.JSX.Element {
 function PeriodText({ period }: { period: Period }): React.JSX.Element {
   const start = formatYYYYMM(period.start);
   const end = period.end ? formatYYYYMM(period.end) : "Present";
-  return <span>{start} — {end}</span>;
+  /* En dash, not em: a date range is the one place a dash is the correct
+     typography rather than a stylistic tic. U+2013, so the em-dash sweep
+     stays clean. */
+  return <span>{start} – {end}</span>;
 }
 
 /* ──────────────────────────────── Utils ─────────────────────────────────── */

@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     template: "Murat Zorlu | %s",
   },
   description:
-    "Murat Zorlu — fullstack TypeScript developer in Istanbul. Internal tools, admin panels and dashboards running in production.",
+    "Murat Zorlu, fullstack TypeScript developer in Istanbul. Internal tools, admin panels and dashboards running in production.",
   authors: [{ name: "Murat Zorlu", url: "https://muratzorlu.dev" }],
   creator: "Murat Zorlu",
   publisher: "Murat Zorlu",

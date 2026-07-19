@@ -129,7 +129,7 @@ export default async function ProjectDetailPage({ params }: Props) {
             Key technical decisions
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Trade-offs that shaped the build — what was chosen, and why over the alternative.
+            Trade-offs that shaped the build: what was chosen, and why over the alternative.
           </p>
 
           <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">

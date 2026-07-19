@@ -58,8 +58,11 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
         // no positioned ancestor that pseudo-element resolves against the
         // initial containing block and covers the entire document, so every
         // click on the page lands on the last card in DOM order.
+        // The focus shadow is NOT a utility here. Tailwind's utilities layer
+        // outranks @layer components, so `focus-within:shadow-[…]` would beat
+        // the hover and active shadows in globals.css and invert them. It
+        // lives in the components layer alongside them instead.
         "plate interactive group relative flex flex-col overflow-hidden",
-        "focus-within:shadow-[var(--shadow-raised-lg)]",
       )}
     >
       <div className="relative aspect-[16/9] overflow-hidden border-b border-[var(--edge-soft)] bg-[var(--muted)]">
@@ -120,7 +123,7 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
           {visibleTags.map((tag) => (
             <li
               key={tag}
-              className="recessed px-2 py-0.5 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--text-muted)]"
+              className="chip px-2 py-0.5 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--text-muted)]"
             >
               {tag}
             </li>

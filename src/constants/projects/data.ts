@@ -8,12 +8,12 @@ export const PROJECTS: readonly Project[] = [
     summary:
       "Custom admin dashboard for a metal manufacturer: product catalog, client management, role-based access (Admin/Manager/User) enforced via Postgres RLS, MUI X analytics charts, live notifications and user presence via Supabase Realtime, and in-browser PDF drawing previews.",
     cardSummary:
-      "Custom admin dashboard for a metal manufacturer — product catalog, client management, RLS roles, and live Realtime updates.",
+      "Custom admin dashboard for a metal manufacturer: product catalog, client management, RLS roles, and live Realtime updates.",
     tags: ["Next.js 16", "React 19", "TypeScript", "Supabase", "PostgreSQL", "MUI"],
     category: "Full-Stack",
     sector: "metal",
     sectorLabel: "Metal manufacturing",
-    withheld: { rows: 3, reason: "Withheld — this is SZMetal's operations data." },
+    withheld: { rows: 3, reason: "Withheld: this is SZMetal's operations data." },
     badge: { label: "Client work", variant: "accent" },
     image: { src: "/images/projects/szmetal-admin-panel.png", alt: "SZMetal admin panel dashboard" },
     gallery: [
@@ -58,12 +58,12 @@ export const PROJECTS: readonly Project[] = [
     summary:
       "Ticimax e-commerce sync engine and admin dashboard: realtime supplier scraping with Puppeteer, a Supabase backend, and live sync progress monitoring built on Next.js App Router.",
     cardSummary:
-      "Ticimax e-commerce sync engine + admin dashboard — realtime supplier scraping and live sync progress monitoring.",
+      "Ticimax e-commerce sync engine + admin dashboard: realtime supplier scraping and live sync progress monitoring.",
     tags: ["Next.js 16", "TypeScript", "Supabase", "Puppeteer", "Tailwind CSS"],
     category: "Full-Stack",
     sector: "commerce",
     sectorLabel: "E-commerce",
-    withheld: { rows: 3, reason: "Withheld — supplier data for an e-commerce client." },
+    withheld: { rows: 3, reason: "Withheld: supplier data for an e-commerce client." },
     badge: { label: "Client work", variant: "accent" },
     image: { src: "/images/projects/ticimax-dashboard.png", alt: "Ticimax sync dashboard" },
     links: {

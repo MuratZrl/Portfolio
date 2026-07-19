@@ -10,7 +10,7 @@ import CvSection from "@/features/about/sections/CV.client";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Experience, stack and CV. Fullstack TypeScript developer in Istanbul — Next.js, NestJS, PostgreSQL, three client systems in production.",
+    "Experience, stack and CV. Fullstack TypeScript developer in Istanbul. Next.js, NestJS, PostgreSQL, three client systems in production.",
   alternates: { canonical: "/about" },
   openGraph: {
     type: "profile",
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     title: "About",
     description:
-      "Experience, skills, and CV — all in one place.",
+      "Experience, skills, and CV in one place.",
   },
 };
 
