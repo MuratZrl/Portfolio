@@ -10,7 +10,7 @@ import ProjectsExplorer from "@/features/projects/sections/ProjectsExplorer.clie
 export const metadata: Metadata = {
   title: "Projects",
   description:
-    "Five projects: three built for paying clients, two personal. What each one does, what it runs on, and what stayed private.",
+    "Six projects: three built for paying clients, three personal. What each one does, what it runs on, and what stayed private.",
 };
 
 /**
@@ -33,7 +33,7 @@ export default function ProjectsPage(): React.JSX.Element {
   return (
     <Page
       title="Projects"
-      description="Five projects. Three were paid client work and are private; the reasons are on each card."
+      description="Six projects. Three were paid client work and are private; the reasons are on each card."
     >
       <ProjectsExplorer items={items} />
     </Page>

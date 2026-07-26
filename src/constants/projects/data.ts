@@ -111,4 +111,45 @@ export const PROJECTS: readonly Project[] = [
     order: 5,
     createdAt: "2026-02-01",
   },
+  {
+    slug: "/projects/api-gateway",
+    title: "API Gateway",
+    summary:
+      "A production-shaped API Gateway written in Go, built around a composable middleware chain. Handles reverse proxying to upstream services with round-robin load balancing, Redis-backed rate limiting and response caching, JWT and API-key authentication, a circuit breaker for failing upstreams, automatic retries, request/response transforms, IP filtering, and body validation. Fully containerized with Docker Compose and instrumented with Prometheus metrics and Grafana dashboards. Covered by integration tests, including a test that proves round-robin distribution across two service replicas.",
+    cardSummary:
+      "Feature-rich API Gateway in Go with a middleware-based architecture — reverse proxy, rate limiting, auth, circuit breaking, and load balancing.",
+    metaDescription:
+      "API Gateway in Go: a middleware chain doing reverse proxy, Redis-backed rate limiting and caching, JWT auth, circuit breaking and round-robin load balancing.",
+    tags: ["Go", "Redis", "Docker", "Docker Compose", "Prometheus", "Grafana", "JWT"],
+    category: "Backend",
+    sector: "personal",
+    sectorLabel: "Personal project",
+    caption: "Self-hosted service, so there is nothing to link a demo at. The repo is the artifact.",
+    badge: { label: "Personal project", variant: "muted" },
+    image: { src: "/images/projects/api-gateway.png", alt: "API Gateway Grafana dashboard showing request throughput and upstream latency" },
+    links: {
+      repo: { href: "https://github.com/MuratZrl/api-gateway", label: "Repo" },
+    },
+    technicalDecisions: [
+      {
+        title: "A middleware chain, not one request handler",
+        body: "Every gateway concern — auth, rate limiting, caching, circuit breaking, retries, transforms, IP filtering, body validation — is its own middleware rather than a branch inside a single proxy handler. A route runs only the layers it enables, and a new concern lands as a new layer instead of an edit to shared control flow. The cost is an explicit ordering contract between layers; the payoff is that each one is tested on its own.",
+      },
+      {
+        title: "Redis for rate limiting and caching, not in-process state",
+        body: "Rate limit counters and cached responses live in Redis instead of the gateway's own memory. In-process state is faster and drops a dependency, but it makes the gateway stateful: two replicas would each enforce their own share of the limit and each hold their own cache. Redis keeps the gateway horizontally scalable at the cost of one network hop per request.",
+      },
+      {
+        title: "A circuit breaker in front of the retries",
+        body: "A failing upstream is retried automatically, but the retry sits behind a circuit breaker rather than standing alone. Retries on their own amplify load on exactly the service that is already struggling; the breaker bounds that by failing fast while the upstream recovers, then letting traffic back through once it does.",
+      },
+      {
+        title: "Load balancing proved by a test, not by inspection",
+        body: "Round-robin distribution is covered by an integration test that runs two replicas of the same upstream and asserts requests reach both. It is a property that is easy to claim and easy to get silently wrong, because a single-replica test passes either way. CI runs the suite alongside golangci-lint on every push.",
+      },
+    ],
+    featured: true,
+    order: 6,
+    createdAt: "2026-03-26",
+  },
 ] as const;

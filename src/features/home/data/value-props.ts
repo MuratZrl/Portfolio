@@ -35,7 +35,7 @@ export const DEFAULT_ITEMS = [
   {
     title: "Open where it can be",
     description:
-      "TypeScript strict in every project, and no ts-ignore anywhere in the public repos. Two of the five projects below are public. Read the source instead of taking my word for it. The client work is private, and the project cards say exactly what is being held back and why.",
+      "TypeScript strict in every TypeScript project, and no ts-ignore anywhere in the public repos. Three of the six projects below are public. Read the source instead of taking my word for it. The client work is private, and the project cards say exactly what is being held back and why.",
     highlights: [
       "strict: true in every tsconfig",
       "Zero @ts-ignore in public repos",

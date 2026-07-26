@@ -28,7 +28,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: project.title,
-    description: project.summary,
+    // `summary` runs past the SERP limit on the longer entries, so the type
+    // carries an optional truncation-safe override for exactly this slot.
+    description: project.metaDescription ?? project.summary,
   };
 }
 
