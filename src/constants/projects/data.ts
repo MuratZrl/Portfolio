@@ -115,16 +115,15 @@ export const PROJECTS: readonly Project[] = [
     slug: "/projects/api-gateway",
     title: "API Gateway",
     summary:
-      "A production-shaped API Gateway written in Go, built around a composable middleware chain. Handles reverse proxying to upstream services with round-robin load balancing, Redis-backed rate limiting and response caching, JWT and API-key authentication, a circuit breaker for failing upstreams, automatic retries, request/response transforms, IP filtering, and body validation. Fully containerized with Docker Compose and instrumented with Prometheus metrics and Grafana dashboards. Covered by integration tests, including a test that proves round-robin distribution across two service replicas.",
+      "An API Gateway written in Go, built as a chain of middleware rather than one request handler. It reverse-proxies to upstream services and spreads traffic across their replicas round-robin. Redis holds the rate limit counters and the response cache. Authentication takes a JWT or an API key. A circuit breaker isolates failing upstreams, failed requests are retried automatically, and the rest of the chain covers request and response transforms, IP filtering and body validation. The stack runs under Docker Compose, with Prometheus scraping metrics into Grafana dashboards. Integration tests cover the gateway, including one that runs two replicas of the same service and fails unless both serve an even share of the requests.",
     cardSummary:
-      "Feature-rich API Gateway in Go with a middleware-based architecture — reverse proxy, rate limiting, auth, circuit breaking, and load balancing.",
+      "API Gateway in Go. Auth, rate limiting, caching, retries and circuit breaking each sit in the middleware chain; what survives is round-robined to an upstream replica.",
     metaDescription:
-      "API Gateway in Go: a middleware chain doing reverse proxy, Redis-backed rate limiting and caching, JWT auth, circuit breaking and round-robin load balancing.",
+      "API Gateway in Go. A middleware chain handles reverse proxying, Redis-backed rate limiting and caching, JWT auth, circuit breaking and round-robin balancing.",
     tags: ["Go", "Redis", "Docker", "Docker Compose", "Prometheus", "Grafana", "JWT"],
     category: "Backend",
     sector: "personal",
     sectorLabel: "Personal project",
-    caption: "Self-hosted service, so there is nothing to link a demo at. The repo is the artifact.",
     badge: { label: "Personal project", variant: "muted" },
     image: { src: "/images/projects/api-gateway.png", alt: "API Gateway Grafana dashboard showing request throughput and upstream latency" },
     links: {
@@ -132,20 +131,20 @@ export const PROJECTS: readonly Project[] = [
     },
     technicalDecisions: [
       {
-        title: "A middleware chain, not one request handler",
-        body: "Every gateway concern — auth, rate limiting, caching, circuit breaking, retries, transforms, IP filtering, body validation — is its own middleware rather than a branch inside a single proxy handler. A route runs only the layers it enables, and a new concern lands as a new layer instead of an edit to shared control flow. The cost is an explicit ordering contract between layers; the payoff is that each one is tested on its own.",
+        title: "One middleware per concern",
+        body: "Auth, rate limiting, caching, circuit breaking, retries, transforms, IP filtering and validation are each their own middleware, not branches inside a single proxy handler. Ordering between them becomes an explicit contract you have to get right. In exchange every layer has its own test file.",
       },
       {
-        title: "Redis for rate limiting and caching, not in-process state",
-        body: "Rate limit counters and cached responses live in Redis instead of the gateway's own memory. In-process state is faster and drops a dependency, but it makes the gateway stateful: two replicas would each enforce their own share of the limit and each hold their own cache. Redis keeps the gateway horizontally scalable at the cost of one network hop per request.",
+        title: "Rate limit counters live in Redis",
+        body: "Counters and cached responses sit in Redis rather than the gateway's own memory. That costs a network hop per request. Keeping them in process would avoid the hop and drop a dependency, but it would also make the gateway stateful: run two replicas and each one enforces its own separate share of the limit, against its own separate cache.",
       },
       {
         title: "A circuit breaker in front of the retries",
-        body: "A failing upstream is retried automatically, but the retry sits behind a circuit breaker rather than standing alone. Retries on their own amplify load on exactly the service that is already struggling; the breaker bounds that by failing fast while the upstream recovers, then letting traffic back through once it does.",
+        body: "Failed requests are retried automatically, but the retry sits behind a circuit breaker. Retrying on its own amplifies load on the service that is already in trouble. Once failures cross the threshold the breaker opens and requests fail fast, and it half-opens later to test whether the upstream came back before closing again.",
       },
       {
-        title: "Load balancing proved by a test, not by inspection",
-        body: "Round-robin distribution is covered by an integration test that runs two replicas of the same upstream and asserts requests reach both. It is a property that is easy to claim and easy to get silently wrong, because a single-replica test passes either way. CI runs the suite alongside golangci-lint on every push.",
+        title: "The round-robin claim has a test behind it",
+        body: "Six requests go through two replicas of the same upstream, and the test fails unless both replicas served exactly three. It also rejects any response that came out of the cache, because a cached response never reaches an upstream and would not count toward either replica. CI runs this on pushes and pull requests to main, alongside golangci-lint.",
       },
     ],
     featured: true,
