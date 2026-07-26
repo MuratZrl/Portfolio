@@ -8,7 +8,7 @@
 export const runtime = "edge";
 
 export const alt =
-  "Murat Zorlu | Full-Stack Developer (Next.js, Node.js, TypeScript)";
+  "Murat Zorlu | Fullstack Developer (Next.js, NestJS, Go, PostgreSQL)";
 
 export const size = {
   width: 1200,

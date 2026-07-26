@@ -49,7 +49,7 @@ export default function Footer(): React.JSX.Element {
               Murat Zorlu
             </Link>
             <p className="mt-1 text-sm text-muted-foreground">
-              Internal tools and admin panels. Istanbul.
+              Fullstack developer building with Next.js, NestJS, Go and PostgreSQL. Based in Istanbul.
             </p>
 
             <address className="mt-3 not-italic">

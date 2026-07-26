@@ -15,7 +15,7 @@ export const ABOUT_DEFAULTS: AboutIntroDefaults = {
     "Delivered two live applications serving real businesses in Turkey.",
   ],
   highlights: [
-    "Full-stack apps with Next.js, NestJS & PostgreSQL",
+    "Fullstack apps with Next.js, NestJS & PostgreSQL",
     "Real-time systems with WebSocket & Redis",
     "Containerized deployments with Docker",
   ],

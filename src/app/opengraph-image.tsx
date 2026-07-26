@@ -8,7 +8,7 @@ import { ImageResponse } from "next/og";
 export const runtime = "edge";
 
 export const alt =
-  "Murat Zorlu | Full-Stack Developer (Next.js, Node.js, TypeScript)";
+  "Murat Zorlu | Fullstack Developer (Next.js, NestJS, Go, PostgreSQL)";
 
 export const size = {
   width: 1200,
@@ -137,7 +137,7 @@ export default async function OpengraphImage(): Promise<ImageResponse> {
                 display: "flex",
               }}
             >
-              Full-Stack Developer
+              Fullstack Developer
             </div>
 
             <div
@@ -150,7 +150,7 @@ export default async function OpengraphImage(): Promise<ImageResponse> {
                 display: "flex",
               }}
             >
-              Next.js · Node.js · TypeScript
+              Next.js · NestJS · Go · PostgreSQL
             </div>
           </div>
         </div>
