@@ -3,6 +3,12 @@
 ## Verification
 Do not spawn agent workflows or adversarial audits unless explicitly asked. Verify inline with grep, computed styles, and screenshots.
 
+- Any claim of current state in a task-closing report must have been measured
+  during that task, not recalled from an earlier one. If it wasn't re-checked,
+  either re-check or write "unverified since `<when>`". Never present tense.
+- Never report on an environment you didn't touch. Localhost findings are
+  localhost findings; prod claims require a prod check.
+
 ## Writing style (user-facing copy)
 
 Applies to every string a visitor reads: project summaries, card text, meta
