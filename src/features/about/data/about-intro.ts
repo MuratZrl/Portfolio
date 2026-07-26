@@ -11,7 +11,7 @@ export const ABOUT_DEFAULTS: AboutIntroDefaults = {
   location: "Istanbul, Turkey",
   availability: "available",
   bio: [
-    "Fullstack TypeScript developer with production experience in Next.js, NestJS, and PostgreSQL.",
+    "Fullstack developer with production experience in Next.js, NestJS, Go and PostgreSQL.",
     "Delivered two live applications serving real businesses in Turkey.",
   ],
   highlights: [

@@ -8,6 +8,7 @@ export const DEFAULT_GROUPS = [
     title: "Languages and frameworks",
     skills: [
       { name: "TypeScript" },
+      { name: "Go" },
       { name: "Next.js" },
       { name: "React" },
       { name: "NestJS" },

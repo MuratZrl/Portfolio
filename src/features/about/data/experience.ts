@@ -35,7 +35,7 @@ export const EXPERIENCE_ITEMS = [
     location: "Kocaeli",
     period: { start: "2025-04" },
     summary:
-      "Developed and shipped a full-stack admin panel using Next.js 16, TypeScript, Supabase, and Material UI, serving a metal products company with 200+ commits in production.",
+      "Developed and shipped a fullstack admin panel using Next.js 16, TypeScript, Supabase, and Material UI, serving a metal products company with 200+ commits in production.",
     achievements: [
       "Established role-based access control with 3 permission levels, Row Level Security across all database tables, IP-based route protection, and server-side session validation.",
       "Built a real-time analytics dashboard integrating live metal price data, interactive charts (Line, Bar, Pie, Gauge), and date range filtering using MUI X-Charts.",
