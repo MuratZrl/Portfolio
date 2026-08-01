@@ -178,6 +178,14 @@ export default function ContactForm(): React.JSX.Element {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit, onInvalid)}
+          /* No-JS / pre-hydration fallback. Without an onSubmit handler the
+             browser performs a native submission, which defaults to GET and
+             serialises every field into the URL: the visitor's message ends
+             up in browser history and server logs. POST keeps it in the
+             request body. Nothing server-side handles that POST (the JS path
+             posts JSON to /api/contact), so the fallback is still a dead
+             end, but a private one. */
+          method="post"
           className="flex flex-1 flex-col gap-5"
           noValidate
           aria-busy={isSubmitting}
