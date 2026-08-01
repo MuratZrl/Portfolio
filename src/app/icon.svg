@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!--
+    The header "MZ" mark (src/components/layout/Navbar.tsx) as a favicon.
+    Letters are paths, not text: SVG favicons render without the page's
+    fonts, so a font stack here would fall back to whatever the OS has.
+
+    Colours mirror src/app/globals.css. An SVG file cannot read CSS custom
+    properties from the page, so the token values are inlined here; if a
+    token changes there, change it here in the same commit.
+      tile  light: - -accent    #1D4ED8   dark: - -accent    #3B82F6
+      mark  light: - -on-accent #FFFFFF   dark: - -on-accent #0A0A0B
+
+    Compared to the 28px header tile the radius is proportional (6/28), the
+    letters sit at 14/32 cap height with ~2.8px stems: heavier and tighter
+    than the header's 12px text so the mark survives 16x16.
+
+    favicon.ico is rasterised from these same paths using the dark pair
+    (#3B82F6 tile, #0A0A0B letters). Safari before 26 ignores SVG favicons
+    and takes the ICO, and against Safari's dark tab bar (~#38383A) the dark
+    accent is the only step of the family that keeps 3:1 on white, Chrome
+    dark and Safari dark strips at once.
+  -->
+  <style>
+    .tile { fill: #1D4ED8; }
+    .mark { fill: #FFFFFF; }
+    @media (prefers-color-scheme: dark) {
+      .tile { fill: #3B82F6; }
+      .mark { fill: #0A0A0B; }
+    }
+  </style>
+  <rect class="tile" width="32" height="32" rx="6.9"/>
+  <path class="mark" d="M5.5 23 V9 H8.7 L11 15.4 L13.3 9 H16.5 V23 H13.7 V14.2 L12.2 18.8 H9.8 L8.3 14.2 V23 Z"/>
+  <path class="mark" d="M18.5 9 H26.5 V11.8 L22.1 20.2 H26.5 V23 H18.5 V20.2 L22.9 11.8 H18.5 Z"/>
+</svg>
