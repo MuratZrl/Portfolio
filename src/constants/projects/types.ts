@@ -31,7 +31,9 @@ export type ProjectCategory =
   | "Backend"
   | "Tooling"
   | "Auth"
-  | "E-Commerce";
+  | "E-Commerce"
+  /** Small business sites: single-page and few-page marketing sites, no app behind them. */
+  | "Website";
 
 /** "accent" = highlighted (client / commercial work). "muted" = subtle (personal / demo). */
 export type ProjectBadgeVariant = "accent" | "muted";
@@ -57,11 +59,14 @@ export type TechnicalDecision = {
 };
 
 /**
- * Which client sector a project belongs to. Drives the card's top-edge colour.
- * `personal` takes no sector colour at all — that is what makes a coloured edge
- * mean "somebody paid for this".
+ * Which client sector a project belongs to. The colour it once drove is gone
+ * (see ProjectCard); what remains is the paid/unpaid split the card reads.
+ * `personal` and `demo` are the two unpaid values. `demo` is a site built to
+ * show prospective clients what they would get: no client, no invoice, so it
+ * must never render the "Client work" mark. The industry it targets is
+ * carried by `sectorLabel` text ("Beauty salon", "Coffee shop").
  */
-export type ProjectSector = "metal" | "property" | "commerce" | "personal";
+export type ProjectSector = "metal" | "property" | "commerce" | "personal" | "demo";
 
 /**
  * The withheld slab. Present only on private client work.

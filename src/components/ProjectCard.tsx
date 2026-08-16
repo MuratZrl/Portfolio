@@ -48,7 +48,12 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
 
   const visibleTags = project.tags.slice(0, MAX_VISIBLE_TAGS);
   const hiddenCount = project.tags.length - visibleTags.length;
-  const isPaid = project.sector !== "personal";
+  const isDemo = project.sector === "demo";
+  const isPaid = project.sector !== "personal" && !isDemo;
+  // The provenance mark beside the sector label. Paid work says so; a demo
+  // says so with the same device, so the two never get confused. Personal
+  // projects carry it in the sectorLabel itself and get nothing extra.
+  const provenance = isPaid ? "Client work" : isDemo ? "Demo site" : null;
 
   return (
     <article
@@ -84,10 +89,10 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
           <span className="text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--text-muted)]">
             {project.sectorLabel}
           </span>
-          {isPaid ? (
+          {provenance ? (
             <span className="flex items-center gap-2 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--text-muted)]">
               <span aria-hidden className="h-px w-4 bg-[var(--edge)]" />
-              Client work
+              {provenance}
             </span>
           ) : null}
         </div>

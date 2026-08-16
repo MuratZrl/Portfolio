@@ -21,7 +21,7 @@ const HARD_CAP = 3;
 /** Server component — nothing here is interactive. */
 export default function FeaturedProjects({
   heading = "Projects",
-  subheading = "Three built for paying clients, three built for me. The client ones are in daily use.",
+  subheading = "Three built for paying clients, three built for me, plus two demo sites for small businesses. The client ones are in daily use.",
   projects,
   className,
   maxVisible = HARD_CAP,
@@ -48,7 +48,7 @@ export default function FeaturedProjects({
           className="link-soft text-[length:var(--text-body-sm)] font-medium text-[var(--accent)]"
               draggable={false}
             >
-          All six projects
+          All eight projects
         </Link>
       </div>
 

@@ -6,7 +6,10 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const PER_PAGE = 6;
+/* Three full rows on the lg grid. Eight projects fit on one page, so the
+   pager below stays dormant, as it was when there were six. It wakes up
+   again at ten. */
+const PER_PAGE = 9;
 
 /**
  * One row of the list. `card` is a SERVER-rendered <ProjectCard>, handed down

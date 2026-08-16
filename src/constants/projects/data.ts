@@ -1,7 +1,64 @@
 // src/constants/projects/data.ts
 import type { Project } from "./types";
 
+/**
+ * Listing order is client-acquisition order, not chronology. The two demo
+ * sites for small businesses lead (order 1-2): the primary audience of
+ * /projects is a business owner who wants a website, and the first thing they
+ * see should look like the thing they came for. Client dashboards follow
+ * (3-5), then personal builds (6-8). Recruiters scroll.
+ *
+ * The demos carry `featured: false`, which is the flag the home page strip
+ * reads via getFeaturedProjects(). Drop the flag to put them on `/` as well;
+ * that page's copy still describes the client trio and would need rewriting.
+ */
 export const PROJECTS: readonly Project[] = [
+  {
+    slug: "/projects/salon-aura",
+    title: "Aura Güzellik Stüdyosu",
+    summary:
+      "Demo site for a beauty salon, built to show a small business what it would get. One page in Turkish and English, with booking routed through WhatsApp: the button opens a chat with the salon, so requests land where the owner already answers customers. Three colour themes switch from the header, and the visitor's language and theme choices persist between visits. Sections animate in on scroll and stay still for anyone who has asked for reduced motion. On phones a sticky bar keeps the WhatsApp booking button on screen the whole way down. Vanilla HTML, CSS and JavaScript with zero dependencies: one stylesheet and one script beside the markup, no framework, no build step, deployed as static files.",
+    cardSummary:
+      "One-page salon site with WhatsApp booking, three colour themes, a TR/EN toggle and a sticky booking bar on phones. Vanilla HTML, CSS and JS, zero dependencies.",
+    metaDescription:
+      "Demo salon site: WhatsApp booking, three colour themes, TR/EN toggle, scroll animations and a sticky mobile booking bar. Vanilla HTML, CSS and JavaScript.",
+    tags: ["HTML", "CSS", "JavaScript", "WhatsApp", "i18n"],
+    category: "Website",
+    sector: "demo",
+    sectorLabel: "Beauty salon",
+    caption: "No client behind this one. It is a demo, and every part of it is live.",
+    badge: { label: "Demo site", variant: "muted" },
+    image: { src: "/images/projects/salon-aura.png", alt: "Aura Güzellik Stüdyosu hero with the TR/EN toggle and three theme dots in the header" },
+    links: {
+      demo: { href: "https://salon-aura-demo.vercel.app", label: "Live" },
+    },
+    featured: false,
+    order: 1,
+    createdAt: "2026-08-12",
+  },
+  {
+    slug: "/projects/cafe-kavella",
+    title: "Kavella",
+    summary:
+      "Demo site for a coffee shop, five pages: home, menu, about, gallery and contact. The menu is real HTML rendered from a single data file, and the same data feeds a schema.org Menu block (JSON-LD) so search engines can read the sections, items and prices; swapping that file for an API response would leave the render code untouched. The gallery opens in a custom lightbox with keyboard and swipe navigation. The contact form validates in the browser and then hands the message to WhatsApp as a deep link, so there is no backend to run. Page changes go behind a curtain transition, and sections reveal on scroll at an editorial pace, both switched off under reduced motion. Vanilla HTML, CSS and JavaScript, zero dependencies.",
+    cardSummary:
+      "Five-page coffee shop site. The menu is real HTML rendered from one data file with schema.org markup, plus a lightbox gallery and a contact form that opens WhatsApp.",
+    metaDescription:
+      "Five-page demo site for a coffee shop: menu rendered from one data file with schema.org JSON-LD, lightbox gallery, WhatsApp contact form, curtain transitions.",
+    tags: ["HTML", "CSS", "JavaScript", "JSON-LD", "WhatsApp"],
+    category: "Website",
+    sector: "demo",
+    sectorLabel: "Coffee shop",
+    caption: "No client behind this one. It is a demo, and all five pages are live.",
+    badge: { label: "Demo site", variant: "muted" },
+    image: { src: "/images/projects/cafe-kavella.png", alt: "Kavella home page hero with the five-page navigation and editorial headline" },
+    links: {
+      demo: { href: "https://cafe-kavella-demo.vercel.app", label: "Live" },
+    },
+    featured: false,
+    order: 2,
+    createdAt: "2026-08-16",
+  },
   {
     slug: "/projects/szmetal-admin-panel",
     title: "SZMetal Admin Panel",
@@ -24,7 +81,7 @@ export const PROJECTS: readonly Project[] = [
       repo: { href: "#", label: "Private repo", isPrivate: true },
     },
     featured: true,
-    order: 1,
+    order: 3,
     createdAt: "2025-07-22",
   },
   {
@@ -49,7 +106,7 @@ export const PROJECTS: readonly Project[] = [
       repo: { href: "#", label: "Private repo", isPrivate: true },
     },
     featured: true,
-    order: 2,
+    order: 4,
     createdAt: "2025-11-26",
   },
   {
@@ -70,7 +127,7 @@ export const PROJECTS: readonly Project[] = [
       repo: { href: "#", label: "Private repo", isPrivate: true },
     },
     featured: true,
-    order: 3,
+    order: 5,
     createdAt: "2026-03-30",
   },
   {
@@ -89,7 +146,7 @@ export const PROJECTS: readonly Project[] = [
       repo: { href: "https://github.com/MuratZrl/teamboard", label: "Repo" },
     },
     featured: true,
-    order: 4,
+    order: 6,
     createdAt: "2026-02-01",
   },
   {
@@ -108,7 +165,7 @@ export const PROJECTS: readonly Project[] = [
       repo: { href: "https://github.com/MuratZrl/pulsechat", label: "Repo" },
     },
     featured: true,
-    order: 5,
+    order: 7,
     createdAt: "2026-02-01",
   },
   {
@@ -148,7 +205,7 @@ export const PROJECTS: readonly Project[] = [
       },
     ],
     featured: true,
-    order: 6,
+    order: 8,
     createdAt: "2026-03-26",
   },
 ] as const;
