@@ -6,46 +6,77 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 import { Page } from "@/components/layout/Page";
+import { cn } from "@/lib/utils";
 import {
-  ExternalLink, Github, ArrowLeft, Calendar, Gauge, Star, Lock,
+  ExternalLink, Github, ArrowLeft, ArrowRight, Lock,
 } from "lucide-react";
 
-import { PROJECTS } from "@/constants/projects";
+import { getAllProjects, type Project } from "@/constants/projects";
 import { placeholder } from "@/lib/media";
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
+/**
+ * Listing order, not authoring order: the same sort /projects uses, so
+ * previous/next at the foot of the page walks the list the visitor came from.
+ */
 function resolveProject(slug: string) {
-  return PROJECTS.find((p) => p.slug === `/projects/${slug}`) ?? null;
+  const list = getAllProjects();
+  const index = list.findIndex((p) => p.slug === `/projects/${slug}`);
+  if (index === -1) return null;
+  const n = list.length;
+  return {
+    project: list[index],
+    // Circular. Eight projects, and the last one should still have a way
+    // forward that is not the footer.
+    prev: n > 1 ? list[(index - 1 + n) % n] : null,
+    next: n > 1 ? list[(index + 1) % n] : null,
+  };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const project = resolveProject(slug);
-  if (!project) return { title: "Project Not Found" };
+  const hit = resolveProject(slug);
+  if (!hit) return { title: "Project Not Found" };
 
   return {
-    title: project.title,
+    title: hit.project.title,
     // `summary` runs past the SERP limit on the longer entries, so the type
     // carries an optional truncation-safe override for exactly this slot.
-    description: project.metaDescription ?? project.summary,
+    description: hit.project.metaDescription ?? hit.project.summary,
   };
 }
 
+/**
+ * Server component, like the card. The withheld note renders here from the
+ * same `reason` string; the confidential values are never authored into
+ * data.ts, and nothing on this page crosses to the client.
+ *
+ * Layout: a two-column header (title, lead and the Live/Repo actions on the
+ * left, the spec sheet on the right at lg), the hero at full container width
+ * beneath both, then the
+ * sections that only exist when their data does (technical decisions, more
+ * screens), and previous/next at the foot. Every block below the hero is
+ * conditional on the data behind it, so a sparse project ends at the spec
+ * sheet and the exit, and never at an empty heading.
+ */
 export default async function ProjectDetailPage({ params }: Props) {
   const { slug } = await params;
-  const project = resolveProject(slug);
-  if (!project) notFound();
+  const hit = resolveProject(slug);
+  if (!hit) notFound();
+  const { project, prev, next } = hit;
 
   const heroSrc = project.image?.src || placeholder(1280, 720, project.title);
   const heroAlt = project.image?.alt ?? project.title;
-  const galleryImages = project.gallery ?? [];
+  const gallery = project.gallery ?? [];
+  const decisions = project.technicalDecisions ?? [];
 
   const demo = project.links?.demo;
   const repo = project.links?.repo;
   const repoIsPrivate = Boolean(repo?.isPrivate);
+  const hasActions = Boolean(demo || repo);
 
   return (
     <Page>
@@ -62,80 +93,78 @@ export default async function ProjectDetailPage({ params }: Props) {
           Back to Projects
         </Link>
 
-        <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
+        {/* DOM order is the mobile order: title, hero, spec sheet. At lg the
+            spec sheet moves up beside the title and the hero takes the full
+            second row. Explicit placement rather than `order`, so reading
+            order and tab order match the small-screen layout everywhere. */}
+        <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] lg:gap-x-10">
+          <div className="lg:col-start-1 lg:row-start-1">
             {/* Display face and weight arrive from the base layer; the size
-                token is the only thing this needs. */}
+                token is the only thing this needs. One step above the shared
+                page title, a documented exception, not an oversight. */}
             <h1 className="text-[length:var(--text-display-lg)] leading-[1.1] text-[var(--text)]">
               {project.title}
             </h1>
-            <p className="mt-2 max-w-2xl text-[length:var(--text-body-lead)] leading-[1.55] text-[var(--text-muted)]">
+            <p className="mt-3 max-w-2xl text-[length:var(--text-body-lead)] leading-[1.55] text-[var(--text-muted)]">
               {project.summary}
             </p>
+
+            {/* The page's only Live and Repo controls, in the reading flow
+                under the lead. Not repeated in the spec sheet: one place for
+                the action, and the sheet stays a sheet of facts. */}
+            {hasActions ? (
+              <div className="mt-6 flex flex-wrap items-center gap-3">
+                {demo ? (
+                  <a
+                    href={demo.href}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    draggable={false}
+                    className="soft-btn soft-btn-primary inline-flex min-h-11 items-center gap-2 px-5 text-[length:var(--text-body-sm)] font-medium"
+                  >
+                    <ExternalLink className="size-4" aria-hidden />
+                    {demo.label}
+                    <span className="sr-only"> (opens in a new tab)</span>
+                  </a>
+                ) : null}
+
+                {repo ? (
+                  repoIsPrivate ? (
+                    <span className="inline-flex min-h-11 items-center gap-1.5 text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
+                      <Lock className="size-4" aria-hidden />
+                      Private repo
+                    </span>
+                  ) : (
+                    <a
+                      href={repo.href}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      draggable={false}
+                      className="soft-btn soft-btn-ghost inline-flex min-h-11 items-center gap-2 px-5 text-[length:var(--text-body-sm)] font-medium"
+                    >
+                      <Github className="size-4" aria-hidden />
+                      {repo.label}
+                      <span className="sr-only"> (opens in a new tab)</span>
+                    </a>
+                  )
+                ) : null}
+              </div>
+            ) : null}
           </div>
 
-          <div className="flex shrink-0 items-center gap-3">
-            {demo ? (
-              <a
-                href={demo.href}
-                target="_blank"
-                rel="noreferrer noopener"
-                draggable={false}
-                className="soft-btn soft-btn-primary inline-flex min-h-11 items-center gap-2 px-5 text-[length:var(--text-body-sm)] font-medium"
-              >
-                <ExternalLink className="size-4" aria-hidden />
-                {demo.label}
-                <span className="sr-only"> (opens in a new tab)</span>
-              </a>
-            ) : null}
-
-            {repo ? (
-              repoIsPrivate ? (
-                <span className="inline-flex items-center gap-1.5 text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
-                  <Lock className="size-4" aria-hidden />
-                  Private repo
-                </span>
-              ) : (
-                <a
-                  href={repo.href}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  draggable={false}
-                  className="soft-btn soft-btn-ghost inline-flex min-h-11 items-center gap-2 px-5 text-[length:var(--text-body-sm)] font-medium"
-                >
-                  <Github className="size-4" aria-hidden />
-                  {repo.label}
-                  <span className="sr-only"> (opens in a new tab)</span>
-                </a>
-              )
-            ) : null}
+          <div className="lg:col-span-2 lg:row-start-2">
+            <BrowserFrame src={heroSrc} alt={heroAlt} priority />
           </div>
-        </div>
 
-        {/* Static labels: .chip, matching the project cards and the About
-            intro. Replaces `rounded-md bg-muted`. */}
-        <div className="mt-4 flex flex-wrap gap-1.5">
-          {project.tags.map((t) => (
-            <span
-              key={t}
-              className="chip px-2.5 py-1 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--text-muted)]"
-            >
-              {t}
-            </span>
-          ))}
-        </div>
-
-        {/* All images: hero + gallery stacked as one uninterrupted sequence */}
-        <div className="mt-8 space-y-6">
-          <BrowserFrame src={heroSrc} alt={heroAlt} priority />
-          {galleryImages.map((img, i) => (
-            <BrowserFrame key={`${img.src}-${i}`} src={img.src} alt={img.alt} />
-          ))}
+          {/* self-start: a grid item stretches to its row by default, and a
+              long lead beside a short sheet would leave the plate with an
+              empty foot. It ends where its rows end. */}
+          <SpecSheet project={project} className="lg:col-start-2 lg:row-start-1 lg:self-start" />
         </div>
       </section>
 
       {/* Key technical decisions: only rendered when project data provides them */}
-      {project.technicalDecisions && project.technicalDecisions.length > 0 ? (
+      {decisions.length > 0 ? (
         <section aria-labelledby="technical-decisions-heading">
           <h2
             id="technical-decisions-heading"
@@ -148,7 +177,7 @@ export default async function ProjectDetailPage({ params }: Props) {
           </p>
 
           <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-            {project.technicalDecisions.map((d, i) => (
+            {decisions.map((d, i) => (
               <article key={`${d.title}-${i}`} className="space-y-2">
                 <h3 className="text-[length:var(--text-display-2xs)] leading-[1.3] text-[var(--text)]">
                   {d.title}
@@ -162,36 +191,61 @@ export default async function ProjectDetailPage({ params }: Props) {
         </section>
       ) : null}
 
-      {/* Was a Radix <Separator>, a client component pulling JavaScript into
-          the page to draw a one-pixel line. The rest of the system draws
-          rules with a border on the element that needs one. */}
-      <div aria-hidden className="my-8 border-t border-[var(--edge-soft)]" />
-
-      {project.createdAt || project.metrics?.lighthouse || project.metrics?.stars ? (
-        <section>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            {project.createdAt ? (
-              <StatCard
-                icon={<Calendar className="size-4" aria-hidden />}
-                label="Created"
-                value={formatDate(project.createdAt)}
+      {/* The rest of the screenshots. Two up when there are two or more; a
+          single extra shot takes the full width rather than half of it. */}
+      {gallery.length > 0 ? (
+        <section aria-labelledby="gallery-heading">
+          <h2
+            id="gallery-heading"
+            className="text-[length:var(--text-display-sm)] leading-[1.2] text-[var(--text)]"
+          >
+            More screens
+          </h2>
+          <div className={cn("mt-6 grid gap-6", gallery.length > 1 && "md:grid-cols-2")}>
+            {gallery.map((img, i) => (
+              <BrowserFrame
+                key={`${img.src}-${i}`}
+                src={img.src}
+                alt={img.alt}
+                compact={gallery.length > 1}
+                sizes={gallery.length > 1 ? "(min-width: 1024px) 36vw, 92vw" : undefined}
               />
-            ) : null}
-            {project.metrics?.lighthouse ? (
-              <StatCard
-                icon={<Gauge className="size-4" aria-hidden />}
-                label="Lighthouse"
-                value={project.metrics.lighthouse}
-              />
-            ) : null}
-            {project.metrics?.stars ? (
-              <StatCard
-                icon={<Star className="size-4" aria-hidden />}
-                label="Stars"
-                value={project.metrics.stars}
-              />
-            ) : null}
+            ))}
           </div>
+        </section>
+      ) : null}
+
+      {prev && next ? (
+        <section
+          aria-labelledby="more-projects-heading"
+          className="border-t border-[var(--edge-soft)] pt-8"
+        >
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <h2
+              id="more-projects-heading"
+              className="text-[length:var(--text-display-sm)] leading-[1.2] text-[var(--text)]"
+            >
+              More projects
+            </h2>
+            <Link
+              href="/projects"
+              draggable={false}
+              className="link-soft text-[length:var(--text-body-sm)] font-medium text-[var(--accent)]"
+            >
+              All projects
+            </Link>
+          </div>
+
+          <nav aria-label="Previous and next project" className="mt-6 grid gap-6 sm:grid-cols-2">
+            {prev.slug === next.slug ? (
+              <NavCard direction="next" project={next} className="sm:col-span-2" />
+            ) : (
+              <>
+                <NavCard direction="prev" project={prev} />
+                <NavCard direction="next" project={next} />
+              </>
+            )}
+          </nav>
         </section>
       ) : null}
     </Page>
@@ -199,6 +253,95 @@ export default async function ProjectDetailPage({ params }: Props) {
 }
 
 /* -------------------------------- Helpers -------------------------------- */
+
+/**
+ * The spec sheet. One plate, one definition list, every row conditional on
+ * its data. Type comes from `badge.label`, the string authored for exactly
+ * this job; the card derives the same word from `sector` instead, so the two
+ * agree today by authoring rather than by construction. Sector is skipped
+ * for personal work, where `sectorLabel` would only repeat the Type row.
+ * Links are not here: the Live and Repo controls sit under the lead, once.
+ */
+function SpecSheet({ project, className }: { project: Project; className?: string }) {
+  const showSector = project.sector !== "personal";
+
+  return (
+    <aside aria-labelledby="spec-heading" className={cn("plate p-5 sm:p-6", className)}>
+      <h2
+        id="spec-heading"
+        className="text-[length:var(--text-display-2xs)] leading-[1.3] text-[var(--text)]"
+      >
+        Details
+      </h2>
+
+      <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-4">
+        <Fact label="Type" value={project.badge.label} />
+        {showSector ? <Fact label="Sector" value={project.sectorLabel} /> : null}
+        <Fact label="Category" value={project.category} />
+        {project.createdAt ? <Fact label="Created" value={formatDate(project.createdAt)} /> : null}
+        {project.metrics?.lighthouse ? <Fact label="Lighthouse" value={project.metrics.lighthouse} /> : null}
+        {project.metrics?.stars ? <Fact label="Stars" value={project.metrics.stars} /> : null}
+
+        {project.tags.length > 0 ? (
+          <div className="col-span-2 border-t border-[var(--edge-soft)] pt-4">
+            <dt className="text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--text-muted)]">
+              Stack
+            </dt>
+            <dd className="mt-2">
+              {/* Static labels: .chip, matching the project cards and the
+                  About intro. */}
+              <ul className="flex flex-wrap gap-1.5">
+                {project.tags.map((t) => (
+                  <li
+                    key={t}
+                    className="chip px-2 py-0.5 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--text-muted)]"
+                  >
+                    {t}
+                  </li>
+                ))}
+              </ul>
+            </dd>
+          </div>
+        ) : null}
+
+        {/* The withheld note, or the caption that replaces it: the same
+            footnote the card carries, so what the card promised about the
+            screenshots holds on the page that shows them large. */}
+        {project.withheld ? (
+          <div className="col-span-2 border-t border-[var(--edge-soft)] pt-4">
+            <dt className="sr-only">What is shown</dt>
+            <dd>
+              <p className="withheld">
+                <Lock className="size-3.5" aria-hidden />
+                {project.withheld.reason}
+              </p>
+            </dd>
+          </div>
+        ) : project.caption ? (
+          <div className="col-span-2 border-t border-[var(--edge-soft)] pt-4">
+            <dt className="sr-only">What is shown</dt>
+            <dd className="text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--text-muted)]">
+              {project.caption}
+            </dd>
+          </div>
+        ) : null}
+      </dl>
+    </aside>
+  );
+}
+
+function Fact({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt className="text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--text-muted)]">
+        {label}
+      </dt>
+      <dd className="mt-0.5 text-[length:var(--text-body-sm)] font-semibold text-[var(--text)]">
+        {value}
+      </dd>
+    </div>
+  );
+}
 
 /**
  * A raised window sitting in a recessed well: .plate inside .recessed, both
@@ -210,19 +353,26 @@ export default async function ProjectDetailPage({ params }: Props) {
  * shadow token. FinalCTA already records the position this contradicts:
  * a gradient wash is a different aesthetic from the flat one everything
  * else is cut to.
+ *
+ * `compact` narrows the well for frames that share a row; the hero keeps
+ * the full padding.
  */
 function BrowserFrame({
   src,
   alt,
   priority = false,
+  compact = false,
+  sizes = "(min-width: 1024px) 72vw, 92vw",
 }: {
   src: string;
   alt: string;
   priority?: boolean;
+  compact?: boolean;
+  sizes?: string;
 }) {
   const isRemote = src.startsWith("http");
   return (
-    <div className="recessed p-4 sm:p-6 lg:p-8">
+    <div className={cn("recessed", compact ? "p-3 sm:p-4" : "p-4 sm:p-6 lg:p-8")}>
       <div className="plate overflow-hidden">
         {/* Traffic lights stay the literal macOS palette. They are a
             recognisable quotation of that chrome, not themed UI, and the
@@ -244,7 +394,7 @@ function BrowserFrame({
             fill
             draggable={false}
             priority={priority}
-            sizes="(min-width: 1024px) 72vw, 92vw"
+            sizes={sizes}
             className="object-cover"
             unoptimized={isRemote}
           />
@@ -254,25 +404,74 @@ function BrowserFrame({
   );
 }
 
-function StatCard({
-  icon,
-  label,
-  value,
+/**
+ * Previous/next card. The card pattern from the system: .plate.interactive
+ * with a stretched title link, so the whole surface is the target and focus
+ * lands on the heading. `direction="next"` mirrors it: thumbnail on the
+ * right, text ranged right, arrow after the label.
+ */
+function NavCard({
+  direction,
+  project,
+  className,
 }: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
+  direction: "prev" | "next";
+  project: Project;
+  className?: string;
 }) {
+  const isNext = direction === "next";
+  const thumbSrc = (project.image?.src ?? "").trim() || placeholder(640, 360, project.title);
+  const thumbAlt = project.image?.alt ?? `${project.title} screenshot`;
+  const isRemote = thumbSrc.startsWith("http");
+  const provenance =
+    project.sector === "demo" ? "Demo site" : project.sector === "personal" ? null : "Client work";
+
   return (
-    <div className="plate flex flex-col items-center gap-1 px-3 py-4 text-center">
-      <span className="text-[var(--accent)]">{icon}</span>
-      <span className="text-[length:var(--text-body-xs)] text-[var(--text-muted)]">
-        {label}
-      </span>
-      <span className="text-[length:var(--text-body-sm)] font-semibold text-[var(--text)]">
-        {value}
-      </span>
-    </div>
+    <article
+      className={cn(
+        "plate interactive group relative flex items-center gap-4 p-4 sm:p-5",
+        isNext && "flex-row-reverse text-right",
+        className,
+      )}
+    >
+      <div className="relative aspect-video w-28 shrink-0 overflow-hidden rounded-[var(--radius-sm)] border border-[var(--edge-soft)] bg-[var(--ground)] sm:w-32">
+        <Image
+          src={thumbSrc}
+          alt={thumbAlt}
+          fill
+          draggable={false}
+          unoptimized={isRemote}
+          sizes="(min-width: 640px) 128px, 112px"
+          className="object-cover"
+        />
+      </div>
+
+      <div className="min-w-0 flex-1">
+        <p
+          className={cn(
+            "flex items-center gap-1.5 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--text-muted)]",
+            isNext && "justify-end",
+          )}
+        >
+          {isNext ? null : <ArrowLeft className="size-3.5" aria-hidden />}
+          {isNext ? "Next project" : "Previous project"}
+          {isNext ? <ArrowRight className="size-3.5" aria-hidden /> : null}
+        </p>
+        <h3 className="mt-1 text-[length:var(--text-display-2xs)] leading-[1.3] text-[var(--text)]">
+          <Link
+            href={project.slug}
+            draggable={false}
+            className="after:absolute after:inset-0 after:content-[''] group-focus-within:underline group-hover:underline"
+          >
+            {project.title}
+          </Link>
+        </h3>
+        <p className="mt-1 text-[length:var(--text-body-xs)] text-[var(--text-muted)]">
+          {project.sectorLabel}
+          {provenance ? ` · ${provenance}` : ""}
+        </p>
+      </div>
+    </article>
   );
 }
 

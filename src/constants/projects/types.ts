@@ -103,7 +103,13 @@ export type Project = {
   withheld?: ProjectWithheld;
   /** Shown in the slab's slot on projects that have a public artifact instead. */
   caption?: string;
-  /** Badge rendered on the thumbnail — reflects project type, not tech category. */
+  /**
+   * Project type as a display string ("Client work", "Personal project",
+   * "Demo site"). Rendered as the Type row of the detail page's spec sheet.
+   * The card derives the same word from `sector`; keep the two in step.
+   * `variant` is currently unused: the thumbnail badge it was written for
+   * never shipped.
+   */
   badge: ProjectBadge;
   /** Primary/hero image. Used on the card and as the first image on the detail page. */
   image?: ProjectImage;
