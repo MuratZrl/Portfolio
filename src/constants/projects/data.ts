@@ -23,7 +23,7 @@ export const PROJECTS: readonly Project[] = [
     metaDescription:
       "Demo salon site: WhatsApp booking, three colour themes, TR/EN toggle, scroll animations and a sticky mobile booking bar. Vanilla HTML, CSS and JavaScript.",
     tags: ["HTML", "CSS", "JavaScript", "WhatsApp", "i18n"],
-    category: "Website",
+    category: "Business site",
     sector: "demo",
     sectorLabel: "Beauty salon",
     caption: "No client behind this one. It is a demo, and every part of it is live.",
@@ -46,7 +46,7 @@ export const PROJECTS: readonly Project[] = [
     metaDescription:
       "Five-page demo coffee shop site in two design directions on one data layer: menu from one file with schema.org JSON-LD, lightbox gallery, WhatsApp contact form.",
     tags: ["HTML", "CSS", "JavaScript", "JSON-LD", "WhatsApp"],
-    category: "Website",
+    category: "Business site",
     sector: "demo",
     sectorLabel: "Coffee shop",
     caption: "No client behind this one. It is a demo, and all five pages are live.",
@@ -88,7 +88,7 @@ export const PROJECTS: readonly Project[] = [
     cardSummary:
       "Custom admin dashboard for a metal manufacturer: product catalog, client management, RLS roles, and live Realtime updates.",
     tags: ["Next.js 16", "React 19", "TypeScript", "Supabase", "PostgreSQL", "MUI"],
-    category: "Full-Stack",
+    category: "Ops dashboard",
     sector: "metal",
     sectorLabel: "Metal manufacturing",
     withheld: { rows: 3, reason: "Withheld: this is SZMetal's operations data." },
@@ -109,11 +109,11 @@ export const PROJECTS: readonly Project[] = [
     slug: "/projects/yenigunemlak",
     title: "Yenigün Emlak",
     summary:
-      "Real estate platform for a client: map-based property search with Google Maps, a full admin panel (listing CRUD with image/video upload, customer and category management, statistics dashboard), and a Google Search Console integration that pulls and caches six analytics queries via a service-account API route. Built with Next.js App Router, ISR, and per-listing dynamic SEO metadata.",
+      "Next.js frontend for a real estate agency, built against a REST API owned by another developer on the project. This repo holds no database: every call is rewritten to that API and goes out through one axios client. Property search runs on Google Maps, with filters for location and category. Behind a cookie-gated login sit the admin screens for listings, customers, categories and statistics, each of them driving the same external API. The server-side piece that does belong here is a Google Search Console route: it authenticates with a service account, fires six analytics queries in parallel and holds the result in memory for an hour. Listing pages render per request rather than from a cache and generate their own SEO metadata; the home page data is revalidated on a timer instead.",
     cardSummary:
-      "Real estate platform with Google Maps property search, a full admin panel, and a Google Search Console analytics integration.",
-    tags: ["Next.js 16", "TypeScript", "Tailwind CSS", "Google Maps", "Axios", "JWT Auth"],
-    category: "Full-Stack",
+      "Next.js frontend for a real estate agency, built against another developer's REST API. Google Maps search, admin screens for listings and customers, and a cached Search Console route.",
+    tags: ["Next.js 16", "TypeScript", "Tailwind CSS", "Google Maps", "Axios", "Search Console"],
+    category: "Frontend build",
     sector: "property",
     sectorLabel: "Real estate",
     caption: "The public site is live. The admin panel behind it isn't.",
@@ -134,11 +134,11 @@ export const PROJECTS: readonly Project[] = [
     slug: "/projects/ticimax-dashboard",
     title: "Ticimax Dashboard",
     summary:
-      "Ticimax e-commerce sync engine and admin dashboard: realtime supplier scraping with Puppeteer, a Supabase backend, and live sync progress monitoring built on Next.js App Router.",
+      "Sync engine and admin dashboard for a Ticimax storefront. Supplier stock arrives as an XML feed over a plain HTTPS request and is parsed into a flat product list, then written back to Ticimax through hand-rolled SOAP envelopes with a few hundred milliseconds between calls. The engine is CommonJS under lib/sync and the dashboard spawns it as a detached child process, which keeps it out of the Next.js bundle and its dependencies out of the build. Each run writes its progress to Supabase and the dashboard subscribes to postgres_changes, so a sync in flight is visible while it happens rather than after it finishes. Scheduling comes from Railway's scheduled jobs.",
     cardSummary:
-      "Ticimax e-commerce sync engine + admin dashboard: realtime supplier scraping and live sync progress monitoring.",
-    tags: ["Next.js 16", "TypeScript", "Supabase", "Puppeteer", "Tailwind CSS"],
-    category: "Full-Stack",
+      "Sync engine and admin dashboard for a Ticimax store. Supplier stock comes in as an XML feed and goes back out over SOAP, with run progress streaming into the dashboard over Supabase Realtime.",
+    tags: ["Next.js 16", "TypeScript", "Supabase", "SOAP", "Tailwind CSS"],
+    category: "Ops dashboard",
     sector: "commerce",
     sectorLabel: "E-commerce",
     withheld: { rows: 3, reason: "Withheld: supplier data for an e-commerce client." },
@@ -157,7 +157,7 @@ export const PROJECTS: readonly Project[] = [
     summary:
       "Multi-tenant project management SaaS with kanban boards, team workspaces, and Stripe subscription billing.",
     tags: ["Next.js 16", "NestJS 11", "TypeScript", "PostgreSQL", "Prisma", "Stripe"],
-    category: "Full-Stack",
+    category: "Product app",
     sector: "personal",
     sectorLabel: "Personal project",
     badge: { label: "Personal project", variant: "muted" },
@@ -176,7 +176,7 @@ export const PROJECTS: readonly Project[] = [
     summary:
       "Real-time chat platform with WebSocket messaging, multi-room channels, and 10+ live features powered by Redis pub/sub.",
     tags: ["Next.js 16", "NestJS 11", "TypeScript", "PostgreSQL", "Prisma", "Redis", "Socket.io"],
-    category: "Full-Stack",
+    category: "Product app",
     sector: "personal",
     sectorLabel: "Personal project",
     badge: { label: "Personal project", variant: "muted" },
@@ -193,13 +193,13 @@ export const PROJECTS: readonly Project[] = [
     slug: "/projects/api-gateway",
     title: "API Gateway",
     summary:
-      "An API Gateway written in Go, built as a chain of middleware rather than one request handler. It reverse-proxies to upstream services and spreads traffic across their replicas round-robin. Redis holds the rate limit counters and the response cache. Authentication takes a JWT or an API key. A circuit breaker isolates failing upstreams, failed requests are retried automatically, and the rest of the chain covers request and response transforms, IP filtering and body validation. The stack runs under Docker Compose, with Prometheus scraping metrics into Grafana dashboards. Integration tests cover the gateway, including one that runs two replicas of the same service and fails unless both serve an even share of the requests.",
+      "An API Gateway written in Go, built as a chain of middleware rather than one request handler. It reverse-proxies to upstream services and spreads traffic across their replicas round-robin. Redis holds the rate limit counters and the response cache. Authentication takes a JWT or an API key. A circuit breaker isolates failing upstreams, failed requests are retried automatically, and the rest of the chain covers request and response transforms, IP filtering and body validation. The stack runs under Docker Compose, with Prometheus scraping metrics into Grafana dashboards and traces leaving over OTLP through OpenTelemetry. Request logs land in MongoDB, which also holds the route table that an admin API lists, adds to and deletes from while the gateway is running, so an upstream can be repointed without a redeploy. Nine of the twelve middleware carry their own test file and fourteen test files cover the gateway in total, including one that runs two replicas of the same service and fails unless both serve an even share of the requests.",
     cardSummary:
       "API Gateway in Go. Auth, rate limiting, caching, retries and circuit breaking each sit in the middleware chain; what survives is round-robined to an upstream replica.",
     metaDescription:
       "API Gateway in Go. A middleware chain handles reverse proxying, Redis-backed rate limiting and caching, JWT auth, circuit breaking and round-robin balancing.",
     tags: ["Go", "Redis", "Docker", "Docker Compose", "Prometheus", "Grafana", "JWT"],
-    category: "Backend",
+    category: "Infrastructure",
     sector: "personal",
     sectorLabel: "Personal project",
     badge: { label: "Personal project", variant: "muted" },

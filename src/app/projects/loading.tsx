@@ -18,7 +18,11 @@ export default function ProjectsLoading() {
       <div
         className="flex flex-wrap gap-2 mb-6"
       >
-        {["w-14", "w-20", "w-16", "w-18", "w-16"].map((w, i) => (
+        {/* Six pills: All plus the five categories, sized to the labels they
+            stand in for (All, Business site, Ops dashboard, Frontend build,
+            Product app, Infrastructure). The old widths were cut for the
+            four-pill set and left the row visibly short of what loaded. */}
+        {["w-16", "w-32", "w-36", "w-36", "w-32", "w-32"].map((w, i) => (
           <PillSkeleton key={i} width={w} />
         ))}
       </div>

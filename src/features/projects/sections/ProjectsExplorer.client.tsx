@@ -37,6 +37,16 @@ export type ProjectListItem = {
 
 type ProjectsExplorerProps = {
   items: readonly ProjectListItem[];
+  /**
+   * Pill order, decided on the server. Derived here once, alphabetically,
+   * which put the technical labels ahead of the small business entry point
+   * the page is ordered around. The canonical order lives beside the
+   * category union in constants/projects/types.ts, and the server passes the
+   * result down rather than this file importing it: the barrel it comes from
+   * re-exports PROJECTS, and importing it here would pull every summary and
+   * gallery entry into the browser bundle.
+   */
+  categories: readonly string[];
   className?: string;
 };
 
@@ -44,13 +54,9 @@ const ALL = "All" as const;
 
 export default function ProjectsExplorer({
   items,
+  categories,
   className,
 }: ProjectsExplorerProps): React.JSX.Element {
-  const categories = React.useMemo(() => {
-    const set = new Set<string>();
-    items.forEach((i) => set.add(i.category));
-    return [...set].sort();
-  }, [items]);
 
   const [activeFilter, setActiveFilter] = React.useState<string>(ALL);
   const [currentPage, setCurrentPage] = React.useState(1);

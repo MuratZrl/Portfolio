@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 
 import { Page } from "@/components/layout/Page";
 import { ProjectCard } from "@/components/ProjectCard";
-import { getAllProjects } from "@/constants/projects";
+import { getAllCategories, getAllProjects } from "@/constants/projects";
 import ProjectsExplorer from "@/features/projects/sections/ProjectsExplorer.client";
 
 export const metadata: Metadata = {
@@ -35,12 +35,17 @@ export default function ProjectsPage(): React.JSX.Element {
     card: <ProjectCard project={project} headingLevel={2} />,
   }));
 
+  // Pill order, resolved here so the client half never imports the projects
+  // barrel. getAllCategories() returns the categories in use, in the order
+  // declared beside the union, not alphabetically.
+  const categories = getAllCategories();
+
   return (
     <Page
       title="Projects"
       description="Small business websites first, then client work and personal projects. The two demo sites are live: click through them. The client builds are private; each card says why."
     >
-      <ProjectsExplorer items={items} />
+      <ProjectsExplorer items={items} categories={categories} />
     </Page>
   );
 }

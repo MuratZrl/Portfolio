@@ -25,15 +25,50 @@ export type ProjectLink = {
   isPrivate?: boolean;
 };
 
+/**
+ * What kind of system the project is, on one axis: where the work actually
+ * sits. Not who paid for it (that is `sector` and `badge`), and not the
+ * stack (the cards already carry `tags`).
+ *
+ * The union holds exactly the members in use. A category nobody is assigned
+ * to renders no pill and describes nothing, so it does not belong here; the
+ * previous version carried four such members and one label ("Full-Stack")
+ * that held five of eight projects and therefore filtered nothing.
+ *
+ * - "Business site": static marketing site, no server and no database.
+ * - "Ops dashboard": internal tool over a database this repo owns, used by
+ *   staff rather than by the public.
+ * - "Frontend build": the interface and its client-side logic, against an
+ *   API owned by someone else.
+ * - "Product app": multi-user product where the schema, the API and the
+ *   client are all in-house.
+ * - "Infrastructure": a service with no product surface at all.
+ */
 export type ProjectCategory =
-  | "Full-Stack"
-  | "Frontend"
-  | "Backend"
-  | "Tooling"
-  | "Auth"
-  | "E-Commerce"
-  /** Small business sites: single-page and few-page marketing sites, no app behind them. */
-  | "Website";
+  | "Business site"
+  | "Ops dashboard"
+  | "Frontend build"
+  | "Product app"
+  | "Infrastructure";
+
+/**
+ * Display order for the filter pills, and the reason getAllCategories() does
+ * not sort alphabetically: that would open the row with "Frontend build" and
+ * push the small business entry point to third. This order follows the
+ * listing order in data.ts, which is client-acquisition order.
+ *
+ * Every member of ProjectCategory must appear exactly once. The satisfies
+ * clause rejects a label that is not a category, so a renamed or stale
+ * member fails the build; a member left out entirely does not, and shows up
+ * instead as a pill that never renders.
+ */
+export const CATEGORY_ORDER = [
+  "Business site",
+  "Ops dashboard",
+  "Frontend build",
+  "Product app",
+  "Infrastructure",
+] as const satisfies readonly ProjectCategory[];
 
 /** "accent" = highlighted (client / commercial work). "muted" = subtle (personal / demo). */
 export type ProjectBadgeVariant = "accent" | "muted";
