@@ -9,6 +9,8 @@ export type {
   Project,
   ProjectCategory,
   TechnicalDecision,
+  ProjectVariant,
+  ProjectVariants,
 } from "./types";
 
 export { PROJECTS } from "./data";

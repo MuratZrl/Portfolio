@@ -59,6 +59,32 @@ export type TechnicalDecision = {
 };
 
 /**
+ * One presentation of a project that ships several: a design direction, an
+ * A/B variant, a theme. Each has its own screenshot and its own live URL.
+ * `tag` is the short marker rendered as a chip before the name ("v2");
+ * `summary` is one line on what this presentation changes.
+ */
+export type ProjectVariant = {
+  tag?: string;
+  name: string;
+  summary?: string;
+  image: ProjectImage;
+  link: ProjectLink;
+};
+
+/**
+ * A set of presentations built on one data layer. `title` and `body` frame
+ * the section on the detail page and belong to the project, not the
+ * template: what the variants share, what differs, and why that split is
+ * the point. The section is hidden entirely when the field is missing.
+ */
+export type ProjectVariants = {
+  title: string;
+  body: string;
+  items: readonly ProjectVariant[];
+};
+
+/**
  * Which client sector a project belongs to. The colour it once drove is gone
  * (see ProjectCard); what remains is the paid/unpaid split the card reads.
  * `personal` and `demo` are the two unpaid values. `demo` is a site built to
@@ -122,6 +148,12 @@ export type Project = {
    * Section is hidden entirely when this field is missing or empty.
    */
   technicalDecisions?: readonly TechnicalDecision[];
+  /**
+   * Optional set of presentations (design directions, variants) built on the
+   * same content and data. Rendered as its own section on the detail page,
+   * side by side with a screenshot and live link each. See ProjectVariants.
+   */
+  variants?: ProjectVariants;
   /** If omitted, treated as featured=true by consumers. */
   featured?: boolean;
   createdAt?: DateStr;

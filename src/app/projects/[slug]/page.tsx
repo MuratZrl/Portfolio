@@ -11,7 +11,7 @@ import {
   ExternalLink, Github, ArrowLeft, ArrowRight, Lock,
 } from "lucide-react";
 
-import { getAllProjects, type Project } from "@/constants/projects";
+import { getAllProjects, type Project, type ProjectVariant } from "@/constants/projects";
 import { placeholder } from "@/lib/media";
 
 type Props = {
@@ -57,8 +57,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  * Layout: a two-column header (title, lead and the Live/Repo actions on the
  * left, the spec sheet on the right at lg), the hero at full container width
  * beneath both, then the
- * sections that only exist when their data does (technical decisions, more
- * screens), and previous/next at the foot. Every block below the hero is
+ * sections that only exist when their data does (variants, technical
+ * decisions, more screens), and previous/next at the foot. Every block below the hero is
  * conditional on the data behind it, so a sparse project ends at the spec
  * sheet and the exit, and never at an empty heading.
  */
@@ -72,6 +72,7 @@ export default async function ProjectDetailPage({ params }: Props) {
   const heroAlt = project.image?.alt ?? project.title;
   const gallery = project.gallery ?? [];
   const decisions = project.technicalDecisions ?? [];
+  const variants = project.variants && project.variants.items.length > 0 ? project.variants : null;
 
   const demo = project.links?.demo;
   const repo = project.links?.repo;
@@ -162,6 +163,30 @@ export default async function ProjectDetailPage({ params }: Props) {
           <SpecSheet project={project} className="lg:col-start-2 lg:row-start-1 lg:self-start" />
         </div>
       </section>
+
+      {/* Variants: the same project in more than one presentation. Sits
+          directly under the hero because it is more screens of the same
+          build, framed. Heading and body come from the data; the template
+          only lays them out, so another project can carry its own set. */}
+      {variants ? (
+        <section aria-labelledby="variants-heading">
+          <h2
+            id="variants-heading"
+            className="text-[length:var(--text-display-sm)] leading-[1.2] text-[var(--text)]"
+          >
+            {variants.title}
+          </h2>
+          <p className="mt-2 max-w-3xl text-[length:var(--text-body-base)] leading-[1.6] text-[var(--text-muted)]">
+            {variants.body}
+          </p>
+
+          <div className={cn("mt-6 grid gap-6", variants.items.length > 1 && "md:grid-cols-2")}>
+            {variants.items.map((v, i) => (
+              <VariantFigure key={`${v.name}-${i}`} variant={v} twoUp={variants.items.length > 1} />
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       {/* Key technical decisions: only rendered when project data provides them */}
       {decisions.length > 0 ? (
@@ -401,6 +426,58 @@ function BrowserFrame({
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * One presentation in the variants grid: the same browser frame the gallery
+ * uses, with a caption underneath instead of a bare image. The caption is a
+ * chip for the tag, the name as an h3, one line on what changes, and the
+ * variant's own Live link in the card's inline-link recipe. The link's
+ * accessible name carries the variant, since two "Live" links in one section
+ * would otherwise be indistinguishable to a screen reader.
+ */
+function VariantFigure({ variant, twoUp }: { variant: ProjectVariant; twoUp: boolean }) {
+  const { tag, name, summary, image, link } = variant;
+  return (
+    <figure>
+      <BrowserFrame
+        src={image.src}
+        alt={image.alt}
+        compact={twoUp}
+        sizes={twoUp ? "(min-width: 1024px) 36vw, 92vw" : undefined}
+      />
+      <figcaption className="mt-4 flex flex-wrap items-start justify-between gap-x-6 gap-y-2">
+        <div className="min-w-0 flex-1">
+          <h3 className="flex flex-wrap items-center gap-2 text-[length:var(--text-display-2xs)] leading-[1.3] text-[var(--text)]">
+            {tag ? (
+              <span className="chip px-2 py-0.5 font-sans text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--text-muted)]">
+                {tag}
+              </span>
+            ) : null}
+            {name}
+          </h3>
+          {summary ? (
+            <p className="mt-1 text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--text-muted)]">
+              {summary}
+            </p>
+          ) : null}
+        </div>
+        <a
+          href={link.href}
+          target="_blank"
+          rel="noreferrer noopener"
+          draggable={false}
+          className="link-soft inline-flex shrink-0 items-center gap-1.5 text-[length:var(--text-body-sm)] font-medium text-[var(--accent)]"
+        >
+          <ExternalLink className="size-4" aria-hidden />
+          {link.label}
+          <span className="sr-only">
+            : {tag ? `${tag} ` : ""}{name} (opens in a new tab)
+          </span>
+        </a>
+      </figcaption>
+    </figure>
   );
 }
 

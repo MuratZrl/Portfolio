@@ -40,11 +40,11 @@ export const PROJECTS: readonly Project[] = [
     slug: "/projects/cafe-kavella",
     title: "Kavella",
     summary:
-      "Demo site for a coffee shop, five pages: home, menu, about, gallery and contact. The menu is real HTML rendered from a single data file, and the same data feeds a schema.org Menu block (JSON-LD) so search engines can read the sections, items and prices; swapping that file for an API response would leave the render code untouched. The gallery opens in a custom lightbox with keyboard and swipe navigation. The contact form validates in the browser and then hands the message to WhatsApp as a deep link, so there is no backend to run. Page changes go behind a curtain transition, and sections reveal on scroll at an editorial pace, both switched off under reduced motion. Vanilla HTML, CSS and JavaScript, zero dependencies.",
+      "Demo site for a coffee shop, five pages: home, menu, about, gallery and contact. The menu is real HTML rendered from a single data file, and the same data feeds a schema.org Menu block (JSON-LD) so search engines can read the sections, items and prices; swapping that file for an API response would leave the render code untouched. The gallery opens in a custom lightbox with keyboard and swipe navigation. The contact form validates in the browser and then hands the message to WhatsApp as a deep link, so there is no backend to run. Page changes go behind a curtain transition, and sections reveal on scroll at an editorial pace, both switched off under reduced motion. The site exists in two design directions, an editorial v2 and an experimental v3, built on the same content, menu data and WhatsApp integration: only the presentation layer differs between them. Vanilla HTML, CSS and JavaScript, zero dependencies.",
     cardSummary:
-      "Five-page coffee shop site. The menu is real HTML rendered from one data file with schema.org markup, plus a lightbox gallery and a contact form that opens WhatsApp.",
+      "Five-page coffee shop site in two design directions on one data layer. The menu is real HTML rendered from one data file with schema.org markup, plus a lightbox gallery and a contact form that opens WhatsApp.",
     metaDescription:
-      "Five-page demo site for a coffee shop: menu rendered from one data file with schema.org JSON-LD, lightbox gallery, WhatsApp contact form, curtain transitions.",
+      "Five-page demo coffee shop site in two design directions on one data layer: menu from one file with schema.org JSON-LD, lightbox gallery, WhatsApp contact form.",
     tags: ["HTML", "CSS", "JavaScript", "JSON-LD", "WhatsApp"],
     category: "Website",
     sector: "demo",
@@ -54,6 +54,27 @@ export const PROJECTS: readonly Project[] = [
     image: { src: "/images/projects/cafe-kavella.png", alt: "Kavella home page hero with the five-page navigation and editorial headline" },
     links: {
       demo: { href: "https://cafe-kavella-demo.vercel.app", label: "Live" },
+    },
+    variants: {
+      title: "One data layer, two directions",
+      body:
+        "Both directions are live, each with all five pages. They share the content, the menu data file, the schema.org menu markup that menu.js writes from it, and the WhatsApp routing in the contact form. Same scripts and the same phone number. Each direction owns only its own markup, stylesheet and motion script, so choosing between them moves nothing in the data, and a redesign later is a stylesheet swap rather than a rebuild.",
+      items: [
+        {
+          tag: "v2",
+          name: "Editorial",
+          summary: "Cream ground, serif display type, paired photography and scroll-timed reveals at a magazine pace.",
+          image: { src: "/images/projects/cafe-kavella.png", alt: "Kavella v2 home page: cream ground, serif headline, photo pair and the WhatsApp button" },
+          link: { href: "https://cafe-kavella-demo.vercel.app", label: "Live" },
+        },
+        {
+          tag: "v3",
+          name: "Experimental",
+          summary: "Dark ground with a particle canvas, a skippable counter loader, kinetic wordmark, magnetic buttons under a custom cursor, and a horizontally pinned menu section.",
+          image: { src: "/images/projects/cafe-kavella-v3.png", alt: "Kavella v3 home page: dark ground, particle field and the KAVELLA wordmark across the full width" },
+          link: { href: "https://cafe-kavella-demo.vercel.app/index-v3.html", label: "Live" },
+        },
+      ],
     },
     featured: false,
     order: 2,
