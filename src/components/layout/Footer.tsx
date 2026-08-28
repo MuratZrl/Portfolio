@@ -11,6 +11,7 @@ import { Github, Linkedin, Briefcase, Mail, Heart } from "lucide-react";
 const NAV_LINKS = [
   { label: "About", href: "/about" },
   { label: "Projects", href: "/projects" },
+  { label: "Paketler", href: "/paketler" },
   { label: "Contact", href: "/contact" },
 ] as const;
 

@@ -16,6 +16,9 @@ type NavItem = {
 const NAV_ITEMS: NavItem[] = [
   { href: "/about", label: "About" },
   { href: "/projects", label: "Projects" },
+  // Labelled in Turkish because the page it opens is in Turkish, and a nav
+  // item that does not match the heading it lands on is a broken promise.
+  { href: "/paketler", label: "Paketler" },
   { href: "/contact", label: "Contact" },
 ];
 

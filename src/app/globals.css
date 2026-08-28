@@ -322,14 +322,26 @@
      living there would be forced to share one property and therefore one
      duration with the 200ms hover lift. outline-color is a free lane, so
      focus keeps its own 140ms regardless of what hover is doing. */
-  a[href],
-  button,
-  [role="button"],
-  input,
-  textarea,
-  select,
-  summary,
-  [tabindex]:not([tabindex="-1"]) {
+  /* :where() is load-bearing, not tidiness. Both rules live in this layer, so
+     specificity decides, and the bare list outranked the :focus-visible rule
+     below on exactly the selectors that matter: `a[href]` is (0,1,1) and
+     `[tabindex]:not([tabindex="-1"])` is (0,2,0) against (0,1,0). The
+     transparent resting outline therefore WON on every link and every
+     tabindex element and the accent ring never painted on them. Buttons and
+     form controls are bare type selectors at (0,0,1), so they lost to the
+     ring and looked correct, which is what hid this.
+
+     :where() zeroes the whole list, so the ring wins everywhere. */
+  :where(
+    a[href],
+    button,
+    [role="button"],
+    input,
+    textarea,
+    select,
+    summary,
+    [tabindex]:not([tabindex="-1"])
+  ) {
     outline: 2px solid transparent;
     outline-offset: 2px;
     transition: outline-color var(--dur-focus) var(--ease-out);
