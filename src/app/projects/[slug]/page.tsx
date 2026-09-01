@@ -36,6 +36,21 @@ function resolveProject(slug: string) {
   };
 }
 
+/**
+ * Prerender every project page at build. Without this the route is rendered on
+ * demand for each visit, which bought nothing: the data is a static array in
+ * src/constants/projects/data.ts, fully known at build time.
+ *
+ * `Project.slug` is authored as the whole internal href ("/projects/teamboard")
+ * rather than the bare segment, so it is trimmed back to what the [slug]
+ * placeholder actually matches. resolveProject re-adds the prefix on the way in.
+ */
+export function generateStaticParams(): Array<{ slug: string }> {
+  return getAllProjects().map((project) => ({
+    slug: project.slug.replace(/^\/projects\//, ""),
+  }));
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const hit = resolveProject(slug);

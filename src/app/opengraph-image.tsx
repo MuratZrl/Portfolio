@@ -8,6 +8,9 @@
 // mostly render in feeds where the dark card reads as the site's identity,
 // and the dark accent #3B82F6 carries both the tile and the glow.
 
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+
 import { ImageResponse } from "next/og";
 
 import {
@@ -19,8 +22,6 @@ import {
   OG_ACCENT_RGB,
 } from "@/lib/og-tokens";
 
-export const runtime = "edge";
-
 export const alt = "Murat Zorlu: I build the internal tools companies run on";
 
 export const size = {
@@ -30,35 +31,33 @@ export const size = {
 
 export const contentType = "image/png";
 
-// Satori does not support WOFF2 — it only parses TTF / OTF. Google Fonts
-// serves WOFF2 to modern UAs, so these are the static-TTF URLs css2 returns
-// to a legacy UA (curl -A "Mozilla/5.0 (Linux; U; Android 4.0)"). gstatic
-// asset URLs are immutable, so they are safe to pin.
+// Satori does not support WOFF2 — it only parses TTF / OTF, which is why these
+// are TTFs rather than the WOFF2 that next/font serves the browser.
+//
+// The files are vendored in src/app/_fonts/ and read off disk, NOT fetched.
+// They were previously pulled from fonts.gstatic.com on every request, which
+// forced this route (and twitter-image, which re-exports it) out of static
+// generation: a route that awaits a network call cannot be prerendered. That
+// put three third-party round trips on the critical path of every link-preview
+// scrape, so a Google Fonts outage or latency spike broke social cards
+// site-wide. Reading locally means the whole image is built once, at build.
+//
+// `_fonts` has a leading underscore, so the App Router treats it as a private
+// folder and never routes it; the files are build-time inputs and are not
+// served. process.cwd() is the project root during the build, which is the
+// only time this runs.
 //
 // Same faces the site loads in layout.tsx: Darker Grotesque 800 is the
 // display face (headings), Instrument Sans is the body face and the face
 // the header's MZ tile and wordmark render in.
-const DARKER_GROTESQUE_800_TTF_URL =
-  "https://fonts.gstatic.com/s/darkergrotesque/v10/U9MK6cuh-mLQlC4BKCtayOfARkSVgb381b-W8-QDqXy3rX7y.ttf";
-const INSTRUMENT_SANS_400_TTF_URL =
-  "https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSTF-Qf1.ttf";
-const INSTRUMENT_SANS_700_TTF_URL =
-  "https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSQi_gf1.ttf";
-
-async function loadFont(url: string): Promise<ArrayBuffer> {
-  const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error(`Failed to download font from ${url}: ${res.status}`);
-  }
-  return await res.arrayBuffer();
-}
+const FONT_DIR = join(process.cwd(), "src", "app", "_fonts");
 
 export default async function OpengraphImage(): Promise<ImageResponse> {
   const [darkerGrotesque, instrumentSans, instrumentSansBold] =
     await Promise.all([
-      loadFont(DARKER_GROTESQUE_800_TTF_URL),
-      loadFont(INSTRUMENT_SANS_400_TTF_URL),
-      loadFont(INSTRUMENT_SANS_700_TTF_URL),
+      readFile(join(FONT_DIR, "DarkerGrotesque-ExtraBold.ttf")),
+      readFile(join(FONT_DIR, "InstrumentSans-Regular.ttf")),
+      readFile(join(FONT_DIR, "InstrumentSans-Bold.ttf")),
     ]);
 
   return new ImageResponse(
