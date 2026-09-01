@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils";
 import { ExternalLink, Github, Lock } from "lucide-react";
 
 import type { Project } from "@/constants/projects";
-import { placeholder } from "@/lib/media";
 
 const MAX_VISIBLE_TAGS = 4;
 
@@ -37,10 +36,11 @@ type ProjectCardProps = {
 export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.JSX.Element {
   const Heading = (headingLevel === 2 ? "h2" : "h3") as "h2" | "h3";
 
-  const desired = (project.image?.src ?? "").trim() || null;
-  const imgSrc = desired ?? placeholder(1280, 720, project.title);
+  // Every project ships a local screenshot. `image` is optional on the type, so
+  // an absent one leaves the framed well empty rather than reaching for a
+  // remote placeholder service.
+  const imgSrc = (project.image?.src ?? "").trim() || null;
   const imgAlt = project.image?.alt ?? `${project.title} screenshot`;
-  const isRemote = imgSrc.startsWith("http");
 
   const demo = project.links?.demo;
   const repo = project.links?.repo;
@@ -71,15 +71,16 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
       )}
     >
       <div className="relative aspect-[16/9] overflow-hidden border-b border-[var(--edge-soft)] bg-[var(--muted)]">
-        <Image
-          src={imgSrc}
-          alt={imgAlt}
-          fill
-          draggable={false}
-          unoptimized={isRemote}
-          sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw"
-          className="object-cover"
-        />
+        {imgSrc ? (
+          <Image
+            src={imgSrc}
+            alt={imgAlt}
+            fill
+            draggable={false}
+            sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw"
+            className="object-cover"
+          />
+        ) : null}
       </div>
 
       <div className="flex flex-1 flex-col gap-4 p-5">

@@ -7,6 +7,9 @@ export const runtime = "nodejs";
 
 /* ------------------------------ Rate limiting ----------------------------- */
 
+// Best-effort only: this map is per-instance and dies with a cold start, so it
+// throttles a single hot instance rather than enforcing a global limit. The
+// honeypot below is the real spam control.
 type Bucket = { count: number; resetAt: number };
 const RATE = { windowMs: 60_000, max: 5 };
 
@@ -135,32 +138,61 @@ type ErrorPayload =
   | { message: "Invalid JSON" | "Too many requests" | "Spam detected" | "Failed to send message" }
   | { message: "Invalid payload"; issues: unknown };
 
+/**
+ * Short codes for the no-JS redirect. The browser lands back on /contact with
+ * ?error=<code>, and src/app/contact/page.tsx maps the code to visible copy —
+ * the wording lives there rather than in the URL.
+ */
+type ErrorCode = "rate" | "badrequest" | "invalid" | "spam" | "send";
+
+type Outcome =
+  | { ok: true }
+  | { ok: false; status: number; code: ErrorCode; payload: ErrorPayload };
+
 /* --------------------------------- Route --------------------------------- */
 
-export async function POST(req: NextRequest): Promise<NextResponse<OkPayload | ErrorPayload>> {
-  if (!rateLimitOk(req)) {
-    return NextResponse.json({ message: "Too many requests" }, { status: 429 });
-  }
+function isFormEncoded(req: NextRequest): boolean {
+  const contentType = req.headers.get("content-type") ?? "";
+  return (
+    contentType.includes("application/x-www-form-urlencoded") ||
+    contentType.includes("multipart/form-data")
+  );
+}
 
-  let json: unknown;
+/** urlencoded from a native submit, JSON from the fetch path. */
+async function readBody(req: NextRequest, formEncoded: boolean): Promise<unknown | null> {
   try {
-    json = await req.json();
+    if (formEncoded) return Object.fromEntries(await req.formData());
+    return await req.json();
   } catch {
-    return NextResponse.json({ message: "Invalid JSON" }, { status: 400 });
+    return null;
+  }
+}
+
+async function handle(req: NextRequest, formEncoded: boolean): Promise<Outcome> {
+  if (!rateLimitOk(req)) {
+    return { ok: false, status: 429, code: "rate", payload: { message: "Too many requests" } };
   }
 
-  const parsed = ContactSchema.safeParse(json);
+  const body = await readBody(req, formEncoded);
+  if (body === null) {
+    return { ok: false, status: 400, code: "badrequest", payload: { message: "Invalid JSON" } };
+  }
+
+  const parsed = ContactSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json(
-      { message: "Invalid payload", issues: parsed.error.flatten() },
-      { status: 400 }
-    );
+    return {
+      ok: false,
+      status: 400,
+      code: "invalid",
+      payload: { message: "Invalid payload", issues: parsed.error.flatten() },
+    };
   }
 
   const { company, name, email, subject, message } = parsed.data;
 
   if (company && company.trim().length > 0) {
-    return NextResponse.json({ message: "Spam detected" }, { status: 400 });
+    return { ok: false, status: 400, code: "spam", payload: { message: "Spam detected" } };
   }
 
   const cleanName = name.trim();
@@ -171,7 +203,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<OkPayload | E
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     console.error("[contact] RESEND_API_KEY is not set; cannot send email");
-    return NextResponse.json({ message: "Failed to send message" }, { status: 500 });
+    return { ok: false, status: 500, code: "send", payload: { message: "Failed to send message" } };
   }
 
   const { html, text } = buildEmail({
@@ -194,12 +226,46 @@ export async function POST(req: NextRequest): Promise<NextResponse<OkPayload | E
 
     if (error) {
       console.error("[contact] resend send error:", error);
-      return NextResponse.json({ message: "Failed to send message" }, { status: 500 });
+      return {
+        ok: false,
+        status: 500,
+        code: "send",
+        payload: { message: "Failed to send message" },
+      };
     }
   } catch (err) {
     console.error("[contact] resend exception:", err);
-    return NextResponse.json({ message: "Failed to send message" }, { status: 500 });
+    return { ok: false, status: 500, code: "send", payload: { message: "Failed to send message" } };
   }
 
-  return NextResponse.json({ ok: true }, { status: 200 });
+  return { ok: true };
+}
+
+/**
+ * Two submit paths reach this handler, and each is answered in the shape it
+ * can actually use:
+ *
+ *   fetch (JS)          -> JSON in, JSON out. Unchanged.
+ *   native form (no JS) -> urlencoded in, 303 redirect out.
+ *
+ * A browser doing a native POST cannot read a JSON body, it just renders it as
+ * text on a blank page. So a form-encoded request gets See Other back to
+ * /contact, which re-issues as GET: the visitor sees the page again with a
+ * result banner, and a reload does not resubmit the message.
+ */
+export async function POST(req: NextRequest): Promise<NextResponse> {
+  const formEncoded = isFormEncoded(req);
+  const outcome = await handle(req, formEncoded);
+
+  if (formEncoded) {
+    const target = new URL("/contact", req.url);
+    if (outcome.ok) target.searchParams.set("sent", "1");
+    else target.searchParams.set("error", outcome.code);
+    return NextResponse.redirect(target, 303);
+  }
+
+  if (!outcome.ok) {
+    return NextResponse.json(outcome.payload, { status: outcome.status });
+  }
+  return NextResponse.json({ ok: true } satisfies OkPayload, { status: 200 });
 }

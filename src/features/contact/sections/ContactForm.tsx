@@ -178,13 +178,16 @@ export default function ContactForm(): React.JSX.Element {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit, onInvalid)}
-          /* No-JS / pre-hydration fallback. Without an onSubmit handler the
-             browser performs a native submission, which defaults to GET and
-             serialises every field into the URL: the visitor's message ends
-             up in browser history and server logs. POST keeps it in the
-             request body. Nothing server-side handles that POST (the JS path
-             posts JSON to /api/contact), so the fallback is still a dead
-             end, but a private one. */
+          /* No-JS / pre-hydration fallback, and a real one now. The native
+             submission POSTs urlencoded to the same route the fetch path uses;
+             it answers a form-encoded request with a 303 back to
+             /contact?sent=1 (or ?error=<code>) instead of JSON. POST rather
+             than the default GET keeps the visitor's message out of the URL,
+             browser history and server logs.
+
+             With JS, handleSubmit calls preventDefault, so action/method are
+             never exercised and the fetch path is unchanged. */
+          action="/api/contact"
           method="post"
           className="flex flex-1 flex-col gap-5"
           noValidate
@@ -296,6 +299,14 @@ export default function ContactForm(): React.JSX.Element {
                         </button>
                       );
                     })}
+                    {/* The options above are <button type="button">, which a
+                        native submit does not serialise — without this the
+                        no-JS POST would arrive with no `subject` at all and
+                        fail schema validation. RHF drives the value through
+                        `control`, so this input is inert on the JS path. With
+                        no JS the buttons cannot change it either, so it
+                        submits the default. */}
+                    <input type="hidden" name="subject" value={field.value} />
                   </div>
                 </FormControl>
                 {showError("subject") && <FormMessage />}

@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 
 import { getAllProjects, type Project, type ProjectVariant } from "@/constants/projects";
-import { placeholder } from "@/lib/media";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -83,7 +82,10 @@ export default async function ProjectDetailPage({ params }: Props) {
   if (!hit) notFound();
   const { project, prev, next } = hit;
 
-  const heroSrc = project.image?.src || placeholder(1280, 720, project.title);
+  // Every project ships a local screenshot, but `image` is optional on the
+  // type: without one the hero frame is dropped rather than filled from a
+  // remote placeholder service.
+  const heroSrc = (project.image?.src ?? "").trim() || null;
   const heroAlt = project.image?.alt ?? project.title;
   const gallery = project.gallery ?? [];
   const decisions = project.technicalDecisions ?? [];
@@ -168,9 +170,11 @@ export default async function ProjectDetailPage({ params }: Props) {
             ) : null}
           </div>
 
-          <div className="lg:col-span-2 lg:row-start-2">
-            <BrowserFrame src={heroSrc} alt={heroAlt} priority />
-          </div>
+          {heroSrc ? (
+            <div className="lg:col-span-2 lg:row-start-2">
+              <BrowserFrame src={heroSrc} alt={heroAlt} priority />
+            </div>
+          ) : null}
 
           {/* self-start: a grid item stretches to its row by default, and a
               long lead beside a short sheet would leave the plate with an
@@ -410,7 +414,6 @@ function BrowserFrame({
   compact?: boolean;
   sizes?: string;
 }) {
-  const isRemote = src.startsWith("http");
   return (
     <div className={cn("recessed", compact ? "p-3 sm:p-4" : "p-4 sm:p-6 lg:p-8")}>
       <div className="plate overflow-hidden">
@@ -436,7 +439,6 @@ function BrowserFrame({
             priority={priority}
             sizes={sizes}
             className="object-cover"
-            unoptimized={isRemote}
           />
         </div>
       </div>
@@ -512,9 +514,8 @@ function NavCard({
   className?: string;
 }) {
   const isNext = direction === "next";
-  const thumbSrc = (project.image?.src ?? "").trim() || placeholder(640, 360, project.title);
+  const thumbSrc = (project.image?.src ?? "").trim() || null;
   const thumbAlt = project.image?.alt ?? `${project.title} screenshot`;
-  const isRemote = thumbSrc.startsWith("http");
   const provenance =
     project.sector === "demo" ? "Demo site" : project.sector === "personal" ? null : "Client work";
 
@@ -527,15 +528,16 @@ function NavCard({
       )}
     >
       <div className="relative aspect-video w-28 shrink-0 overflow-hidden rounded-[var(--radius-sm)] border border-[var(--edge-soft)] bg-[var(--ground)] sm:w-32">
-        <Image
-          src={thumbSrc}
-          alt={thumbAlt}
-          fill
-          draggable={false}
-          unoptimized={isRemote}
-          sizes="(min-width: 640px) 128px, 112px"
-          className="object-cover"
-        />
+        {thumbSrc ? (
+          <Image
+            src={thumbSrc}
+            alt={thumbAlt}
+            fill
+            draggable={false}
+            sizes="(min-width: 640px) 128px, 112px"
+            className="object-cover"
+          />
+        ) : null}
       </div>
 
       <div className="min-w-0 flex-1">
