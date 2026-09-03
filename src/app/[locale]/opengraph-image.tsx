@@ -61,7 +61,9 @@ type Props = {
 /**
  * Both images are rendered at build. Without this the route sits under a
  * dynamic segment and Next renders it on demand, which is what the move to
- * on-disk fonts was meant to end.
+ * on-disk fonts was meant to end. The pages reference these URLs explicitly
+ * (see socialImages in src/lib/site.ts), so static params here do not
+ * affect which tags the pages carry.
  */
 export function generateStaticParams(): Array<{ locale: string }> {
   return routing.locales.map((locale) => ({ locale }));

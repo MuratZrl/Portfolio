@@ -14,7 +14,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { Container } from "@/components/layout/Container";
 import { routing } from "@/i18n/routing";
-import { localeAlternates, localizedPath, OG_LOCALE } from "@/lib/site";
+import { localeAlternates, localizedPath, OG_LOCALE, socialImages } from "@/lib/site";
 
 import { ThemeProvider } from "@/theme/theme-provider";
 import Navbar from "@/components/layout/Navbar";
@@ -82,13 +82,13 @@ export async function generateMetadata({ params }: Omit<Props, "children">): Pro
       description: t("ogDescription"),
       locale: OG_LOCALE[locale],
       alternateLocale: otherLocale ? OG_LOCALE[otherLocale] : undefined,
-      // The image is added automatically by src/app/[locale]/opengraph-image.tsx.
+      images: socialImages(locale).openGraph,
     },
     twitter: {
       card: "summary_large_image",
       title: t("ogTitle"),
       description: t("ogDescription"),
-      // The image is added automatically by src/app/[locale]/twitter-image.tsx.
+      images: socialImages(locale).twitter,
     },
   };
 }

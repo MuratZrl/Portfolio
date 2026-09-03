@@ -7,7 +7,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { Page } from "@/components/layout/Page";
 import { routing } from "@/i18n/routing";
-import { localeAlternates, localizedPath, OG_LOCALE } from "@/lib/site";
+import { localeAlternates, localizedPath, OG_LOCALE, socialImages } from "@/lib/site";
 
 import AboutIntro from "@/features/about/sections/AboutIntro.client";
 import ExperienceTimeline from "@/features/about/sections/Experience.client";
@@ -34,6 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       locale: OG_LOCALE[locale],
       title: t("title"),
       description: t("ogDescription"),
+      images: socialImages(locale).openGraph,
     },
   };
 }

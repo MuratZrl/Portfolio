@@ -10,7 +10,7 @@ import { Page } from "@/components/layout/Page";
 import ContactForm from "@/features/contact/sections/ContactForm";
 import ContactDetails from "@/features/contact/sections/ContactDetails";
 import { routing } from "@/i18n/routing";
-import { localeAlternates, localizedPath, OG_LOCALE, whatsappHref } from "@/lib/site";
+import { localeAlternates, localizedPath, OG_LOCALE, whatsappHref, socialImages } from "@/lib/site";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -34,6 +34,7 @@ export async function generateMetadata({ params }: Pick<Props, "params">): Promi
       locale: OG_LOCALE[locale],
       title: t("title"),
       description: t("ogDescription"),
+      images: socialImages(locale).openGraph,
     },
   };
 }

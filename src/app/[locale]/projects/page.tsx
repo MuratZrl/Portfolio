@@ -10,7 +10,7 @@ import { ProjectCard } from "@/components/ProjectCard";
 import { getAllCategories, getAllProjects } from "@/constants/projects";
 import ProjectsExplorer from "@/features/projects/sections/ProjectsExplorer.client";
 import { routing } from "@/i18n/routing";
-import { localeAlternates, localizedPath, OG_LOCALE } from "@/lib/site";
+import { localeAlternates, localizedPath, OG_LOCALE, socialImages } from "@/lib/site";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -33,6 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       locale: OG_LOCALE[locale],
       title: t("title"),
       description: t("description"),
+      images: socialImages(locale).openGraph,
     },
   };
 }

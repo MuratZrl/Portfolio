@@ -39,6 +39,22 @@ export const OG_LOCALE: Record<Locale, string> = {
 };
 
 /**
+ * The per-locale social card, declared explicitly. The file-based
+ * opengraph-image.tsx / twitter-image.tsx routes still render the PNGs, but
+ * Next only injects them automatically into pages that do not override the
+ * `openGraph` / `twitter` blocks, and every page here does. Each page and
+ * the layout spread these in, so the tag is present on every route.
+ * The URLs carry the locale segment on purpose: src/proxy.ts skips them.
+ */
+export function socialImages(locale: Locale) {
+  const alt = "Murat Zorlu";
+  return {
+    openGraph: [{ url: `/${locale}/opengraph-image`, width: 1200, height: 630, alt }],
+    twitter: [{ url: `/${locale}/twitter-image`, width: 1200, height: 630, alt }],
+  };
+}
+
+/**
  * Pages that only exist in English: the developer portfolio. Their bare
  * (Turkish) URLs redirect to /en in next.config.ts, so the locale switcher
  * sends a visitor on one of these to the Turkish home rather than into that
