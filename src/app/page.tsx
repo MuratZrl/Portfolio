@@ -10,7 +10,11 @@ import TechStack from "@/features/home/sections/TechStack";
 import FinalCta from "@/features/home/sections/FinalCTA";
 
 export const metadata: Metadata = {
-  title: "Home",
+  /**
+   * `absolute` bypasses the layout's "Murat Zorlu | %s" template. Without it
+   * the tab reads "Murat Zorlu | Home", which names the route, not the person.
+   */
+  title: { absolute: "Murat Zorlu | Fullstack developer, Istanbul" },
   description:
     "Admin panels, dashboards and sync engines running in production. Next.js, NestJS, Go and PostgreSQL. Open to full-time and contract work.",
   openGraph: {
