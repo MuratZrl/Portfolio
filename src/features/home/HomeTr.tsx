@@ -5,7 +5,8 @@
 // as the portfolio; only the words, the targets and the section set differ.
 //
 // No code panel beside the hero and no stack list: both are jargon to a
-// shop owner, and the hero copy already says who the site is for.
+// shop owner. The hero's right column carries a phone screenshot of a live
+// client site instead, and it stacks under the plate on small screens.
 
 import React from "react";
 import { useMessages, useTranslations } from "next-intl";
@@ -20,6 +21,7 @@ import ValueProps from "@/features/home/sections/ValueProps";
 import FeaturedProjects from "@/features/home/sections/Projects";
 import FinalCta from "@/features/home/sections/FinalCTA";
 import ContactSection from "@/features/local/sections/ContactSection";
+import HeroShot from "@/features/local/sections/HeroShot";
 
 /** Service key -> the example site that demonstrates it. */
 const SERVICES = [
@@ -77,6 +79,8 @@ export default function HomeTr(): React.JSX.Element {
         primary={{ href: waHref, label: t("hero.primary"), external: true }}
         secondary={{ href: "#ornekler", label: t("hero.secondary"), ariaLabel: t("hero.secondaryAria") }}
         availability={t("hero.availability")}
+        aside={<HeroShot />}
+        stackAside
         className="pb-10 sm:pb-12"
       />
 

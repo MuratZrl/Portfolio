@@ -62,8 +62,10 @@
       "primary": "WhatsApp'tan yazın",
       "secondary": "Örnekleri görün",
       "secondaryAria": "Örnek sitelere git",
-      "availability": "İstanbul · Türkiye'nin her yerine · Hafta içi 10:00-18:00",
-      "codeCaption": "PulseChat · Socket.io ölçekleme"
+      "availability": "İstanbul · Türkiye'nin her yerine · Hafta içi akşam · Cumartesi",
+      "codeCaption": "PulseChat · Socket.io ölçekleme",
+      "shotCaption": "Yenigün Emlak · ilan listesi",
+      "shotAlt": "Yenigün Emlak ana sayfası, telefon görünümü: arama kutusu ve popüler şehirler"
     },
     "howIBuild": {
       "heading": "Nasıl yapıyorum",
@@ -159,10 +161,10 @@
       "items": {
         "realEstate": {
           "title": "Emlak sitesi ve ilan paneli",
-          "description": "İlanlarınız kendi sitenizde, haritada ve Google'da. Yeni ilanı panelden siz eklersiniz: fotoğraf, fiyat, oda sayısı, konum. Arayan müşteri ilanın altındaki WhatsApp düğmesinden size yazar.",
+          "description": "İlanlarınız kendi sitenizde ve Google'da. Yeni ilanı panelden siz eklersiniz: fotoğraf, fiyat, oda sayısı, konum. Arayan müşteri ilanın altındaki WhatsApp düğmesinden size yazar.",
           "highlights": {
             "1": "Sınırsız ilan, kendi panelinizden",
-            "2": "Harita ve filtreli arama",
+            "2": "Filtreli arama ve ilan detayı",
             "3": "Her ilan Google'da ayrı sayfa"
           },
           "example": "Yenigün Emlak"
@@ -462,7 +464,7 @@
         "features": {
           "1": "Sınırsız kayıt: ilan, ürün veya hizmet",
           "2": "Kendi panelinizden ekleme, düzenleme, yayından kaldırma",
-          "3": "Arama ve filtreleme, detay sayfaları, galeri, harita",
+          "3": "Filtreli arama ve ilan detayı",
           "4": "Her kayıt Google'da ayrı sayfa olarak çıkar",
           "5": "Formdan gelen talep doğrudan WhatsApp'ınıza düşer",
           "6": "Alan adı ve SSL ilk yıl dahil, alan adı sizin adınıza"

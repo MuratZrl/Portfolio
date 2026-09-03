@@ -30,6 +30,12 @@ type HeroProps = {
    * its own rather than sitting beside an empty half.
    */
   aside?: React.ReactNode;
+  /**
+   * Show the aside on small screens too, stacked under the plate. Off by
+   * default: the code panel is desktop-only scroll cost on a phone, but a
+   * screenshot of what the visitor would get is worth the space.
+   */
+  stackAside?: boolean;
 };
 
 /**
@@ -50,6 +56,7 @@ export default function Hero({
   secondary,
   availability,
   aside,
+  stackAside = false,
 }: HeroProps): React.JSX.Element {
   const headingId = React.useId();
 
@@ -111,9 +118,12 @@ export default function Hero({
         ) : null}
       </div>
 
-        {/* Desktop only. It does not stack on smaller screens — a code block
-            below the CTAs on a phone is scroll cost, not information. */}
-        {aside ? <div className="hidden lg:block">{aside}</div> : null}
+        {/* Desktop only unless `stackAside`: a code block below the CTAs on a
+            phone is scroll cost, not information, so the portfolio hides it
+            there. The Turkish home stacks its screenshot instead. */}
+        {aside ? (
+          <div className={stackAside ? "mt-8 lg:mt-0" : "hidden lg:block"}>{aside}</div>
+        ) : null}
       </div>
     </section>
   );
