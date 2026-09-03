@@ -19,13 +19,16 @@ export type Cta = {
 
 export type Stat = { label: string; value: string; icon?: LucideIcon };
 
-/** The non-copy half of the About intro. Copy comes from `about.intro`. */
 export type AboutIntroDefaults = {
   name: string;
+  role: string;
+  location: string;
   availability: Availability;
+  bio: readonly string[];
+  highlights: readonly string[];
   techTags: readonly string[];
   social: readonly SocialLink[];
   stats: readonly Stat[];
-  primaryHref: Href;   // e.g. /contact
-  secondaryHref: string; // e.g. /cv/..pdf
+  primary: Cta;   // e.g. /contact
+  secondary: Cta; // e.g. /cv/..pdf
 };

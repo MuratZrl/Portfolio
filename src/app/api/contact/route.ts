@@ -66,9 +66,8 @@ function buildEmail(args: {
   email: string;
   subjectLabel: string;
   message: string;
-  locale: string;
 }): { html: string; text: string } {
-  const { name, email, subjectLabel, message, locale } = args;
+  const { name, email, subjectLabel, message } = args;
   const safeName = escapeHtml(name);
   const safeEmail = escapeHtml(email);
   const safeSubject = escapeHtml(subjectLabel);
@@ -120,7 +119,6 @@ function buildEmail(args: {
     `From:    ${name}`,
     `Email:   ${email}`,
     `Subject: ${subjectLabel}`,
-    `Site:    ${locale}`,
     ``,
     `Message:`,
     `--------`,
@@ -191,7 +189,7 @@ async function handle(req: NextRequest, formEncoded: boolean): Promise<Outcome> 
     };
   }
 
-  const { company, name, email, subject, message, locale } = parsed.data;
+  const { company, name, email, subject, message } = parsed.data;
 
   if (company && company.trim().length > 0) {
     return { ok: false, status: 400, code: "spam", payload: { message: "Spam detected" } };
@@ -213,7 +211,6 @@ async function handle(req: NextRequest, formEncoded: boolean): Promise<Outcome> 
     email: cleanEmail,
     subjectLabel,
     message: cleanMessage,
-    locale: locale ?? "unknown",
   });
 
   try {
@@ -245,20 +242,6 @@ async function handle(req: NextRequest, formEncoded: boolean): Promise<Outcome> 
 }
 
 /**
- * Where the no-JS redirect lands. The form carries a hidden `locale` field;
- * anything but "en" goes to the Turkish page, which is also the bare URL.
- * Read from a clone so the handler below still gets the original body.
- */
-async function redirectPathFor(req: NextRequest): Promise<string> {
-  try {
-    const form = await req.clone().formData();
-    return form.get("locale") === "en" ? "/en/contact" : "/contact";
-  } catch {
-    return "/contact";
-  }
-}
-
-/**
  * Two submit paths reach this handler, and each is answered in the shape it
  * can actually use:
  *
@@ -275,16 +258,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const outcome = await handle(req, formEncoded);
 
   if (formEncoded) {
-    const target = new URL(await redirectPathFor(req), req.url);
+    const target = new URL("/contact", req.url);
     if (outcome.ok) target.searchParams.set("sent", "1");
     else target.searchParams.set("error", outcome.code);
     return NextResponse.redirect(target, 303);
   }
 
   if (!outcome.ok) {
-    // The code rides along so the client can pick a localized message
-    // rather than echoing the English `message`.
-    return NextResponse.json({ ...outcome.payload, code: outcome.code }, { status: outcome.status });
+    return NextResponse.json(outcome.payload, { status: outcome.status });
   }
   return NextResponse.json({ ok: true } satisfies OkPayload, { status: 200 });
 }

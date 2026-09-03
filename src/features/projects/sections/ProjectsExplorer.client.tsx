@@ -2,7 +2,6 @@
 "use client";
 
 import React from "react";
-import { useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -58,7 +57,7 @@ export default function ProjectsExplorer({
   categories,
   className,
 }: ProjectsExplorerProps): React.JSX.Element {
-  const t = useTranslations("projectsPage");
+
   const [activeFilter, setActiveFilter] = React.useState<string>(ALL);
   const [currentPage, setCurrentPage] = React.useState(1);
 
@@ -98,7 +97,7 @@ export default function ProjectsExplorer({
     <section className={cn(className)}>
       <div
         role="group"
-        aria-label={t("filterAria")}
+        aria-label="Filter projects by category"
         className="mb-8 flex flex-wrap items-center gap-2"
       >
         <button
@@ -107,7 +106,7 @@ export default function ProjectsExplorer({
           aria-pressed={activeFilter === ALL}
           className={pillClass(activeFilter === ALL)}
         >
-          {t("all")}
+          {ALL}
           {/* Full opacity, deliberately. This count used to be opacity-60,
               which on the filled primary dropped white from 6.70:1 to about
               2.4:1 and failed AA outright. Size carries the demotion now,
@@ -145,20 +144,20 @@ export default function ProjectsExplorer({
         </div>
       ) : (
         <p className="py-12 text-center text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
-          {t("empty")}
+          No projects found for this category.
         </p>
       )}
 
       {totalPages > 1 ? (
         <nav
-          aria-label={t("paginationAria")}
+          aria-label="Projects pagination"
           className="mt-8 flex items-center justify-center gap-1"
         >
           <button
             type="button"
             disabled={safePage <= 1}
             onClick={() => goToPage(safePage - 1)}
-            aria-label={t("prevPage")}
+            aria-label="Previous page"
             className={pageBtnClass(false)}
           >
             <ChevronLeft className="size-4" aria-hidden />
@@ -169,7 +168,7 @@ export default function ProjectsExplorer({
               key={page}
               type="button"
               onClick={() => goToPage(page)}
-              aria-label={t("page", { page })}
+              aria-label={`Page ${page}`}
               aria-current={page === safePage ? "page" : undefined}
               className={pageBtnClass(page === safePage)}
             >
@@ -181,7 +180,7 @@ export default function ProjectsExplorer({
             type="button"
             disabled={safePage >= totalPages}
             onClick={() => goToPage(safePage + 1)}
-            aria-label={t("nextPage")}
+            aria-label="Next page"
             className={pageBtnClass(false)}
           >
             <ChevronRight className="size-4" aria-hidden />

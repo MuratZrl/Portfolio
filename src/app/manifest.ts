@@ -1,19 +1,12 @@
 // src/app/manifest.ts
 import type { MetadataRoute } from "next";
 
-import tr from "../../messages/tr.json";
-
-/**
- * One manifest for the whole origin, so it speaks the site default: Turkish.
- * The strings are read straight from the message file rather than through
- * next-intl, because this route sits outside the [locale] segment.
- */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: tr.layout.title,
-    short_name: "Murat Zorlu",
-    description: tr.layout.description,
-    lang: "tr",
+    name: "Murat Zorlu | Portfolio",
+    short_name: "Portfolio",
+    description:
+      "Murat Zorlu, fullstack developer in Istanbul. Internal tools, admin panels and dashboards running in production.",
     start_url: "/",
     scope: "/",
     display: "standalone",

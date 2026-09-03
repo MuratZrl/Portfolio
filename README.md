@@ -127,21 +127,14 @@ npm start
 
 ---
 
-## Pages and locales
+## Pages
 
-Two locales with different positioning, routed by [next-intl](https://next-intl.dev). Turkish is the default and lives at the bare path; English sits under `/en`. There is no browser-language detection and no locale cookie: `/` is Turkish for everyone.
-
-| Route | Locale | Description |
-|---|---|---|
-| `/` | TR | Small-business offer: hero, what I build, examples, how it works, contact |
-| `/paketler` | TR | Packages and prices (`/en/paketler` redirects here) |
-| `/contact` | TR | WhatsApp button, contact form and details |
-| `/en` | EN | Developer portfolio: hero, how I build, projects, stack, CTA |
-| `/en/about` | EN | Experience timeline, languages, CV (`/about` redirects here) |
-| `/en/projects` | EN | Projects with category filters (`/projects` and `/projects/*` redirect here) |
-| `/en/contact` | EN | Contact form with validation and rate limiting |
-
-All user-facing copy lives in `messages/tr.json` and `messages/en.json`; the two files share one key set but are not translations of each other. Locale routing is in `src/i18n/` and `src/proxy.ts`; per-page canonical and hreflang metadata come from `src/lib/site.ts`.
+| Route | Description |
+|---|---|
+| `/` | Home — hero, value props, featured projects, tech stack |
+| `/about` | Experience timeline, languages, CV download |
+| `/projects` | Curated projects with category filters & pagination |
+| `/contact` | Contact form with validation & rate limiting |
 
 ---
 

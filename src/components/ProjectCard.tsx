@@ -2,10 +2,9 @@
 
 import React from "react";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import Link from "next/link";
 
 import { cn } from "@/lib/utils";
-import { Link } from "@/i18n/navigation";
 import { ExternalLink, Github, Lock } from "lucide-react";
 
 import type { Project } from "@/constants/projects";
@@ -25,12 +24,6 @@ type ProjectCardProps = {
    * On `/projects` the page h1 is the only ancestor, so they are h2.
    */
   headingLevel: 2 | 3;
-  /**
-   * Optional. When set, the stretched title link goes to this absolute URL
-   * in a new tab instead of to the project's detail page. The Turkish
-   * examples use it: they are live sites with no case study behind them.
-   */
-  titleHref?: string;
 };
 
 /**
@@ -39,20 +32,15 @@ type ProjectCardProps = {
  * serialises it. The values are never authored into `data.ts` at all, and
  * keeping this component off the client means the props are not in the
  * flight payload either.
- *
- * The project content (title, summary, tags, sector label) is English data
- * from constants/projects; the card's own labels come from messages.
  */
-export function ProjectCard({ project, headingLevel, titleHref }: ProjectCardProps): React.JSX.Element {
-  const t = useTranslations("projectCard");
-  const tCommon = useTranslations("common");
+export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.JSX.Element {
   const Heading = (headingLevel === 2 ? "h2" : "h3") as "h2" | "h3";
 
   // Every project ships a local screenshot. `image` is optional on the type, so
   // an absent one leaves the framed well empty rather than reaching for a
   // remote placeholder service.
   const imgSrc = (project.image?.src ?? "").trim() || null;
-  const imgAlt = project.image?.alt ?? t("screenshotAlt", { title: project.title });
+  const imgAlt = project.image?.alt ?? `${project.title} screenshot`;
 
   const demo = project.links?.demo;
   const repo = project.links?.repo;
@@ -65,8 +53,7 @@ export function ProjectCard({ project, headingLevel, titleHref }: ProjectCardPro
   // The provenance mark beside the sector label. Paid work says so; a demo
   // says so with the same device, so the two never get confused. Personal
   // projects carry it in the sectorLabel itself and get nothing extra.
-  const provenance = isPaid ? t("clientWork") : isDemo ? t("demoSite") : null;
-  const newTab = <span className="sr-only"> ({tCommon("opensInNewTab")})</span>;
+  const provenance = isPaid ? "Client work" : isDemo ? "Demo site" : null;
 
   return (
     <article
@@ -112,26 +99,13 @@ export function ProjectCard({ project, headingLevel, titleHref }: ProjectCardPro
         </div>
 
         <Heading className="text-[length:var(--text-display-xs)] font-bold leading-[1.2] text-[var(--text)]">
-          {titleHref ? (
-            <a
-              href={titleHref}
-              target="_blank"
-              rel="noreferrer noopener"
-              draggable={false}
-              className="after:absolute after:inset-0 after:content-[''] group-focus-within:underline group-hover:underline"
-            >
-              {project.title}
-              {newTab}
-            </a>
-          ) : (
-            <Link
-              href={project.slug}
-              draggable={false}
-              className="after:absolute after:inset-0 after:content-[''] group-focus-within:underline group-hover:underline"
-            >
-              {project.title}
-            </Link>
-          )}
+          <Link
+            href={project.slug}
+            draggable={false}
+            className="after:absolute after:inset-0 after:content-[''] group-focus-within:underline group-hover:underline"
+          >
+            {project.title}
+          </Link>
         </Heading>
 
         <p className="text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--text-muted)]">
@@ -162,7 +136,7 @@ export function ProjectCard({ project, headingLevel, titleHref }: ProjectCardPro
           ))}
           {hiddenCount > 0 ? (
             <li className="px-2 py-0.5 text-[length:var(--text-body-xs)] text-[var(--text-muted)]">
-              {t("moreTags", { count: hiddenCount })}
+              +{hiddenCount} more
             </li>
           ) : null}
         </ul>
@@ -178,7 +152,7 @@ export function ProjectCard({ project, headingLevel, titleHref }: ProjectCardPro
             >
               <ExternalLink className="size-4" aria-hidden />
               {demo.label}
-              {newTab}
+              <span className="sr-only"> (opens in a new tab)</span>
             </a>
           ) : null}
 
@@ -192,14 +166,14 @@ export function ProjectCard({ project, headingLevel, titleHref }: ProjectCardPro
             >
               <Github className="size-4" aria-hidden />
               {repo.label}
-              {newTab}
+              <span className="sr-only"> (opens in a new tab)</span>
             </a>
           ) : null}
 
           {repoIsPrivate ? (
             <span className="inline-flex items-center gap-1.5 text-[var(--text-muted)]">
               <Lock className="size-4" aria-hidden />
-              {t("privateRepo")}
+              Private repo
             </span>
           ) : null}
         </div>

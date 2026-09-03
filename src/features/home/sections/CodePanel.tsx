@@ -1,8 +1,6 @@
 // src/features/home/sections/CodePanel.tsx
 
 import React from "react";
-import { useTranslations } from "next-intl";
-
 import { cn } from "@/lib/utils";
 
 /**
@@ -82,7 +80,6 @@ const COLOR: Record<Tok, string> = {
 };
 
 export default function CodePanel({ className }: { className?: string }): React.JSX.Element {
-  const t = useTranslations("home.hero");
   const lines = SNIPPET.split("\n");
 
   return (
@@ -105,7 +102,7 @@ export default function CodePanel({ className }: { className?: string }): React.
       </div>
 
       <figcaption className="mt-3 text-[length:var(--text-body-xs)] text-[var(--text-muted)]">
-        {t("codeCaption")}
+        PulseChat · Socket.io scaling across replicas
       </figcaption>
     </figure>
   );

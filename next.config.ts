@@ -1,5 +1,4 @@
 import type { NextConfig } from "next";
-import createNextIntlPlugin from "next-intl/plugin";
 
 const isDev = process.env.NODE_ENV === "development";
 
@@ -54,19 +53,6 @@ const nextConfig: NextConfig = {
     root: __dirname,
   },
   devIndicators: false,
-  async redirects() {
-    // The developer-portfolio pages exist only in English. Their old bare
-    // URLs keep resolving through a permanent redirect rather than turning
-    // into Turkish 404s. /paketler is the mirror case: Turkish only, so the
-    // prefixed form folds back to the bare path. These run before the locale
-    // proxy in src/proxy.ts, which then rewrites the /en target internally.
-    return [
-      { source: "/about", destination: "/en/about", permanent: true },
-      { source: "/projects", destination: "/en/projects", permanent: true },
-      { source: "/projects/:path*", destination: "/en/projects/:path*", permanent: true },
-      { source: "/en/paketler", destination: "/paketler", permanent: true },
-    ];
-  },
   async headers() {
     return [
       {
@@ -89,7 +75,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-// Wires src/i18n/request.ts in as the next-intl request config.
-const withNextIntl = createNextIntlPlugin();
-
-export default withNextIntl(nextConfig);
+export default nextConfig;

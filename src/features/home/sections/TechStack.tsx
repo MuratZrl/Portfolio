@@ -1,9 +1,8 @@
 // src/features/home/sections/TechStack.tsx
 
 import React from "react";
-import { useTranslations } from "next-intl";
-
 import { cn } from "@/lib/utils";
+
 import { DEFAULT_GROUPS } from "@/features/home/data";
 import type { TechStackProps } from "@/features/home/types/tech-stack";
 
@@ -16,38 +15,34 @@ import type { TechStackProps } from "@/features/home/types/tech-stack";
  * touch users, so it would be decoration pretending to be information, and
  * the "what I use it for" depth already lives on the project pages.
  *
- * Group titles come from messages; the skill names are proper nouns and stay
- * in the data file.
- *
  * Server component — nothing here is interactive.
  */
 export default function TechStack({
-  id,
+  heading = "Stack",
+  subheading = "What I reach for. The detail is on the project pages.",
   groups = DEFAULT_GROUPS,
   className,
 }: TechStackProps): React.JSX.Element {
-  const t = useTranslations("home.stack");
-
   return (
-    <section id={id} aria-labelledby="tech-stack-heading" className={cn("py-10 sm:py-12", className)}>
+    <section aria-labelledby="tech-stack-heading" className={cn("py-10 sm:py-12", className)}>
       <h2
         id="tech-stack-heading"
         className="text-[length:var(--text-display-md)] font-bold leading-[1.05] text-[var(--text)]"
       >
-        {t("heading")}
+        {heading}
       </h2>
       <p className="mt-1 text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
-        {t("subheading")}
+        {subheading}
       </p>
 
       <dl className="mt-4 border-t border-[var(--edge-soft)]">
         {groups.map((group) => (
           <div
-            key={group.key}
+            key={group.title}
             className="grid gap-x-6 gap-y-1 border-b border-[var(--edge-soft)] py-2 sm:grid-cols-[minmax(170px,auto)_1fr]"
           >
             <dt className="text-[length:var(--text-body-sm)] font-medium text-[var(--text)]">
-              {t(`groups.${group.key}`)}
+              {group.title}
             </dt>
             <dd className="text-[length:var(--text-body-sm)] leading-relaxed text-[var(--text-muted)]">
               {group.skills.map((s, i) => (

@@ -1,35 +1,29 @@
 // src/features/home/sections/FinalCta.tsx
 import React from "react";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import { ArrowRight, Mail, Sparkles, Clock, Zap } from "lucide-react";
 
-import { cn } from "@/lib/utils";
-import { Link } from "@/i18n/navigation";
-import { Button } from "@/components/ui/button";
 import type { FinalCtaProps } from "@/features/home/types/final-cta";
+import { FINAL_CTA_DEFAULTS } from "@/features/home/data";
 
-/** One icon per step, in order. The copy for each step comes from the page. */
-const STEP_ICONS = [Mail, Clock, Zap] as const;
+const PROCESS_STEPS = [
+  { icon: Mail, label: "You describe the problem", description: "The current process, not the feature list." },
+  { icon: Clock, label: "I scope it in writing", description: "What gets built, what doesn't, how long." },
+  { icon: Zap, label: "Ship it", description: "Deployed and documented." },
+] as const;
 
-/**
- * The closing plate: a badge, a heading, three numbered steps and one
- * button. "Two ways to work together" on the portfolio, "Nasıl çalışır" on
- * the small-business site; the layout is the same and only the words and the
- * button target change.
- */
 export default function FinalCta({
-  id,
-  badge,
-  heading,
-  subheading,
-  steps,
-  primary,
+  heading = FINAL_CTA_DEFAULTS.heading,
+  subheading = FINAL_CTA_DEFAULTS.subheading,
+  primary = FINAL_CTA_DEFAULTS.primary,
   className,
 }: FinalCtaProps): React.JSX.Element {
   const headingId = React.useId();
 
   return (
     <section
-      id={id}
       aria-labelledby={headingId}
       className={cn("py-10 sm:py-12", className)}
     >
@@ -45,7 +39,7 @@ export default function FinalCta({
           <div className="mx-auto max-w-2xl text-center">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
               <Sparkles className="h-3 w-3" aria-hidden />
-              {badge}
+              Two ways to work together
             </div>
 
             <h2
@@ -61,8 +55,8 @@ export default function FinalCta({
 
           {/* Process steps */}
           <div className="mx-auto mt-10 grid max-w-xl gap-4 sm:grid-cols-3">
-            {steps.map((step, i) => {
-              const StepIcon = STEP_ICONS[i];
+            {PROCESS_STEPS.map((step, i) => {
+              const StepIcon = step.icon;
               return (
                 <div key={step.label} className="flex flex-col items-center gap-2 text-center">
                   <div className="relative">
@@ -83,17 +77,10 @@ export default function FinalCta({
           {/* CTA button */}
           <div className="mx-auto mt-10 flex justify-center">
             <Button asChild size="lg" aria-label={primary.ariaLabel ?? primary.label}>
-              {primary.external ? (
-                <a href={primary.href} target="_blank" rel="noopener noreferrer" draggable={false}>
-                  {primary.label}
-                  <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
-                </a>
-              ) : (
-                <Link href={primary.href} draggable={false}>
-                  {primary.label}
-                  <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
-                </Link>
-              )}
+              <Link href={primary.href} draggable={false}>
+                {primary.label}
+                <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
+              </Link>
             </Button>
           </div>
         </div>

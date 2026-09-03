@@ -3,12 +3,10 @@
 
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
-import { useTranslations } from "next-intl";
 import { Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function ThemeToggle(): React.JSX.Element {
-  const t = useTranslations("theme");
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState<boolean>(false);
 
@@ -34,7 +32,7 @@ export function ThemeToggle(): React.JSX.Element {
       size="icon"
       /* The accessible name states what the control will DO, and changes with
          state — so the change is announced without needing aria-pressed. */
-      aria-label={isDark ? t("toLight") : t("toDark")}
+      aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
       onClick={handleToggle}
     >
       <Sun className="size-5 rotate-0 scale-100 dark:-rotate-90 dark:scale-0" />

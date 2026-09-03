@@ -1,24 +1,30 @@
 // src/features/about/data/about-intro.ts
-//
-// Data only. The role, location, bio and highlights are copy and live in
-// messages under `about.intro`; what remains here is what a translation
-// would not change: the name, the profile URLs, the stack tags and the CTA
-// targets.
-
-import type { AboutIntroDefaults } from "@/features/about/types";
-import { CV_PATH, SOCIAL_URLS } from "@/lib/site";
+import {
+  type AboutIntroDefaults,
+} from "@/features/about/types";
 
 import { Github, Linkedin } from "lucide-react";
 
 export const ABOUT_DEFAULTS: AboutIntroDefaults = {
   name: "Murat Zorlu",
+  role: "Fullstack Web Developer",
+  location: "Istanbul, Turkey",
   availability: "available",
+  bio: [
+    "Fullstack developer with production experience in Next.js, NestJS, Go and PostgreSQL.",
+    "Delivered two live applications serving real businesses in Turkey.",
+  ],
+  highlights: [
+    "Fullstack apps with Next.js, NestJS & PostgreSQL",
+    "Real-time systems with WebSocket & Redis",
+    "Containerized deployments with Docker",
+  ],
   techTags: ["Next.js", "NestJS", "TypeScript", "PostgreSQL", "Docker", "Redis", "Supabase", "Tailwind CSS", "MUI", "Prisma"],
   social: [
-    { href: SOCIAL_URLS.github, label: "GitHub", icon: Github },
-    { href: SOCIAL_URLS.linkedin, label: "LinkedIn", icon: Linkedin },
+    { href: "https://github.com/MuratZrl", label: "GitHub", icon: Github },
+    { href: "https://www.linkedin.com/in/murat-zorlu-dev", label: "LinkedIn", icon: Linkedin },
   ],
   stats: [],
-  primaryHref: "/contact",
-  secondaryHref: CV_PATH,
+  primary: { href: "/contact", label: "Get in touch", ariaLabel: "Open contact page" },
+  secondary: { href: "/cv/Murat_Zorlu_CV.pdf", label: "Download CV", ariaLabel: "Download CV", download: true },
 } as const;

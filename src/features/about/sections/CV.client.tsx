@@ -2,7 +2,6 @@
 "use client";
 
 import React from "react";
-import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { ExternalLink, FileDown, FileText } from "lucide-react";
 
@@ -16,14 +15,11 @@ type CvViewerProps = {
 
 export default function CvSection({
   pdfSrc = "/cv/Murat_Zorlu_CV.pdf",
-  title,
-  description,
+  title = "CV",
+  description = "View inline, download, or open in a new tab.",
   maxHeightPx = 1000,
   className,
 }: CvViewerProps): React.JSX.Element {
-  const t = useTranslations("about.cv");
-  const heading = title ?? t("title");
-  const lead = description ?? t("description");
   const [mounted, setMounted] = React.useState(false);
   const INITIAL_HEIGHT = Math.min(720, maxHeightPx);
   const [height, setHeight] = React.useState(INITIAL_HEIGHT);
@@ -48,10 +44,10 @@ export default function CvSection({
           id={headingId}
           className="text-[length:var(--text-display-sm)] leading-[1.2] text-[var(--text)]"
         >
-          {heading}
+          {title}
         </h2>
         <p id={descId} className="text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
-          {lead}
+          {description}
         </p>
       </div>
 
@@ -68,7 +64,7 @@ export default function CvSection({
                 Murat_Zorlu_CV.pdf
               </div>
               <div className="text-[length:var(--text-body-xs)] text-[var(--text-muted)]">
-                {t("fileType")}
+                PDF document
               </div>
             </div>
           </div>
@@ -80,11 +76,11 @@ export default function CvSection({
               href={pdfSrc}
               download
               draggable={false}
-              aria-label={t("downloadAria")}
+              aria-label="Download CV"
               className="soft-btn soft-btn-ghost inline-flex min-h-9 select-none items-center gap-2 px-4 text-[length:var(--text-body-xs)] font-medium"
             >
               <FileDown className="size-3.5" aria-hidden />
-              {t("download")}
+              Download
             </a>
 
             <a
@@ -92,11 +88,11 @@ export default function CvSection({
               target="_blank"
               rel="noreferrer noopener"
               draggable={false}
-              aria-label={t("openAria")}
+              aria-label="Open CV in a new tab"
               className="soft-btn soft-btn-primary inline-flex min-h-9 select-none items-center gap-2 px-4 text-[length:var(--text-body-xs)] font-medium"
             >
               <ExternalLink className="size-3.5" aria-hidden />
-              {t("open")}
+              Open
             </a>
           </div>
         </div>
@@ -107,7 +103,7 @@ export default function CvSection({
         <div className="recessed overflow-hidden">
           {mounted ? (
             <iframe
-              title={t("viewerTitle")}
+              title="CV PDF viewer"
               aria-describedby={descId}
               src={iframeSrc}
               className="block w-full bg-[var(--ground)]"
@@ -122,7 +118,7 @@ export default function CvSection({
             >
               <div className="flex flex-col items-center gap-2">
                 <FileText className="size-8 text-[var(--edge)]" aria-hidden />
-                <span className="text-[length:var(--text-body-xs)]">{t("loading")}</span>
+                <span className="text-[length:var(--text-body-xs)]">Loading viewer...</span>
               </div>
             </div>
           )}
@@ -130,7 +126,7 @@ export default function CvSection({
 
         <noscript>
           <p className="mt-4 text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
-            {t("noJs")}{" "}
+            JavaScript is disabled.{" "}
             <a
               className="link-soft font-medium text-[var(--accent)] underline"
               href={pdfSrc}
@@ -138,16 +134,16 @@ export default function CvSection({
               rel="noreferrer noopener"
               draggable={false}
             >
-              {t("noJsOpen")}
+              Open CV in a new tab
             </a>{" "}
-            {t("noJsOr")}{" "}
+            or{" "}
             <a
               className="link-soft font-medium text-[var(--accent)] underline"
               href={pdfSrc}
               download
               draggable={false}
             >
-              {t("noJsDownload")}
+              download it
             </a>
             .
           </p>

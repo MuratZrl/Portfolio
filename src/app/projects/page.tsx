@@ -1,47 +1,19 @@
-// src/app/[locale]/projects/page.tsx
+// src/app/projects/page.tsx
 import React from "react";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { hasLocale } from "next-intl";
-import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { Page } from "@/components/layout/Page";
 import { ProjectCard } from "@/components/ProjectCard";
 import { getAllCategories, getAllProjects } from "@/constants/projects";
 import ProjectsExplorer from "@/features/projects/sections/ProjectsExplorer.client";
-import { routing } from "@/i18n/routing";
-import { localeAlternates, localizedPath, OG_LOCALE } from "@/lib/site";
 
-type Props = {
-  params: Promise<{ locale: string }>;
+export const metadata: Metadata = {
+  title: "Projects",
+  description:
+    "Eight projects: two live demo sites for small businesses, three private client builds, three personal projects. What each one does and what it runs on.",
 };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = await params;
-  if (!hasLocale(routing.locales, locale)) return {};
-
-  const t = await getTranslations({ locale, namespace: "projectsPage.meta" });
-
-  return {
-    title: t("title"),
-    description: t("description"),
-    alternates: localeAlternates(locale, "/projects", { enOnly: true }),
-    openGraph: {
-      type: "website",
-      url: localizedPath(locale, "/projects"),
-      siteName: "Murat Zorlu",
-      locale: OG_LOCALE[locale],
-      title: t("title"),
-      description: t("description"),
-    },
-  };
-}
-
 /**
- * English only. The project data is English content, so the bare /projects
- * URL is a permanent redirect to /en/projects (next.config.ts) and a Turkish
- * render of this page is a 404 rather than a half-translated list.
- *
  * Server component. The project data is read, sorted and rendered here, and
  * only two strings per project (slug, category) are handed to the client
  * filter. ProjectCard therefore stays on the server, which is what keeps its
@@ -54,12 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  * PROJECTS in constants/projects/data.ts), the client dashboards and personal
  * builds after them.
  */
-export default async function ProjectsPage({ params }: Props): Promise<React.JSX.Element> {
-  const { locale } = await params;
-  if (locale !== "en") notFound();
-  setRequestLocale(locale);
-
-  const t = await getTranslations("projectsPage");
+export default function ProjectsPage(): React.JSX.Element {
   const projects = getAllProjects();
 
   const items = projects.map((project) => ({
@@ -74,7 +41,10 @@ export default async function ProjectsPage({ params }: Props): Promise<React.JSX
   const categories = getAllCategories();
 
   return (
-    <Page title={t("title")} description={t("description")}>
+    <Page
+      title="Projects"
+      description="Small business websites first, then client work and personal projects. The two demo sites are live: click through them. The client builds are private; each card says why."
+    >
       <ProjectsExplorer items={items} categories={categories} />
     </Page>
   );

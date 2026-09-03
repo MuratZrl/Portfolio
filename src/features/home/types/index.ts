@@ -12,7 +12,6 @@ export type {
   // Tech Stack
   Skill,
   Group,
-  GroupKey,
   TechStackProps,
 } from "./tech-stack";
 
@@ -20,7 +19,9 @@ export type {
   // Final CTA
   Href as CtaHref,
   CtaLink,
-  CtaStep,
+  Stat,
+  Media,
+  Variant,
   FinalCtaProps,
 } from "./final-cta";
 

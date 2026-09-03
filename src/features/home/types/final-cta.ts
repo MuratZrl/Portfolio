@@ -1,29 +1,35 @@
 // src/features/home/types/final-cta.ts
+import type { LucideIcon } from "lucide-react";
 
-/** Internal route ("/contact"), or an absolute URL when `external` is set. */
+/** Internal route only, because this CTA is for on-site actions. */
 export type Href = "/" | `/${string}`;
 
 export type CtaLink = {
-  href: string;
+  href: Href;
   label: string;
   ariaLabel?: string;
-  /** Absolute URL, opened in a new tab (the WhatsApp deep link). */
-  external?: boolean;
 };
 
-export type CtaStep = {
+export type Stat = {
   label: string;
-  description: string;
+  value: string;
+  icon?: LucideIcon;
 };
+
+export type Media =
+  | { type: "image"; src: string; alt: string }
+  | { type: "pattern" };
+
+export type Variant = "center" | "split" | "minimal";
 
 export type FinalCtaProps = {
-  /** Stable anchor id, so old in-page links keep working. */
-  id?: string;
-  badge: string;
-  heading: string;
-  subheading: string;
-  /** Exactly three; the icons are fixed in the component. */
-  steps: readonly [CtaStep, CtaStep, CtaStep];
-  primary: CtaLink;
+  heading?: string;
+  subheading?: string;
+  primary?: CtaLink;   // usually /contact
+  tertiary?: CtaLink;  // optional third link
+  highlights?: readonly string[];
+  stats?: readonly Stat[];
+  media?: Media;       // fills the right side in the split variant
   className?: string;
+  variant?: Variant;
 };

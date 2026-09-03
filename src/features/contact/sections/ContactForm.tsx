@@ -4,8 +4,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLocale, useTranslations } from "next-intl";
-import { createContactSchema, type ContactInput } from "@/features/contact/schema";
+import { ContactSchema, type ContactInput } from "@/features/contact/schema";
 import { cn } from "@/lib/utils";
 import {
   Form,
@@ -22,48 +21,21 @@ import { Send, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 type SubmitStatus = "idle" | "success" | "error";
 type SubjectValue = "general" | "project" | "hiring";
 
-const SUBJECT_OPTIONS: ReadonlyArray<{ value: SubjectValue }> = [
-  { value: "general" },
-  { value: "project" },
-  { value: "hiring" },
+const SUBJECT_OPTIONS: ReadonlyArray<{ value: SubjectValue; label: string }> = [
+  { value: "general", label: "General" },
+  { value: "project", label: "Project" },
+  { value: "hiring", label: "Hiring" },
 ];
 
-/** Short codes /api/contact returns beside its status; each has a message. */
-const ERROR_CODES = ["rate", "badrequest", "invalid", "spam", "send"] as const;
-type ErrorCode = (typeof ERROR_CODES)[number];
-function isErrorCode(value: unknown): value is ErrorCode {
-  return typeof value === "string" && (ERROR_CODES as readonly string[]).includes(value);
-}
-
 export default function ContactForm(): React.JSX.Element {
-  const t = useTranslations("contact.form");
-  const tErr = useTranslations("contact.errors");
-  const locale = useLocale();
-
-  // Validation copy follows the locale; the schema shape does not.
-  const schema = React.useMemo(
-    () =>
-      createContactSchema({
-        nameMin: t("validation.nameMin"),
-        nameMax: t("validation.nameMax"),
-        emailInvalid: t("validation.emailInvalid"),
-        emailMax: t("validation.emailMax"),
-        subjectInvalid: t("validation.subjectInvalid"),
-        messageMin: t("validation.messageMin"),
-        messageMax: t("validation.messageMax"),
-      }),
-    [t],
-  );
-
   const form = useForm<ContactInput>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(ContactSchema),
     defaultValues: {
       name: "",
       email: "",
       subject: "general",
       message: "",
       company: "",
-      locale,
     },
     mode: "onChange",
     reValidateMode: "onChange",
@@ -119,12 +91,12 @@ export default function ContactForm(): React.JSX.Element {
   async function onSubmit(values: ContactInput): Promise<void> {
     if (values.company && values.company.trim().length > 0) {
       setStatus("error");
-      setErrorMsg(tErr("spam"));
+      setErrorMsg("Spam detected.");
       return;
     }
     if (Date.now() - formStartedAtRef.current < minSubmitDelayMs) {
       setStatus("error");
-      setErrorMsg(tErr("tooFast"));
+      setErrorMsg("That was too fast. Please try again.");
       return;
     }
 
@@ -144,11 +116,10 @@ export default function ContactForm(): React.JSX.Element {
       });
 
       if (!res.ok) {
-        const fallback = tErr("generic");
+        const fallback = "Something went wrong.";
         try {
           const payload: {
             message?: string;
-            code?: string;
             fieldErrors?: Partial<Record<keyof ContactInput, string>>;
           } = await res.json();
 
@@ -159,13 +130,13 @@ export default function ContactForm(): React.JSX.Element {
               },
             );
             setStatus("error");
-            setErrorMsg(tErr("fixFields"));
+            setErrorMsg("Please fix the highlighted fields.");
             focusFirstError();
             return;
           }
 
           setStatus("error");
-          setErrorMsg(isErrorCode(payload.code) ? tErr(payload.code) : fallback);
+          setErrorMsg(payload.message ?? fallback);
           return;
         } catch {
           setStatus("error");
@@ -175,19 +146,19 @@ export default function ContactForm(): React.JSX.Element {
       }
 
       setStatus("success");
-      form.reset({ name: "", email: "", subject: "general", message: "", company: "", locale });
+      form.reset({ name: "", email: "", subject: "general", message: "", company: "" });
       setMessageLen(0);
       formStartedAtRef.current = Date.now();
     } catch (err) {
       if ((err as DOMException).name === "AbortError") return;
       setStatus("error");
-      setErrorMsg(tErr("network"));
+      setErrorMsg("Network error. Check your connection and try again.");
     }
   }
 
   function onInvalid(): void {
     setStatus("error");
-    setErrorMsg(tErr("fixFields"));
+    setErrorMsg("Please fix the highlighted fields.");
     focusFirstError();
   }
 
@@ -200,7 +171,7 @@ export default function ContactForm(): React.JSX.Element {
           <div className="flex size-9 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--raised)] text-[var(--accent)]">
             <Send className="h-4 w-4" aria-hidden />
           </div>
-          <h3 className="text-base font-semibold">{t("heading")}</h3>
+          <h3 className="text-base font-semibold">Send a message</h3>
         </div>
       </div>
 
@@ -229,13 +200,8 @@ export default function ContactForm(): React.JSX.Element {
             id="contact-required-note"
             className="text-[length:var(--text-body-sm)] text-[color:var(--text-muted)]"
           >
-            {t("required")}
+            Every field is required.
           </p>
-
-          {/* Locale of the page the form sits on. On the JS path the API
-              ignores it; on the native POST it decides which /contact the
-              303 lands on. */}
-          <input type="hidden" {...form.register("locale")} />
 
           {/* Honeypot */}
           <input
@@ -254,13 +220,13 @@ export default function ContactForm(): React.JSX.Element {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel htmlFor="contact-name">{t("name")}</FormLabel>
+                  <FormLabel htmlFor="contact-name">Full Name</FormLabel>
                   <FormControl>
                     <Input
                       required
                       aria-required="true"
                       id="contact-name"
-                      placeholder={t("namePlaceholder")}
+                      placeholder="Your name"
                       autoComplete="name"
                       inputMode="text"
                       className="recessed control"
@@ -278,14 +244,14 @@ export default function ContactForm(): React.JSX.Element {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel htmlFor="contact-email">{t("email")}</FormLabel>
+                  <FormLabel htmlFor="contact-email">Email</FormLabel>
                   <FormControl>
                     <Input
                       required
                       aria-required="true"
                       id="contact-email"
                       type="email"
-                      placeholder={t("emailPlaceholder")}
+                      placeholder="you@example.com"
                       autoComplete="email"
                       inputMode="email"
                       className="recessed control"
@@ -305,11 +271,11 @@ export default function ContactForm(): React.JSX.Element {
             name="subject"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("subject")}</FormLabel>
+                <FormLabel>Subject</FormLabel>
                 <FormControl>
                   <div
                     role="radiogroup"
-                    aria-label={t("subjectAria")}
+                    aria-label="Choose a subject"
                     className="grid grid-cols-3 gap-2"
                     onKeyDown={(e) => handleSubjectKeyDown(e, field.value, field.onChange)}
                   >
@@ -329,7 +295,7 @@ export default function ContactForm(): React.JSX.Element {
                               : "cursor-pointer border border-[var(--edge-soft)] bg-background/60 text-muted-foreground hover:bg-muted hover:text-foreground",
                           )}
                         >
-                          {t(`subjects.${opt.value}`)}
+                          {opt.label}
                         </button>
                       );
                     })}
@@ -355,7 +321,7 @@ export default function ContactForm(): React.JSX.Element {
             render={({ field }) => (
               <FormItem className="flex flex-1 flex-col min-h-[220px]">
                 <div className="flex items-center justify-between">
-                  <FormLabel htmlFor="contact-message">{t("message")}</FormLabel>
+                  <FormLabel htmlFor="contact-message">Message</FormLabel>
                   <span
                     id="message-counter"
                     className={cn(
@@ -374,7 +340,7 @@ export default function ContactForm(): React.JSX.Element {
                     required
                     aria-required="true"
                     id="contact-message"
-                    placeholder={t("messagePlaceholder")}
+                    placeholder="Tell me about your idea..."
                     aria-describedby="message-counter"
                     className="flex-1 h-full min-h-[180px] md:min-h-[260px] resize-y rounded-lg border-[var(--edge-soft)] bg-background/60"
                     rows={10}
@@ -399,7 +365,7 @@ export default function ContactForm(): React.JSX.Element {
               aria-live="polite"
             >
               <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden />
-              {t("success")}
+              Your message has been sent. I&apos;ll get back to you soon.
             </div>
           )}
           {status === "error" && (
@@ -425,7 +391,7 @@ export default function ContactForm(): React.JSX.Element {
               ) : (
                 <Send className="h-4 w-4" aria-hidden />
               )}
-              {isSubmitting ? t("sending") : t("submit")}
+              {isSubmitting ? "Sending…" : "Send message"}
             </button>
           </div>
         </form>
