@@ -7,12 +7,12 @@ import Packages from "@/features/packages/sections/Packages";
 
 /**
  * The only Turkish page on the site, and the metadata says so: the audience
- * for a price list is a local business owner searching in Turkish.
+ * for a package list is a local business owner searching in Turkish.
  */
 export const metadata: Metadata = {
   title: "Paketler",
   description:
-    "Tanıtım sitesi, katalog sitesi ve yönetim panelli sistem. Üç çalışma biçimi, kapsamı ve fiyatıyla.",
+    "Tanıtım sitesi, katalog sitesi ve yönetim panelli sistem. Üç çalışma biçimi ve kapsamı.",
   alternates: { canonical: "/paketler" },
   openGraph: {
     type: "website",
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     locale: "tr_TR",
     title: "Paketler",
     description:
-      "Tanıtım sitesi, katalog sitesi ve yönetim panelli sistem. Kapsam, fiyat ve iletişim.",
+      "Tanıtım sitesi, katalog sitesi ve yönetim panelli sistem. Kapsam ve iletişim.",
   },
 };
 

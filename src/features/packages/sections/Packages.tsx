@@ -20,22 +20,16 @@ export const CONTACT_PHONE = {
   display: "+90 541 657 79 25",
 } as const;
 
-/**
- * Two shapes, not one nullable price. The scoped package has no number to
- * print and never will, so it carries a sentence where the others carry a
- * setup fee and a renewal fee. A discriminated union makes the renderer
- * handle both instead of guarding on an empty string.
- */
-type PackagePrice =
-  | { kind: "fixed"; setup: string; renewal: string }
-  | { kind: "scoped"; note: string };
-
 type PackageItem = {
   id: string;
   title: string;
   summary: string;
   features: readonly string[];
-  price: PackagePrice;
+  /**
+   * No package prints a figure. Every card carries the same sentence and the
+   * number is settled in the conversation the CTA starts.
+   */
+  price: string;
   cta: {
     label: string;
     /** Prefilled into the wa.me link, URL-encoded at render. */
@@ -46,9 +40,12 @@ type PackageItem = {
 };
 
 /**
- * The single source for this section. Prices, feature lists and CTA text all
- * live here: change a figure once and it changes everywhere it is rendered.
+ * The single source for this section. Feature lists, price lines and CTA
+ * text all live here: change a string once and it changes everywhere it is
+ * rendered.
  */
+const PRICE_NOTE = "Fiyat görüşmede netleşir";
+
 const PACKAGES: readonly PackageItem[] = [
   {
     id: "tanitim-sitesi",
@@ -63,11 +60,7 @@ const PACKAGES: readonly PackageItem[] = [
       "Alan adı ve SSL ilk yıl dahil",
       "Alan adı sizin adınıza kayıtlı, site tamamen sizin",
     ],
-    price: {
-      kind: "fixed",
-      setup: "Kurulum 6.000 TL",
-      renewal: "Yıllık yenileme 4.000 TL",
-    },
+    price: PRICE_NOTE,
     cta: {
       label: "Teklif alın",
       message: "Merhaba, Tanıtım Sitesi paketi için bilgi almak istiyorum.",
@@ -87,11 +80,7 @@ const PACKAGES: readonly PackageItem[] = [
       "Formdan gelen talep doğrudan WhatsApp'ınıza düşer",
       "Alan adı ve SSL ilk yıl dahil, alan adı sizin adınıza",
     ],
-    price: {
-      kind: "fixed",
-      setup: "Kurulum 28.000 TL'den başlar",
-      renewal: "Yıllık yenileme 10.000 TL",
-    },
+    price: PRICE_NOTE,
     cta: {
       label: "Teklif alın",
       message:
@@ -112,10 +101,7 @@ const PACKAGES: readonly PackageItem[] = [
       "İşleyişinize göre tasarlanan panel",
       "Kurulum ve bakım kapsama göre belirlenir",
     ],
-    price: {
-      kind: "scoped",
-      note: "Fiyat, ihtiyacınıza göre belirlenir.",
-    },
+    price: PRICE_NOTE,
     cta: {
       label: "Arayın, konuşalım",
       message:
@@ -221,20 +207,9 @@ export default function Packages({
                 so the three buttons line up however unevenly the summaries
                 and feature lists wrap above them. */}
             <div className="mt-auto border-t border-[var(--edge-soft)] pt-4">
-              {pkg.price.kind === "fixed" ? (
-                <>
-                  <p className="text-[length:var(--text-display-sm)] font-semibold leading-[1.2] text-[var(--text)]">
-                    {pkg.price.setup}
-                  </p>
-                  <p className="mt-1 text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
-                    {pkg.price.renewal}
-                  </p>
-                </>
-              ) : (
-                <p className="text-[length:var(--text-body-base)] font-medium leading-[1.5] text-[var(--text)]">
-                  {pkg.price.note}
-                </p>
-              )}
+              <p className="text-[length:var(--text-body-base)] font-medium leading-[1.5] text-[var(--text)]">
+                {pkg.price}
+              </p>
 
               {/* Above the button, not below it. Below, the extra line pushes
                   this card's CTA 36px clear of the other two and the row of
