@@ -420,8 +420,8 @@
   "packages": {
     "meta": {
       "title": "Packages",
-      "description": "Business website, catalogue site and a system with an admin panel. Three ways of working, with scope and price.",
-      "ogDescription": "Business website, catalogue site and a system with an admin panel. Scope, price and contact."
+      "description": "Business website, catalogue site and a system with an admin panel. Three ways of working, with their scope.",
+      "ogDescription": "Business website, catalogue site and a system with an admin panel. Scope and contact."
     },
     "heading": "Packages",
     "subheading": "Three main ways of working, depending on what you want built. If what you need is not exactly one of these, write and we will pin it down together.",
@@ -439,8 +439,7 @@
           "5": "Domain and SSL included for the first year",
           "6": "The domain is registered in your name; the site is entirely yours"
         },
-        "setup": "Setup 6,000 TL",
-        "renewal": "Yearly renewal 4,000 TL",
+        "price": "Price is settled in the first conversation",
         "cta": "Get a quote",
         "ctaMessage": "Hello, I would like information about the Business Website package."
       },
@@ -455,8 +454,7 @@
           "5": "Form requests land straight in your WhatsApp",
           "6": "Domain and SSL included for the first year, domain in your name"
         },
-        "setup": "Setup from 28,000 TL",
-        "renewal": "Yearly renewal 10,000 TL",
+        "price": "Price is settled in the first conversation",
         "cta": "Get a quote",
         "ctaMessage": "Hello, I would like information about the Catalogue / Listing Site package."
       },
@@ -471,7 +469,7 @@
           "5": "A panel designed around how you work",
           "6": "Setup and maintenance priced by scope"
         },
-        "note": "The price depends on what you need.",
+        "price": "Price is settled in the first conversation",
         "cta": "Call, let's talk",
         "ctaMessage": "Hello, I would like to talk about a system with an admin panel."
       }

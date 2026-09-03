@@ -11,28 +11,22 @@ import { CONTACT_PHONE, TEL_HREF, whatsappHref } from "@/lib/site";
 
 type PackageKey = "brochure" | "catalogue" | "system";
 
-/**
- * Two shapes, not one nullable price. The scoped package has no number to
- * print and never will, so it carries a sentence where the others carry a
- * setup fee and a renewal fee. A discriminated union makes the renderer
- * handle both instead of guarding on an empty string.
- */
 type PackageItem = {
   key: PackageKey;
-  price: "fixed" | "scoped";
-  /** Prints a second, visible tel: link under the CTA. */
+  /** Prints a second, visible tel: link under the price line. */
   showPhone: boolean;
 };
 
 /**
- * Structure only. Titles, summaries, feature lists, prices and CTA text all
- * live in messages under `packages.cards.<key>`: change a figure once there
- * and it changes everywhere it is rendered.
+ * Structure only. Titles, summaries, feature lists, the price line and CTA
+ * text all live in messages under `packages.cards.<key>`. No figures are
+ * printed anywhere on this page: every card carries the same one-line
+ * "settled in conversation" note instead.
  */
 const PACKAGES: readonly PackageItem[] = [
-  { key: "brochure", price: "fixed", showPhone: false },
-  { key: "catalogue", price: "fixed", showPhone: false },
-  { key: "system", price: "scoped", showPhone: true },
+  { key: "brochure", showPhone: false },
+  { key: "catalogue", showPhone: false },
+  { key: "system", showPhone: true },
 ] as const;
 
 /** A module constant, not useId: this section stays a server component. */
@@ -88,8 +82,7 @@ export default function Packages({
 
       <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {PACKAGES.map((pkg) => {
-          const card = messages.packages.cards[pkg.key];
-          const features = values(card.features);
+          const features = values(messages.packages.cards[pkg.key].features);
           return (
             <article
               key={pkg.key}
@@ -118,24 +111,13 @@ export default function Packages({
                 ))}
               </ul>
 
-              {/* `mt-auto` pins the price and the CTA to the foot of the card,
-                  so the three buttons line up however unevenly the summaries
-                  and feature lists wrap above them. */}
+              {/* `mt-auto` pins the price line and the CTA to the foot of the
+                  card, so the three buttons line up however unevenly the
+                  summaries and feature lists wrap above them. */}
               <div className="mt-auto border-t border-[var(--edge-soft)] pt-4">
-                {"setup" in card ? (
-                  <>
-                    <p className="text-[length:var(--text-display-sm)] font-semibold leading-[1.2] text-[var(--text)]">
-                      {card.setup}
-                    </p>
-                    <p className="mt-1 text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
-                      {card.renewal}
-                    </p>
-                  </>
-                ) : (
-                  <p className="text-[length:var(--text-body-base)] font-medium leading-[1.5] text-[var(--text)]">
-                    {card.note}
-                  </p>
-                )}
+                <p className="text-[length:var(--text-body-base)] font-medium leading-[1.5] text-[var(--text)]">
+                  {t(`cards.${pkg.key}.price`)}
+                </p>
 
                 {/* Above the button, not below it. Below, the extra line pushes
                     this card's CTA 36px clear of the other two and the row of

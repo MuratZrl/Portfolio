@@ -420,8 +420,8 @@
   "packages": {
     "meta": {
       "title": "Paketler",
-      "description": "Tanıtım sitesi, katalog sitesi ve yönetim panelli sistem. Üç çalışma biçimi, kapsamı ve fiyatıyla.",
-      "ogDescription": "Tanıtım sitesi, katalog sitesi ve yönetim panelli sistem. Kapsam, fiyat ve iletişim."
+      "description": "Tanıtım sitesi, katalog sitesi ve yönetim panelli sistem. Üç çalışma biçimi, kapsamıyla.",
+      "ogDescription": "Tanıtım sitesi, katalog sitesi ve yönetim panelli sistem. Kapsam ve iletişim."
     },
     "heading": "Paketler",
     "subheading": "Ne yaptırmak istediğinize göre üç ana çalışma biçimi var. Aradığınız tam olarak bunlardan biri değilse yazın, birlikte netleştirelim.",
@@ -439,8 +439,7 @@
           "5": "Alan adı ve SSL ilk yıl dahil",
           "6": "Alan adı sizin adınıza kayıtlı, site tamamen sizin"
         },
-        "setup": "Kurulum 6.000 TL",
-        "renewal": "Yıllık yenileme 4.000 TL",
+        "price": "Fiyat görüşmede netleşir",
         "cta": "Teklif alın",
         "ctaMessage": "Merhaba, Tanıtım Sitesi paketi için bilgi almak istiyorum."
       },
@@ -455,8 +454,7 @@
           "5": "Formdan gelen talep doğrudan WhatsApp'ınıza düşer",
           "6": "Alan adı ve SSL ilk yıl dahil, alan adı sizin adınıza"
         },
-        "setup": "Kurulum 28.000 TL'den başlar",
-        "renewal": "Yıllık yenileme 10.000 TL",
+        "price": "Fiyat görüşmede netleşir",
         "cta": "Teklif alın",
         "ctaMessage": "Merhaba, Katalog / Portföy Sitesi paketi için bilgi almak istiyorum."
       },
@@ -471,7 +469,7 @@
           "5": "İşleyişinize göre tasarlanan panel",
           "6": "Kurulum ve bakım kapsama göre belirlenir"
         },
-        "note": "Fiyat, ihtiyacınıza göre belirlenir.",
+        "price": "Fiyat görüşmede netleşir",
         "cta": "Arayın, konuşalım",
         "ctaMessage": "Merhaba, yönetim panelli bir sistem için görüşmek istiyorum."
       }
