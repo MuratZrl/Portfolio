@@ -1,19 +1,19 @@
 // src/features/home/sections/Hero.tsx
 
 import React from "react";
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import CodePanel from "@/features/home/sections/CodePanel";
-
-type Href = "/" | `/${string}`;
+import { Link } from "@/i18n/navigation";
 
 type ActionLink = {
-  href: Href;
+  /** Internal path ("/projects"), in-page anchor ("#ornekler") or absolute URL. */
+  href: string;
   label: string;
   ariaLabel?: string;
   download?: boolean;
+  /** Absolute URLs open in a new tab; the sr-only note is appended by the caller's copy. */
+  external?: boolean;
 };
 
 type HeroProps = {
@@ -24,6 +24,18 @@ type HeroProps = {
   secondary?: ActionLink;
   /** Logistics line stamped at the foot of the plate. Location, timezone, availability. */
   availability?: string;
+  /**
+   * Desktop-only right column. The portfolio puts the code panel here; the
+   * small-business site leaves it out, and the plate then takes the row on
+   * its own rather than sitting beside an empty half.
+   */
+  aside?: React.ReactNode;
+  /**
+   * Show the aside on small screens too, stacked under the plate. Off by
+   * default: the code panel is desktop-only scroll cost on a phone, but a
+   * screenshot of what the visitor would get is worth the space.
+   */
+  stackAside?: boolean;
 };
 
 /**
@@ -43,6 +55,8 @@ export default function Hero({
   primary,
   secondary,
   availability,
+  aside,
+  stackAside = false,
 }: HeroProps): React.JSX.Element {
   const headingId = React.useId();
 
@@ -51,8 +65,8 @@ export default function Hero({
       className={cn("relative w-full", className)}
       aria-labelledby={headingId}
     >
-      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start lg:gap-8">
-      <div className="coupon p-6 sm:p-8">
+      <div className={cn(aside && "lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start lg:gap-8")}>
+      <div className={cn("coupon p-6 sm:p-8", !aside && "max-w-[40rem]")}>
         <h1
           id={headingId}
           className="max-w-[18ch] text-[length:var(--text-display-xl)] font-extrabold leading-[0.96] text-[var(--text)]"
@@ -73,26 +87,21 @@ export default function Hero({
           style={{ "--i": 2 } as React.CSSProperties}
           className="mt-7 flex flex-wrap items-center gap-3"
         >
-          <Link
-            href={primary.href}
-            aria-label={primary.ariaLabel}
+          <ActionAnchor
+            action={primary}
             className="soft-btn soft-btn-primary inline-flex min-h-11 items-center gap-2 px-5 text-[length:var(--text-body-sm)] font-medium"
-              draggable={false}
-            >
+          >
             {primary.label}
             <ArrowRight className="size-4" aria-hidden />
-          </Link>
+          </ActionAnchor>
 
           {secondary ? (
-            <a
-              href={secondary.href}
-              download={secondary.download}
-              aria-label={secondary.ariaLabel}
+            <ActionAnchor
+              action={secondary}
               className="soft-btn soft-btn-ghost inline-flex min-h-11 items-center px-5 text-[length:var(--text-body-sm)] font-medium"
-              draggable={false}
             >
               {secondary.label}
-            </a>
+            </ActionAnchor>
           ) : null}
         </div>
 
@@ -109,12 +118,51 @@ export default function Hero({
         ) : null}
       </div>
 
-        {/* Desktop only. It does not stack on smaller screens — a code block
-            below the CTAs on a phone is scroll cost, not information. */}
-        <div className="hidden lg:block">
-          <CodePanel />
-        </div>
+        {/* Desktop only unless `stackAside`: a code block below the CTAs on a
+            phone is scroll cost, not information, so the portfolio hides it
+            there. The Turkish home stacks its screenshot instead. */}
+        {aside ? (
+          <div className={stackAside ? "mt-8 lg:mt-0" : "hidden lg:block"}>{aside}</div>
+        ) : null}
       </div>
     </section>
+  );
+}
+
+/**
+ * One anchor, three kinds of href. Internal paths go through the locale-aware
+ * Link so /projects becomes /en/projects on the English site; anchors and
+ * downloads are plain <a>; absolute URLs open in a new tab.
+ */
+function ActionAnchor({
+  action,
+  className,
+  children,
+}: {
+  action: ActionLink;
+  className: string;
+  children: React.ReactNode;
+}): React.JSX.Element {
+  const isInternalRoute = action.href.startsWith("/") && !action.download;
+
+  if (isInternalRoute) {
+    return (
+      <Link href={action.href} aria-label={action.ariaLabel} className={className} draggable={false}>
+        {children}
+      </Link>
+    );
+  }
+
+  return (
+    <a
+      href={action.href}
+      download={action.download}
+      aria-label={action.ariaLabel}
+      {...(action.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+      className={className}
+      draggable={false}
+    >
+      {children}
+    </a>
   );
 }

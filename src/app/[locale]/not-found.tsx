@@ -1,46 +1,51 @@
-// src/app/not-found.tsx
+// src/app/[locale]/not-found.tsx
 import React from "react";
-import Link from "next/link";
-import type { Metadata } from "next";
+import { useLocale, useTranslations } from "next-intl";
+
 import { Button } from "@/components/ui/button";
 import { Page } from "@/components/layout/Page";
+import { Link } from "@/i18n/navigation";
 
-export const metadata: Metadata = {
-  title: "Page not found",
-};
-
+/**
+ * Rendered for every unmatched path inside a locale (see [...rest]/page.tsx)
+ * and for notFound() calls from pages. The secondary link points at the
+ * second-most-useful page for that audience: packages for the Turkish site,
+ * projects for the portfolio.
+ */
 export default function NotFound(): React.JSX.Element {
+  const t = useTranslations("notFound");
+  const locale = useLocale();
+  const secondaryHref = locale === "en" ? "/projects" : "/paketler";
+
   return (
     <Page>
       <section
         aria-labelledby="not-found-title"
         className="mx-auto flex min-h-[60vh] max-w-lg flex-col items-center justify-center text-center"
       >
-        <p className="text-sm font-medium text-muted-foreground">404</p>
+        <p className="text-sm font-medium text-muted-foreground">{t("label")}</p>
 
         <h1
           id="not-found-title"
           className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl"
         >
-          Page not found
+          {t("title")}
         </h1>
 
-        <p className="mt-3 text-pretty text-muted-foreground">
-          The page you’re looking for doesn’t exist or has been moved.
-        </p>
+        <p className="mt-3 text-pretty text-muted-foreground">{t("description")}</p>
 
         <div className="mt-6 flex items-center gap-3">
           <Button asChild>
-            <Link href="/" draggable={false}>Go home</Link>
+            <Link href="/" draggable={false}>{t("home")}</Link>
           </Button>
 
           <Link
-            href="/projects"
+            href={secondaryHref}
             draggable={false}
             className="inline-flex h-11 select-none items-center text-sm font-medium underline underline-offset-4 text-muted-foreground hover:text-foreground"
-            aria-label="See all projects"
+            aria-label={t("secondaryAria")}
           >
-            View projects
+            {t("secondary")}
           </Link>
         </div>
       </section>

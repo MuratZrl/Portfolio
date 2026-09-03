@@ -1,11 +1,13 @@
 // src/features/home/data/tech-stack.ts
-// Single source of truth for TechStack groups used on the Home page.
+// Single source of truth for TechStack groups used on the Home page. The
+// group titles live in messages under `home.stack.groups.<key>`; only the
+// proper-noun skill names are data.
 
 import type { Group } from "@/features/home/types/tech-stack";
 
 export const DEFAULT_GROUPS = [
   {
-    title: "Languages and frameworks",
+    key: "languages",
     skills: [
       { name: "TypeScript" },
       { name: "Go" },
@@ -16,7 +18,7 @@ export const DEFAULT_GROUPS = [
     ],
   },
   {
-    title: "Interface and state",
+    key: "interface",
     skills: [
       { name: "Tailwind CSS" },
       { name: "Material UI" },
@@ -25,7 +27,7 @@ export const DEFAULT_GROUPS = [
     ],
   },
   {
-    title: "Data and infrastructure",
+    key: "data",
     skills: [
       { name: "PostgreSQL" },
       { name: "Prisma" },
@@ -38,7 +40,7 @@ export const DEFAULT_GROUPS = [
     ],
   },
   {
-    title: "Build, deploy, test",
+    key: "build",
     skills: [
       { name: "Docker" },
       { name: "Git" },

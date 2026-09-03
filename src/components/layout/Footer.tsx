@@ -1,42 +1,66 @@
 // src/components/layout/Footer.tsx
-"use client";
+//
+// Server component. Nothing here is interactive; the previous "use client"
+// bought nothing and shipped the footer to the browser for no reason.
 
 import React from "react";
-import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
+import { Github, Linkedin, Briefcase, Mail, Heart, MessageCircle, type LucideIcon } from "lucide-react";
+
 import { cn } from "@/lib/utils";
-import { Github, Linkedin, Briefcase, Mail, Heart } from "lucide-react";
+import { Link } from "@/i18n/navigation";
+import type { Locale } from "@/i18n/routing";
+import { EMAIL, SOCIAL_URLS, whatsappHref } from "@/lib/site";
 
 /* ────────────────────────────── Data ────────────────────────────── */
 
-const NAV_LINKS = [
-  { label: "About", href: "/about" },
-  { label: "Projects", href: "/projects" },
-  { label: "Contact", href: "/contact" },
-] as const;
+type NavKey = "about" | "projects" | "contact" | "packages";
 
-const SOCIAL_LINKS = [
-  {
-    label: "GitHub",
-    href: "https://github.com/MuratZrl",
-    icon: Github,
-  },
-  {
-    label: "LinkedIn",
-    href: "https://www.linkedin.com/in/murat-zorlu-dev/",
-    icon: Linkedin,
-  },
-  {
-    label: "Upwork",
-    href: "https://www.upwork.com/freelancers/~01eb1693cb0c1f6b22",
-    icon: Briefcase,
-  },
-] as const;
+const NAV_BY_LOCALE: Record<Locale, readonly { href: `/${string}`; key: NavKey }[]> = {
+  tr: [
+    { href: "/paketler", key: "packages" },
+    { href: "/contact", key: "contact" },
+  ],
+  en: [
+    { href: "/about", key: "about" },
+    { href: "/projects", key: "projects" },
+    { href: "/contact", key: "contact" },
+  ],
+};
+
+type Social = { label: string; href: string; icon: LucideIcon };
+
+/**
+ * The portfolio lists the developer profiles. The Turkish site lists the
+ * channels a business owner actually uses: WhatsApp first, LinkedIn as the
+ * one profile that reads as a real person. Labels are proper nouns, not copy.
+ */
+function socialsFor(locale: Locale, waHref: string): readonly Social[] {
+  if (locale === "tr") {
+    return [
+      { label: "WhatsApp", href: waHref, icon: MessageCircle },
+      { label: "LinkedIn", href: SOCIAL_URLS.linkedin, icon: Linkedin },
+    ];
+  }
+  return [
+    { label: "GitHub", href: SOCIAL_URLS.github, icon: Github },
+    { label: "LinkedIn", href: SOCIAL_URLS.linkedin, icon: Linkedin },
+    { label: "Upwork", href: SOCIAL_URLS.upwork, icon: Briefcase },
+  ];
+}
 
 /* ────────────────────────────── Component ────────────────────────────── */
 
 export default function Footer(): React.JSX.Element {
+  const t = useTranslations("footer");
+  const tNav = useTranslations("nav");
+  const tCommon = useTranslations("common");
+  const tWa = useTranslations("whatsapp");
+  const locale = useLocale();
+
   const year = new Date().getFullYear();
-  const email = "me@muratzorlu.dev";
+  const navLinks = NAV_BY_LOCALE[locale];
+  const socials = socialsFor(locale, whatsappHref(tWa("defaultMessage")));
 
   return (
     <footer role="contentinfo" className="mt-auto border-t border-[var(--edge-soft)]">
@@ -46,24 +70,22 @@ export default function Footer(): React.JSX.Element {
           {/* Brand + email */}
           <div className="flex flex-col items-center md:items-start">
             <Link href="/" draggable={false} className="select-none text-lg font-semibold tracking-tight">
-              Murat Zorlu
+              {tCommon("brand")}
             </Link>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Fullstack developer building with Next.js, NestJS, Go and PostgreSQL. Based in Istanbul.
-            </p>
+            <p className="mt-1 text-sm text-muted-foreground">{t("tagline")}</p>
 
             <address className="mt-3 not-italic">
               <a
-                href={`mailto:${email}`}
+                href={`mailto:${EMAIL}`}
                 draggable={false}
                 className={cn(
                   "chip inline-flex min-h-6 select-none items-center gap-2 px-3 py-1.5 text-xs font-medium interactive",
                   "text-muted-foreground hover:text-foreground",
                 )}
-                aria-label={`Email ${email}`}
+                aria-label={t("emailAria", { email: EMAIL })}
               >
                 <Mail className="h-3.5 w-3.5" aria-hidden />
-                {email}
+                {EMAIL}
               </a>
             </address>
           </div>
@@ -71,17 +93,17 @@ export default function Footer(): React.JSX.Element {
           {/* Nav */}
           <div className="flex flex-col items-center">
             <div className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Pages
+              {t("pages")}
             </div>
-            <nav aria-label="Footer navigation" className="flex flex-wrap justify-center gap-x-5 gap-y-2">
-              {NAV_LINKS.map((link) => (
+            <nav aria-label={t("navAria")} className="flex flex-wrap justify-center gap-x-5 gap-y-2">
+              {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   draggable={false}
                   className="inline-flex min-h-6 select-none items-center text-sm text-muted-foreground interactive hover:text-primary"
                 >
-                  {link.label}
+                  {tNav(link.key)}
                 </Link>
               ))}
             </nav>
@@ -90,17 +112,17 @@ export default function Footer(): React.JSX.Element {
           {/* Socials */}
           <div className="flex flex-col items-center md:items-end">
             <div className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Connect
+              {t("connect")}
             </div>
             <div className="flex items-center gap-2">
-              {SOCIAL_LINKS.map((s) => (
+              {socials.map((s) => (
                 <a
                   key={s.label}
                   href={s.href}
                   target="_blank"
                   rel="noopener noreferrer"
                   draggable={false}
-                  aria-label={`${s.label} (opens in a new tab)`}
+                  aria-label={`${s.label} (${tCommon("opensInNewTab")})`}
                   className={cn(
                     "flex size-9 select-none items-center justify-center rounded-lg interactive",
                     "bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary",
@@ -115,13 +137,11 @@ export default function Footer(): React.JSX.Element {
 
         {/* ── Bottom bar ── */}
         <div className="flex flex-col items-center gap-2 border-t border-[var(--edge-soft)] py-5 text-xs text-muted-foreground sm:flex-row sm:justify-between">
-          <p>
-            © {year} Murat Zorlu. All rights reserved.
-          </p>
+          <p>{t("copyright", { year })}</p>
           <p className="inline-flex items-center gap-1">
-            Built with
+            {t("builtWith")}
             <Heart className="h-3 w-3 text-primary" aria-hidden />
-            Next.js & TypeScript
+            {t("builtWithSuffix")}
           </p>
         </div>
       </div>

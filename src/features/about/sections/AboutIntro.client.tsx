@@ -6,47 +6,33 @@
 // constant does the same job without shipping the component to the browser.
 
 import React from "react";
-import Link from "next/link";
+import { useMessages, useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
+import { Link } from "@/i18n/navigation";
 import type { LucideIcon } from "lucide-react";
 import { MapPin, Download, ArrowRight } from "lucide-react";
 
-import type { Availability, Cta } from "@/features/about/types";
 import { ABOUT_DEFAULTS } from "@/features/about/data/about-intro";
 
 const HEADING_ID = "about-intro-heading";
 
 type AboutIntroProps = {
-  name?: string;
-  role?: string;
-  location?: string;
-  availability?: Availability;
-  bio?: readonly string[];
-  highlights?: readonly string[];
-  techTags?: readonly string[];
-  social?: readonly { href: string; label: string; icon: LucideIcon }[];
-  stats?: readonly { label: string; value: string; icon?: LucideIcon }[];
-  primary?: Cta;
-  secondary?: Cta;
   className?: string;
 };
 
-export default function AboutIntro(props: AboutIntroProps): React.JSX.Element {
-  const {
-    name = ABOUT_DEFAULTS.name,
-    role = ABOUT_DEFAULTS.role,
-    location = ABOUT_DEFAULTS.location,
-    availability = ABOUT_DEFAULTS.availability,
-    bio = ABOUT_DEFAULTS.bio,
-    highlights = ABOUT_DEFAULTS.highlights,
-    techTags = ABOUT_DEFAULTS.techTags,
-    social = ABOUT_DEFAULTS.social,
-    stats = ABOUT_DEFAULTS.stats,
-    primary = ABOUT_DEFAULTS.primary,
-    secondary = ABOUT_DEFAULTS.secondary,
-    className,
-  } = props;
+/** Message lists are objects keyed "1", "2", ... ; this reads them in order. */
+function values(obj: unknown): string[] {
+  return Object.values((obj ?? {}) as Record<string, string>);
+}
+
+export default function AboutIntro({ className }: AboutIntroProps): React.JSX.Element {
+  const t = useTranslations("about.intro");
+  const messages = useMessages();
+  const { name, availability, techTags, social, stats, primaryHref, secondaryHref } = ABOUT_DEFAULTS;
+
+  const bio = values(messages.about.intro.bio);
+  const highlights = values(messages.about.intro.highlights);
 
   return (
     <section aria-labelledby={HEADING_ID} className={cn(className)}>
@@ -73,18 +59,18 @@ export default function AboutIntro(props: AboutIntroProps): React.JSX.Element {
                     <span className="absolute inline-flex size-full animate-ping rounded-full bg-[var(--accent)] opacity-60" />
                     <span className="relative inline-flex size-2 rounded-full bg-[var(--accent)]" />
                   </span>
-                  Available for work
+                  {t("available")}
                 </span>
               ) : null}
             </div>
 
             <p className="text-[length:var(--text-body-base)] text-[var(--text-muted)]">
-              {role}
+              {t("role")}
             </p>
 
             <span className="chip inline-flex items-center gap-1.5 px-3 py-1 text-[length:var(--text-body-xs)] text-[var(--text-muted)]">
               <MapPin className="size-3" aria-hidden />
-              {location}
+              {t("location")}
             </span>
           </header>
 
@@ -92,28 +78,28 @@ export default function AboutIntro(props: AboutIntroProps): React.JSX.Element {
               ghost. The shadcn Button variants are gone. */}
           <div className="flex flex-wrap items-center gap-3">
             <Link
-              href={primary.href}
+              href={primaryHref}
               draggable={false}
-              aria-label={primary.ariaLabel ?? primary.label}
+              aria-label={t("primaryAria")}
               className="soft-btn soft-btn-primary inline-flex min-h-11 items-center gap-2 px-5 text-[length:var(--text-body-sm)] font-medium"
             >
-              {primary.label}
+              {t("primary")}
               <ArrowRight className="size-4" aria-hidden />
             </Link>
 
             <a
-              href={secondary.href}
-              {...(secondary.download ? { download: true } : {})}
+              href={secondaryHref}
+              download
               draggable={false}
-              aria-label={secondary.ariaLabel ?? secondary.label}
+              aria-label={t("secondary")}
               className="soft-btn soft-btn-ghost inline-flex min-h-11 items-center gap-2 px-5 text-[length:var(--text-body-sm)] font-medium"
             >
               <Download className="size-4" aria-hidden />
-              {secondary.label}
+              {t("secondary")}
             </a>
 
             {social.length > 0 ? (
-              <nav aria-label="Social links" className="ml-auto flex items-center gap-2">
+              <nav aria-label={t("socialNav")} className="ml-auto flex items-center gap-2">
                 {social.map((s) => (
                   <a
                     key={s.href}
@@ -149,19 +135,19 @@ export default function AboutIntro(props: AboutIntroProps): React.JSX.Element {
           ) : null}
 
           <p className="text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
-            Languages: Turkish (Native) · English (B2) · German (A2)
+            {t("languages")}
           </p>
 
           {/* Static labels, not controls: .chip, the same primitive the
               project cards and the footer email use. */}
           {techTags.length > 0 ? (
             <div className="flex flex-wrap gap-1.5">
-              {techTags.map((t) => (
+              {techTags.map((tag) => (
                 <span
-                  key={t}
+                  key={tag}
                   className="chip px-2 py-0.5 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--text-muted)]"
                 >
-                  {t}
+                  {tag}
                 </span>
               ))}
             </div>

@@ -2,7 +2,7 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import {
   Mail,
@@ -14,52 +14,38 @@ import {
   Copy,
   Check,
   Briefcase,
+  MessageCircle,
+  type LucideIcon,
 } from "lucide-react";
 
-type ContactDetailsProps = {
-  email?: string;
-  location?: string;
-  timezoneLabel?: string;
-  responseWindow?: string;
-  githubUrl?: string;
-  linkedinUrl?: string;
-  upworkUrl?: string;
-};
+import type { Locale } from "@/i18n/routing";
+import { CONTACT_PHONE, EMAIL, SOCIAL_URLS, whatsappHref } from "@/lib/site";
 
-const SOCIAL_LINKS = (
-  githubUrl: string,
-  linkedinUrl: string,
-  upworkUrl: string,
-) => [
-  {
-    label: "GitHub",
-    icon: Github,
-    href: githubUrl,
-    handle: "@MuratZrl",
-  },
-  {
-    label: "LinkedIn",
-    icon: Linkedin,
-    href: linkedinUrl,
-    handle: "murat-zorlu-dev",
-  },
-  {
-    label: "Upwork",
-    icon: Briefcase,
-    href: upworkUrl,
-    handle: "Murat Z.",
-  },
-];
+type Social = { label: string; icon: LucideIcon; href: string; handle: string };
 
-export default function ContactDetails({
-  email = "me@muratzorlu.dev",
-  location = "Istanbul, Türkiye",
-  timezoneLabel = "TRT (UTC+3)",
-  responseWindow = "Mon–Fri, 10:00–18:00",
-  githubUrl = "https://github.com/MuratZrl",
-  linkedinUrl = "https://www.linkedin.com/in/murat-zorlu-dev/",
-  upworkUrl = "https://www.upwork.com/freelancers/~01eb1693cb0c1f6b22",
-}: ContactDetailsProps): React.JSX.Element {
+/**
+ * The portfolio lists developer profiles. The Turkish site lists what a
+ * business owner reaches for: WhatsApp with the number printed, then
+ * LinkedIn as the one profile that reads as a real person.
+ */
+function socialsFor(locale: Locale, waHref: string, waHandle: string): readonly Social[] {
+  if (locale === "tr") {
+    return [
+      { label: "WhatsApp", icon: MessageCircle, href: waHref, handle: `${CONTACT_PHONE.display} · ${waHandle}` },
+      { label: "LinkedIn", icon: Linkedin, href: SOCIAL_URLS.linkedin, handle: "murat-zorlu-dev" },
+    ];
+  }
+  return [
+    { label: "GitHub", icon: Github, href: SOCIAL_URLS.github, handle: "@MuratZrl" },
+    { label: "LinkedIn", icon: Linkedin, href: SOCIAL_URLS.linkedin, handle: "murat-zorlu-dev" },
+    { label: "Upwork", icon: Briefcase, href: SOCIAL_URLS.upwork, handle: "Murat Z." },
+  ];
+}
+
+export default function ContactDetails(): React.JSX.Element {
+  const t = useTranslations("contact.details");
+  const tWa = useTranslations("whatsapp");
+  const locale = useLocale();
   const [copied, setCopied] = React.useState(false);
 
   async function copyToClipboard(text: string): Promise<void> {
@@ -72,38 +58,36 @@ export default function ContactDetails({
     }
   }
 
-  const socials = SOCIAL_LINKS(githubUrl, linkedinUrl, upworkUrl);
+  const socials = socialsFor(locale, whatsappHref(tWa("defaultMessage")), t("whatsappHandle"));
 
   return (
     <aside className="flex h-full flex-col gap-4">
       {/* ── Direct Contact ── */}
-      <div
-        className={cn("plate rounded-2xl border p-5 sm:p-6")}
-      >
+      <div className={cn("plate rounded-2xl border p-5 sm:p-6")}>
         <div className="mb-5 flex items-center gap-3">
           <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
             <Mail className="h-4 w-4" aria-hidden />
           </div>
-          <h3 className="text-base font-semibold">Direct</h3>
+          <h3 className="text-base font-semibold">{t("direct")}</h3>
         </div>
 
         <div className="space-y-4 text-sm">
           {/* Email */}
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
-              <div className="text-xs font-medium text-muted-foreground">Email</div>
-              <Link
-                href={`mailto:${email}`}
+              <div className="text-xs font-medium text-muted-foreground">{t("email")}</div>
+              <a
+                href={`mailto:${EMAIL}`}
                 className="break-all text-sm font-medium text-foreground hover:text-primary interactive"
-              draggable={false}
-            >
-                {email}
-              </Link>
+                draggable={false}
+              >
+                {EMAIL}
+              </a>
             </div>
             <button
               type="button"
-              aria-label="Copy email address"
-              onClick={() => void copyToClipboard(email)}
+              aria-label={t("copyEmail")}
+              onClick={() => void copyToClipboard(EMAIL)}
               className={cn(
                 "flex size-8 shrink-0 cursor-pointer select-none items-center justify-center rounded-lg interactive",
                 copied
@@ -114,7 +98,7 @@ export default function ContactDetails({
               {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
             </button>
             <span className="sr-only" aria-live="polite">
-              {copied ? "Copied email address" : ""}
+              {copied ? t("copied") : ""}
             </span>
           </div>
 
@@ -126,10 +110,10 @@ export default function ContactDetails({
               <MapPin className="h-3.5 w-3.5" aria-hidden />
             </div>
             <div>
-              <div className="text-xs font-medium text-muted-foreground">Location</div>
+              <div className="text-xs font-medium text-muted-foreground">{t("location")}</div>
               <p className="text-sm font-medium">
-                {location}{" "}
-                <span className="text-muted-foreground">({timezoneLabel})</span>
+                {t("locationValue")}{" "}
+                <span className="text-muted-foreground">({t("timezone")})</span>
               </p>
             </div>
           </div>
@@ -140,22 +124,20 @@ export default function ContactDetails({
               <Clock className="h-3.5 w-3.5" aria-hidden />
             </div>
             <div>
-              <div className="text-xs font-medium text-muted-foreground">Response window</div>
-              <p className="text-sm font-medium">{responseWindow}</p>
+              <div className="text-xs font-medium text-muted-foreground">{t("responseWindow")}</div>
+              <p className="text-sm font-medium">{t("responseWindowValue")}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* ── Elsewhere ── */}
-      <div
-        className={cn("plate rounded-2xl border p-5 sm:p-6")}
-      >
+      <div className={cn("plate rounded-2xl border p-5 sm:p-6")}>
         <div className="mb-5 flex items-center gap-3">
           <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
             <ExternalLink className="h-4 w-4" aria-hidden />
           </div>
-          <h3 className="text-base font-semibold">Elsewhere</h3>
+          <h3 className="text-base font-semibold">{t("elsewhere")}</h3>
         </div>
 
         <div className="-mb-2.5 space-y-2">
@@ -183,7 +165,6 @@ export default function ContactDetails({
           ))}
         </div>
       </div>
-
     </aside>
   );
 }

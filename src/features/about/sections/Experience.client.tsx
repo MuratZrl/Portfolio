@@ -2,7 +2,8 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import {
   CalendarDays, MapPin, Building2, Briefcase, GraduationCap,
@@ -24,25 +25,21 @@ import { EXPERIENCE_ITEMS } from "@/features/about/data/experience";
  * here: every badge carries its own icon and its own label text.
  */
 const KIND_CONFIG: Record<Kind, {
-  label: string;
   icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
   dot: string;
   badge: string;
 }> = {
   work: {
-    label: "Employment",
     icon: Building2,
     dot: "bg-[var(--accent)] border-[var(--accent)] text-[var(--on-accent)]",
     badge: "text-[var(--accent)]",
   },
   freelance: {
-    label: "Client project",
     icon: Briefcase,
     dot: "bg-[var(--edge)] border-[var(--edge)] text-[var(--ground)]",
     badge: "text-[var(--text-muted)]",
   },
   education: {
-    label: "Education",
     icon: GraduationCap,
     dot: "bg-[var(--accent)] border-[var(--accent)] text-[var(--on-accent)]",
     badge: "text-[var(--accent)]",
@@ -67,6 +64,7 @@ export default function ExperienceTimeline({
   items = EXPERIENCE_ITEMS,
   className,
 }: ExperienceTimelineProps): React.JSX.Element {
+  const t = useTranslations("about.experience");
   const [activeKind, setActiveKind] = React.useState<Kind | "all">("all");
 
   const sorted = React.useMemo(() => {
@@ -88,7 +86,7 @@ export default function ExperienceTimeline({
 
   return (
     <section
-      aria-label="Experience and education"
+      aria-label={t("sectionAria")}
       className={cn("py-10 sm:py-12", className)}
     >
       {/* Contract B: a group of toggle buttons, all tabbable, no arrow keys.
@@ -96,7 +94,7 @@ export default function ExperienceTimeline({
           unexplained controls to a screen-reader user. */}
       <div
         role="group"
-        aria-label="Filter experience by type"
+        aria-label={t("filterAria")}
         className="mb-8 flex flex-wrap gap-2"
       >
         <button
@@ -105,7 +103,7 @@ export default function ExperienceTimeline({
           aria-pressed={activeKind === "all"}
           className={pillClass(activeKind === "all")}
         >
-          All
+          {t("all")}
         </button>
         {kinds.map((k) => {
           const cfg = KIND_CONFIG[k];
@@ -120,7 +118,7 @@ export default function ExperienceTimeline({
               className={pillClass(isActive)}
             >
               <Icon className="size-3.5" aria-hidden />
-              {cfg.label}
+              {t(`kinds.${k}`)}
             </button>
           );
         })}
@@ -144,14 +142,14 @@ export default function ExperienceTimeline({
       ) : (
         <div className="plate flex flex-col items-center justify-center py-16 text-center">
           <p className="text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
-            No items match this filter.
+            {t("empty")}
           </p>
           <button
             type="button"
             onClick={() => setActiveKind("all")}
             className="soft-btn soft-btn-primary mt-3 inline-flex min-h-9 select-none items-center px-4 text-[length:var(--text-body-xs)] font-medium"
           >
-            Show all
+            {t("showAll")}
           </button>
         </div>
       )}
@@ -178,9 +176,14 @@ function TimelineCard({
   item: ExperienceItem;
   index: number;
 }): React.JSX.Element {
+  const t = useTranslations("about.experience");
   const cfg = KIND_CONFIG[item.kind];
   const Icon = cfg.icon;
-  const duration = durationHuman(item.period);
+  const { years, months } = durationParts(item.period);
+  const durationBits: string[] = [];
+  if (years > 0) durationBits.push(t("duration.years", { count: years }));
+  if (months > 0) durationBits.push(t("duration.months", { count: months }));
+  const duration = durationBits.length > 0 ? durationBits.join(" ") : t("duration.lessThanMonth");
 
   return (
     <div
@@ -219,7 +222,7 @@ function TimelineCard({
             )}
           >
             <Icon className="size-3.5" aria-hidden />
-            {cfg.label}
+            {t(`kinds.${item.kind}`)}
           </span>
         </div>
 
@@ -251,7 +254,7 @@ function TimelineCard({
             {/* Was text-foreground/70, an opacity knock-back on text. The
                 system has a token for secondary text. */}
             <p className="mb-2 text-[length:var(--text-body-xs)] font-semibold text-[var(--text)]">
-              Key Achievements
+              {t("achievements")}
             </p>
             <ul className="space-y-2 text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
               {item.achievements.map((a) => (
@@ -267,7 +270,7 @@ function TimelineCard({
         {item.responsibilities?.length ? (
           <div className="mb-4">
             <p className="mb-2 text-[length:var(--text-body-xs)] font-semibold text-[var(--text)]">
-              Responsibilities
+              {t("responsibilities")}
             </p>
             <ul className="space-y-2 text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
               {item.responsibilities.map((r) => (
@@ -338,8 +341,9 @@ function LinkPill({ href, label }: ExtLink): React.JSX.Element {
 }
 
 function PeriodText({ period }: { period: Period }): React.JSX.Element {
+  const t = useTranslations("about.experience");
   const start = formatYYYYMM(period.start);
-  const end = period.end ? formatYYYYMM(period.end) : "Present";
+  const end = period.end ? formatYYYYMM(period.end) : t("present");
   /* En dash, not em: a date range is the one place a dash is the correct
      typography rather than a stylistic tic. U+2013, so the em-dash sweep
      stays clean. */
@@ -386,17 +390,12 @@ function toMonthIndex(s: `${number}-${MonthStr}`): number {
   return Number(yStr) * 12 + (Number(mStr) - 1);
 }
 
-function durationHuman(period: Period): string {
+/** Whole years and leftover months; the words are added by the caller from messages. */
+function durationParts(period: Period): { years: number; months: number } {
   const start = toMonthIndex(period.start);
   const end = period.end ? toMonthIndex(period.end) : currentMonthIndex();
-  const months = Math.max(0, end - start + 1);
-  const years = Math.floor(months / 12);
-  const rem = months % 12;
-  const parts: string[] = [];
-  if (years > 0) parts.push(`${years} ${years === 1 ? "year" : "years"}`);
-  if (rem > 0) parts.push(`${rem} ${rem === 1 ? "month" : "months"}`);
-  if (parts.length === 0) return "< 1 month";
-  return parts.join(" ");
+  const total = Math.max(0, end - start + 1);
+  return { years: Math.floor(total / 12), months: total % 12 };
 }
 
 function currentMonthIndex(): number {

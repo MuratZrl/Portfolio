@@ -1,0 +1,501 @@
+{
+  "common": {
+    "skipToContent": "Skip to content",
+    "brand": "Murat Zorlu",
+    "opensInNewTab": "opens in a new tab"
+  },
+  "theme": {
+    "toLight": "Switch to light theme",
+    "toDark": "Switch to dark theme"
+  },
+  "localeSwitcher": {
+    "label": "Language",
+    "tr": "TR",
+    "en": "EN",
+    "trName": "Türkçe",
+    "enName": "English"
+  },
+  "nav": {
+    "about": "About",
+    "projects": "Projects",
+    "contact": "Contact",
+    "packages": "Packages",
+    "examples": "Examples",
+    "cv": "CV",
+    "downloadCv": "Download CV",
+    "whatsapp": "WhatsApp",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "footer": {
+    "tagline": "Fullstack developer building with Next.js, NestJS, Go and PostgreSQL. Based in Istanbul.",
+    "pages": "Pages",
+    "connect": "Connect",
+    "navAria": "Footer navigation",
+    "emailAria": "Email {email}",
+    "copyright": "© {year} Murat Zorlu. All rights reserved.",
+    "builtWith": "Built with",
+    "builtWithSuffix": "Next.js & TypeScript"
+  },
+  "layout": {
+    "title": "Murat Zorlu | Portfolio",
+    "template": "Murat Zorlu | %s",
+    "description": "Murat Zorlu, fullstack developer in Istanbul. Next.js, NestJS, Go and PostgreSQL. Internal tools, admin panels and dashboards running in production.",
+    "ogTitle": "Murat Zorlu | Portfolio",
+    "ogDescription": "Fullstack developer in Istanbul. Next.js, NestJS, Go and PostgreSQL. Internal tools and admin panels running in production."
+  },
+  "ogImage": {
+    "line1": "I build the internal tools",
+    "line2": "companies run on",
+    "footer": "Next.js · NestJS · Go · PostgreSQL"
+  },
+  "home": {
+    "meta": {
+      "title": "Murat Zorlu | Home",
+      "description": "Admin panels, dashboards and sync engines running in production. Next.js, NestJS, Go and PostgreSQL. Open to full-time and contract work.",
+      "ogTitle": "Murat Zorlu | Fullstack developer, Istanbul",
+      "ogDescription": "I build the internal tools companies run on. Next.js, NestJS, Go and PostgreSQL. Three client systems in daily production use."
+    },
+    "hero": {
+      "title": "I build the internal tools companies run on",
+      "subtitle": "Next.js, NestJS, Go and PostgreSQL. Three of these systems are in daily use: a metal manufacturer, a real estate agency, an e-commerce operation.",
+      "primary": "See the projects",
+      "secondary": "Download the CV",
+      "secondaryAria": "Download the CV as a PDF",
+      "availability": "Istanbul · UTC+3 · open to full-time roles and contract work",
+      "codeCaption": "PulseChat · Socket.io scaling across replicas",
+      "shotCaption": "Yenigün Emlak · listing page",
+      "shotAlt": "Yenigün Emlak home page on a phone: featured listing cards"
+    },
+    "howIBuild": {
+      "heading": "How I build",
+      "subheading": "Three claims. You can check all three without leaving this page.",
+      "checkPrefix": "Check it:",
+      "items": {
+        "keyboard": {
+          "title": "Keyboard first",
+          "description": "Put the mouse down and press Tab. Every focus ring is visible, the skip link works, and nothing traps you. Contrast holds in both themes.",
+          "highlights": {
+            "1": "Visible focus on every control",
+            "2": "Skip link to main content",
+            "3": "AA contrast, light and dark"
+          },
+          "tags": {
+            "1": "WCAG 2.2 AA",
+            "2": "Semantic HTML",
+            "3": "Keyboard-first"
+          },
+          "check": "Check it: press Tab, right now."
+        },
+        "lean": {
+          "title": "Nothing loads that doesn't have to",
+          "description": "No animation library, no carousel, no hero video, no font CDN. One third-party script (Vercel Analytics) and nothing else. Fonts are self-hosted through next/font with a single file preloaded. Turn JavaScript off and the words on this page are still here; they are rendered on the server.",
+          "highlights": {
+            "1": "One third-party script: Vercel Analytics",
+            "2": "Self-hosted fonts, one file preloaded",
+            "3": "Text renders with JavaScript disabled"
+          },
+          "tags": {
+            "1": "Next.js 16",
+            "2": "RSC",
+            "3": "next/font"
+          },
+          "check": "Check it: open the Network tab and reload."
+        },
+        "open": {
+          "title": "Open where it can be",
+          "description": "TypeScript strict in every TypeScript project, and no ts-ignore anywhere in the public repos. Three of the eight projects have public repos. Read the source instead of taking my word for it. The client work is private, and the project cards say exactly what is being held back and why.",
+          "highlights": {
+            "1": "strict: true in every tsconfig",
+            "2": "Zero @ts-ignore in public repos",
+            "3": "Private work labelled, not hidden"
+          },
+          "tags": {
+            "1": "TypeScript",
+            "2": "strict",
+            "3": "Public source"
+          },
+          "check": "github.com/MuratZrl"
+        }
+      }
+    },
+    "projects": {
+      "heading": "Projects",
+      "subheading": "Three built for paying clients, three built for me, plus two demo sites for small businesses. The client ones are in daily use.",
+      "all": "All eight projects"
+    },
+    "stack": {
+      "heading": "Stack",
+      "subheading": "What I reach for. The detail is on the project pages.",
+      "groups": {
+        "languages": "Languages and frameworks",
+        "interface": "Interface and state",
+        "data": "Data and infrastructure",
+        "build": "Build, deploy, test"
+      }
+    },
+    "finalCta": {
+      "badge": "Two ways to work together",
+      "heading": "Hiring, or have a system that needs building?",
+      "subheading": "Full-time roles and contract work both. If you have a process running on a spreadsheet that four people are editing at once, that is the thing I build.",
+      "steps": {
+        "1": {
+          "label": "You describe the problem",
+          "description": "The current process, not the feature list."
+        },
+        "2": {
+          "label": "I scope it in writing",
+          "description": "What gets built, what doesn't, how long."
+        },
+        "3": {
+          "label": "Ship it",
+          "description": "Deployed and documented."
+        }
+      },
+      "primary": "Send a message"
+    },
+    "services": {
+      "heading": "What I build",
+      "subheading": "Three kinds of site. We start from whichever fits.",
+      "examplePrefix": "Example:",
+      "items": {
+        "realEstate": {
+          "title": "Real estate site with a listing panel",
+          "description": "Your listings on your own site, on a map and on Google. You add a new listing from the panel yourself: photos, price, rooms, location. A buyer writes to you from the WhatsApp button under the listing.",
+          "highlights": {
+            "1": "Unlimited listings from your own panel",
+            "2": "Map and filtered search",
+            "3": "Every listing is its own page on Google"
+          },
+          "example": "Yenigün Emlak"
+        },
+        "brochure": {
+          "title": "Business website",
+          "description": "A single address that opens properly on a phone and shows up on Google and Google Maps. Your services, photos, opening hours and directions. This is the link you put in your Instagram bio.",
+          "highlights": {
+            "1": "Up to five pages, works on phones",
+            "2": "Matches your Google Maps listing",
+            "3": "The domain is registered in your name"
+          },
+          "example": "Aura Beauty Studio"
+        },
+        "booking": {
+          "title": "WhatsApp appointments",
+          "description": "The customer picks a day and time on the site, and the request lands in your WhatsApp as a message. No separate app, no separate monthly fee. You still confirm the appointment yourself.",
+          "highlights": {
+            "1": "Requests go straight to WhatsApp",
+            "2": "No extra app, no subscription",
+            "3": "Salons, gyms, clinics"
+          },
+          "example": "Ritim Fitness"
+        }
+      }
+    },
+    "examples": {
+      "heading": "Examples",
+      "subheading": "Two demos and one live site. Click through them.",
+      "visit": "Visit the site",
+      "items": {
+        "yenigun": {
+          "title": "Yenigün Emlak",
+          "sector": "Real estate agency",
+          "summary": "A real estate agency in Sakarya. I built the interface; 150+ listings are live. Listing filters and the agency's own listing panel.",
+          "imageAlt": "Yenigün Emlak property listings",
+          "tags": {
+            "1": "Listing panel",
+            "2": "Filtered search",
+            "3": "WhatsApp"
+          }
+        },
+        "ritim": {
+          "title": "Ritim Fitness",
+          "sector": "Gym",
+          "summary": "One page for a neighbourhood gym: membership prices, the weekly class schedule, opening hours and a membership request over WhatsApp.",
+          "imageAlt": "Ritim Fitness home page with membership prices and the weekly schedule",
+          "tags": {
+            "1": "One page",
+            "2": "Class schedule",
+            "3": "WhatsApp signup"
+          }
+        },
+        "salon": {
+          "title": "Aura Beauty Studio",
+          "sector": "Hair and beauty salon",
+          "summary": "A one-page salon site. The booking button opens WhatsApp, three colour options, and a booking bar pinned to the bottom of the screen on phones.",
+          "imageAlt": "Aura Beauty Studio hero with the TR/EN toggle and three theme dots in the header",
+          "tags": {
+            "1": "One page",
+            "2": "WhatsApp booking",
+            "3": "3 colour themes"
+          }
+        }
+      }
+    },
+    "howItWorks": {
+      "badge": "Three steps",
+      "heading": "How it works",
+      "subheading": "From the first call to going live, three steps. You never touch the technical side.",
+      "steps": {
+        "1": {
+          "label": "We talk",
+          "description": "On the phone or WhatsApp, about what you need. Price and timeline arrive in writing."
+        },
+        "2": {
+          "label": "You see a draft",
+          "description": "I send the first version as a link. You say what to change, and it changes."
+        },
+        "3": {
+          "label": "It goes live",
+          "description": "The site launches on your own domain, with the Google listing and the WhatsApp link ready."
+        }
+      },
+      "primary": "Write on WhatsApp"
+    },
+    "contactSection": {
+      "heading": "Contact",
+      "subheading": "WhatsApp is fastest. The form works too, with a reply the same day.",
+      "whatsapp": "Write on WhatsApp",
+      "call": "Call"
+    }
+  },
+  "whatsapp": {
+    "defaultMessage": "Hello, I would like to get information about a website."
+  },
+  "about": {
+    "meta": {
+      "title": "About",
+      "description": "Experience, stack and CV. Fullstack developer in Istanbul. Next.js, NestJS, Go and PostgreSQL, with three client systems in production.",
+      "ogDescription": "Experience, skills, and CV in one place."
+    },
+    "title": "About",
+    "description": "Where I've worked, what I shipped, and the CV in full.",
+    "intro": {
+      "role": "Fullstack Web Developer",
+      "location": "Istanbul, Turkey",
+      "available": "Available for work",
+      "bio": {
+        "1": "Fullstack developer with production experience in Next.js, NestJS, Go and PostgreSQL.",
+        "2": "Delivered two live applications serving real businesses in Turkey."
+      },
+      "highlights": {
+        "1": "Fullstack apps with Next.js, NestJS & PostgreSQL",
+        "2": "Real-time systems with WebSocket & Redis",
+        "3": "Containerized deployments with Docker"
+      },
+      "languages": "Languages: Turkish (Native) · English (B2) · German (A2)",
+      "socialNav": "Social links",
+      "primary": "Get in touch",
+      "primaryAria": "Open contact page",
+      "secondary": "Download CV"
+    },
+    "experience": {
+      "sectionAria": "Experience and education",
+      "filterAria": "Filter experience by type",
+      "all": "All",
+      "kinds": {
+        "work": "Employment",
+        "freelance": "Client project",
+        "education": "Education"
+      },
+      "present": "Present",
+      "achievements": "Key Achievements",
+      "responsibilities": "Responsibilities",
+      "empty": "No items match this filter.",
+      "showAll": "Show all",
+      "duration": {
+        "years": "{count, plural, one {# year} other {# years}}",
+        "months": "{count, plural, one {# month} other {# months}}",
+        "lessThanMonth": "< 1 month"
+      }
+    },
+    "cv": {
+      "title": "CV",
+      "description": "View inline, download, or open in a new tab.",
+      "fileType": "PDF document",
+      "download": "Download",
+      "downloadAria": "Download CV",
+      "open": "Open",
+      "openAria": "Open CV in a new tab",
+      "viewerTitle": "CV PDF viewer",
+      "loading": "Loading viewer...",
+      "noJs": "JavaScript is disabled.",
+      "noJsOpen": "Open CV in a new tab",
+      "noJsOr": "or",
+      "noJsDownload": "download it"
+    }
+  },
+  "projectsPage": {
+    "meta": {
+      "title": "Projects",
+      "description": "Eight projects: two live demo sites for small businesses, three private client builds, three personal projects. What each one does and what it runs on."
+    },
+    "title": "Projects",
+    "description": "Small business websites first, then client work and personal projects. The two demo sites are live: click through them. The client builds are private; each card says why.",
+    "filterAria": "Filter projects by category",
+    "all": "All",
+    "empty": "No projects found for this category.",
+    "paginationAria": "Projects pagination",
+    "prevPage": "Previous page",
+    "nextPage": "Next page",
+    "page": "Page {page}"
+  },
+  "projectCard": {
+    "clientWork": "Client work",
+    "demoSite": "Demo site",
+    "privateRepo": "Private repo",
+    "moreTags": "+{count} more",
+    "screenshotAlt": "{title} screenshot"
+  },
+  "projectDetail": {
+    "notFound": "Project Not Found",
+    "back": "Back to Projects",
+    "details": "Details",
+    "type": "Type",
+    "sector": "Sector",
+    "category": "Category",
+    "created": "Created",
+    "lighthouse": "Lighthouse",
+    "stars": "Stars",
+    "stack": "Stack",
+    "whatIsShown": "What is shown",
+    "decisionsHeading": "Key technical decisions",
+    "decisionsSub": "Trade-offs that shaped the build: what was chosen, and why over the alternative.",
+    "moreScreens": "More screens",
+    "moreProjects": "More projects",
+    "allProjects": "All projects",
+    "navAria": "Previous and next project",
+    "prevProject": "Previous project",
+    "nextProject": "Next project",
+    "privateRepo": "Private repo"
+  },
+  "contact": {
+    "meta": {
+      "title": "Contact",
+      "description": "Get in touch for projects, collaborations, or hiring.",
+      "ogDescription": "Project work, contract work, or a role. Istanbul, UTC+3."
+    },
+    "title": "Contact",
+    "description": "Project work, contract work, or a role. Every message gets a reply.",
+    "sent": "Message sent. You will get a reply.",
+    "whatsapp": "Write on WhatsApp",
+    "form": {
+      "heading": "Send a message",
+      "required": "Every field is required.",
+      "name": "Full Name",
+      "namePlaceholder": "Your name",
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "subject": "Subject",
+      "subjectAria": "Choose a subject",
+      "subjects": {
+        "general": "General",
+        "project": "Project",
+        "hiring": "Hiring"
+      },
+      "message": "Message",
+      "messagePlaceholder": "Tell me about your idea...",
+      "submit": "Send message",
+      "sending": "Sending…",
+      "success": "Your message has been sent. I'll get back to you soon.",
+      "validation": {
+        "nameMin": "Name must be at least 2 characters",
+        "nameMax": "Name is too long",
+        "emailInvalid": "Enter a valid email address",
+        "emailMax": "Email is too long",
+        "subjectInvalid": "Invalid subject",
+        "messageMin": "Message must be at least 12 characters",
+        "messageMax": "Message must be 2000 characters or fewer"
+      }
+    },
+    "errors": {
+      "spam": "That submission was flagged as automated.",
+      "tooFast": "That was too fast. Please try again.",
+      "fixFields": "Please fix the highlighted fields.",
+      "generic": "Something went wrong.",
+      "network": "Network error. Check your connection and try again.",
+      "rate": "Too many messages from this connection. Wait a minute, then try again.",
+      "badrequest": "That submission could not be read. Please try again.",
+      "invalid": "Some fields need another look. Every field is required, and the message needs at least 12 characters.",
+      "send": "The message could not be sent. You can email me directly at me@muratzorlu.dev."
+    },
+    "details": {
+      "direct": "Direct",
+      "email": "Email",
+      "copyEmail": "Copy email address",
+      "copied": "Copied email address",
+      "location": "Location",
+      "locationValue": "Istanbul, Türkiye",
+      "timezone": "TRT (UTC+3)",
+      "responseWindow": "Response window",
+      "responseWindowValue": "Mon–Fri, 10:00–18:00",
+      "elsewhere": "Elsewhere",
+      "whatsappHandle": "Write or call"
+    }
+  },
+  "packages": {
+    "meta": {
+      "title": "Packages",
+      "description": "Business website, catalogue site and a system with an admin panel. Three ways of working, with their scope.",
+      "ogDescription": "Business website, catalogue site and a system with an admin panel. Scope and contact."
+    },
+    "heading": "Packages",
+    "subheading": "Three main ways of working, depending on what you want built. If what you need is not exactly one of these, write and we will pin it down together.",
+    "footnote": "Scope and delivery time are settled in the first conversation.",
+    "newTab": "opens in a new tab",
+    "cards": {
+      "brochure": {
+        "title": "Business Website",
+        "summary": "A site at a single address that can be found on Google and opens properly on a phone.",
+        "features": {
+          "1": "5 pages, works on phones",
+          "2": "Shows up correctly on Google and Google Maps (SEO basics)",
+          "3": "The one link you put in your Instagram profile",
+          "4": "Form requests land straight in your WhatsApp",
+          "5": "Domain and SSL included for the first year",
+          "6": "The domain is registered in your name; the site is entirely yours"
+        },
+        "price": "Price is settled in the first conversation",
+        "cta": "Get a quote",
+        "ctaMessage": "Hello, I would like information about the Business Website package."
+      },
+      "catalogue": {
+        "title": "Catalogue / Listing Site",
+        "summary": "A site that lists your properties, products or services, managed from your own panel.",
+        "features": {
+          "1": "Unlimited records: listings, products or services",
+          "2": "Add, edit and unpublish from your own panel",
+          "3": "Search and filters, detail pages, gallery, map",
+          "4": "Every record appears on Google as its own page",
+          "5": "Form requests land straight in your WhatsApp",
+          "6": "Domain and SSL included for the first year, domain in your name"
+        },
+        "price": "Price is settled in the first conversation",
+        "cta": "Get a quote",
+        "ctaMessage": "Hello, I would like information about the Catalogue / Listing Site package."
+      },
+      "system": {
+        "title": "System with Admin Panel",
+        "summary": "Custom software where processes like appointments, orders or memberships are managed end to end.",
+        "features": {
+          "1": "Appointment, order or registration management",
+          "2": "User login and permissions",
+          "3": "Database, record history and reporting",
+          "4": "WhatsApp and email notifications",
+          "5": "A panel designed around how you work",
+          "6": "Setup and maintenance priced by scope"
+        },
+        "price": "Price is settled in the first conversation",
+        "cta": "Call, let's talk",
+        "ctaMessage": "Hello, I would like to talk about a system with an admin panel."
+      }
+    }
+  },
+  "notFound": {
+    "label": "404",
+    "title": "Page not found",
+    "description": "The page you’re looking for doesn’t exist or has been moved.",
+    "home": "Go home",
+    "secondary": "View projects",
+    "secondaryAria": "See all projects"
+  }
+}

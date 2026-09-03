@@ -2,10 +2,14 @@
 import React from "react";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
 import type { Metadata } from "next";
+import { hasLocale, useTranslations } from "next-intl";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { Page } from "@/components/layout/Page";
+import { Link } from "@/i18n/navigation";
+import { routing } from "@/i18n/routing";
+import { localeAlternates } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import {
   ExternalLink, Github, ArrowLeft, ArrowRight, Lock,
@@ -14,7 +18,7 @@ import {
 import { getAllProjects, type Project, type ProjectVariant } from "@/constants/projects";
 
 type Props = {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 };
 
 /**
@@ -44,22 +48,28 @@ function resolveProject(slug: string) {
  * rather than the bare segment, so it is trimmed back to what the [slug]
  * placeholder actually matches. resolveProject re-adds the prefix on the way in.
  */
-export function generateStaticParams(): Array<{ slug: string }> {
+export function generateStaticParams(): Array<{ locale: string; slug: string }> {
+  // English only: the case studies are English content, and the bare
+  // /projects/* URLs redirect to /en (next.config.ts).
   return getAllProjects().map((project) => ({
+    locale: "en",
     slug: project.slug.replace(/^\/projects\//, ""),
   }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  if (!hasLocale(routing.locales, locale)) return {};
+  const t = await getTranslations({ locale, namespace: "projectDetail" });
   const hit = resolveProject(slug);
-  if (!hit) return { title: "Project Not Found" };
+  if (!hit) return { title: t("notFound") };
 
   return {
     title: hit.project.title,
     // `summary` runs past the SERP limit on the longer entries, so the type
     // carries an optional truncation-safe override for exactly this slot.
     description: hit.project.metaDescription ?? hit.project.summary,
+    alternates: localeAlternates("en", hit.project.slug, { enOnly: true }),
   };
 }
 
@@ -77,7 +87,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  * sheet and the exit, and never at an empty heading.
  */
 export default async function ProjectDetailPage({ params }: Props) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  if (locale !== "en") notFound();
+  setRequestLocale(locale);
+  const t = await getTranslations("projectDetail");
+  const tCommon = await getTranslations("common");
   const hit = resolveProject(slug);
   if (!hit) notFound();
   const { project, prev, next } = hit;
@@ -108,7 +122,7 @@ export default async function ProjectDetailPage({ params }: Props) {
           className="link-soft mb-6 inline-flex select-none items-center gap-1.5 text-[length:var(--text-body-sm)] font-medium text-[var(--accent)]"
         >
           <ArrowLeft className="size-4" aria-hidden />
-          Back to Projects
+          {t("back")}
         </Link>
 
         {/* DOM order is the mobile order: title, hero, spec sheet. At lg the
@@ -142,7 +156,7 @@ export default async function ProjectDetailPage({ params }: Props) {
                   >
                     <ExternalLink className="size-4" aria-hidden />
                     {demo.label}
-                    <span className="sr-only"> (opens in a new tab)</span>
+                    <span className="sr-only"> ({tCommon("opensInNewTab")})</span>
                   </a>
                 ) : null}
 
@@ -150,7 +164,7 @@ export default async function ProjectDetailPage({ params }: Props) {
                   repoIsPrivate ? (
                     <span className="inline-flex min-h-11 items-center gap-1.5 text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
                       <Lock className="size-4" aria-hidden />
-                      Private repo
+                      {t("privateRepo")}
                     </span>
                   ) : (
                     <a
@@ -162,7 +176,7 @@ export default async function ProjectDetailPage({ params }: Props) {
                     >
                       <Github className="size-4" aria-hidden />
                       {repo.label}
-                      <span className="sr-only"> (opens in a new tab)</span>
+                      <span className="sr-only"> ({tCommon("opensInNewTab")})</span>
                     </a>
                   )
                 ) : null}
@@ -214,10 +228,10 @@ export default async function ProjectDetailPage({ params }: Props) {
             id="technical-decisions-heading"
             className="text-[length:var(--text-display-sm)] leading-[1.2] text-[var(--text)]"
           >
-            Key technical decisions
+            {t("decisionsHeading")}
           </h2>
           <p className="mt-1 text-[length:var(--text-body-sm)] text-[var(--text-muted)]">
-            Trade-offs that shaped the build: what was chosen, and why over the alternative.
+            {t("decisionsSub")}
           </p>
 
           <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -243,7 +257,7 @@ export default async function ProjectDetailPage({ params }: Props) {
             id="gallery-heading"
             className="text-[length:var(--text-display-sm)] leading-[1.2] text-[var(--text)]"
           >
-            More screens
+            {t("moreScreens")}
           </h2>
           <div className={cn("mt-6 grid gap-6", gallery.length > 1 && "md:grid-cols-2")}>
             {gallery.map((img, i) => (
@@ -269,18 +283,18 @@ export default async function ProjectDetailPage({ params }: Props) {
               id="more-projects-heading"
               className="text-[length:var(--text-display-sm)] leading-[1.2] text-[var(--text)]"
             >
-              More projects
+              {t("moreProjects")}
             </h2>
             <Link
               href="/projects"
               draggable={false}
               className="link-soft text-[length:var(--text-body-sm)] font-medium text-[var(--accent)]"
             >
-              All projects
+              {t("allProjects")}
             </Link>
           </div>
 
-          <nav aria-label="Previous and next project" className="mt-6 grid gap-6 sm:grid-cols-2">
+          <nav aria-label={t("navAria")} className="mt-6 grid gap-6 sm:grid-cols-2">
             {prev.slug === next.slug ? (
               <NavCard direction="next" project={next} className="sm:col-span-2" />
             ) : (
@@ -307,6 +321,7 @@ export default async function ProjectDetailPage({ params }: Props) {
  * Links are not here: the Live and Repo controls sit under the lead, once.
  */
 function SpecSheet({ project, className }: { project: Project; className?: string }) {
+  const t = useTranslations("projectDetail");
   const showSector = project.sector !== "personal";
 
   return (
@@ -315,21 +330,21 @@ function SpecSheet({ project, className }: { project: Project; className?: strin
         id="spec-heading"
         className="text-[length:var(--text-display-2xs)] leading-[1.3] text-[var(--text)]"
       >
-        Details
+        {t("details")}
       </h2>
 
       <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-4">
-        <Fact label="Type" value={project.badge.label} />
-        {showSector ? <Fact label="Sector" value={project.sectorLabel} /> : null}
-        <Fact label="Category" value={project.category} />
-        {project.createdAt ? <Fact label="Created" value={formatDate(project.createdAt)} /> : null}
-        {project.metrics?.lighthouse ? <Fact label="Lighthouse" value={project.metrics.lighthouse} /> : null}
-        {project.metrics?.stars ? <Fact label="Stars" value={project.metrics.stars} /> : null}
+        <Fact label={t("type")} value={project.badge.label} />
+        {showSector ? <Fact label={t("sector")} value={project.sectorLabel} /> : null}
+        <Fact label={t("category")} value={project.category} />
+        {project.createdAt ? <Fact label={t("created")} value={formatDate(project.createdAt)} /> : null}
+        {project.metrics?.lighthouse ? <Fact label={t("lighthouse")} value={project.metrics.lighthouse} /> : null}
+        {project.metrics?.stars ? <Fact label={t("stars")} value={project.metrics.stars} /> : null}
 
         {project.tags.length > 0 ? (
           <div className="col-span-2 border-t border-[var(--edge-soft)] pt-4">
             <dt className="text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--text-muted)]">
-              Stack
+              {t("stack")}
             </dt>
             <dd className="mt-2">
               {/* Static labels: .chip, matching the project cards and the
@@ -353,7 +368,7 @@ function SpecSheet({ project, className }: { project: Project; className?: strin
             screenshots holds on the page that shows them large. */}
         {project.withheld ? (
           <div className="col-span-2 border-t border-[var(--edge-soft)] pt-4">
-            <dt className="sr-only">What is shown</dt>
+            <dt className="sr-only">{t("whatIsShown")}</dt>
             <dd>
               <p className="withheld">
                 <Lock className="size-3.5" aria-hidden />
@@ -363,7 +378,7 @@ function SpecSheet({ project, className }: { project: Project; className?: strin
           </div>
         ) : project.caption ? (
           <div className="col-span-2 border-t border-[var(--edge-soft)] pt-4">
-            <dt className="sr-only">What is shown</dt>
+            <dt className="sr-only">{t("whatIsShown")}</dt>
             <dd className="text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--text-muted)]">
               {project.caption}
             </dd>
@@ -455,6 +470,7 @@ function BrowserFrame({
  * would otherwise be indistinguishable to a screen reader.
  */
 function VariantFigure({ variant, twoUp }: { variant: ProjectVariant; twoUp: boolean }) {
+  const tCommon = useTranslations("common");
   const { tag, name, summary, image, link } = variant;
   return (
     <figure>
@@ -490,7 +506,7 @@ function VariantFigure({ variant, twoUp }: { variant: ProjectVariant; twoUp: boo
           <ExternalLink className="size-4" aria-hidden />
           {link.label}
           <span className="sr-only">
-            : {tag ? `${tag} ` : ""}{name} (opens in a new tab)
+            : {tag ? `${tag} ` : ""}{name} ({tCommon("opensInNewTab")})
           </span>
         </a>
       </figcaption>
@@ -513,11 +529,13 @@ function NavCard({
   project: Project;
   className?: string;
 }) {
+  const t = useTranslations("projectDetail");
+  const tCard = useTranslations("projectCard");
   const isNext = direction === "next";
   const thumbSrc = (project.image?.src ?? "").trim() || null;
-  const thumbAlt = project.image?.alt ?? `${project.title} screenshot`;
+  const thumbAlt = project.image?.alt ?? tCard("screenshotAlt", { title: project.title });
   const provenance =
-    project.sector === "demo" ? "Demo site" : project.sector === "personal" ? null : "Client work";
+    project.sector === "demo" ? tCard("demoSite") : project.sector === "personal" ? null : tCard("clientWork");
 
   return (
     <article
@@ -548,7 +566,7 @@ function NavCard({
           )}
         >
           {isNext ? null : <ArrowLeft className="size-3.5" aria-hidden />}
-          {isNext ? "Next project" : "Previous project"}
+          {isNext ? t("nextProject") : t("prevProject")}
           {isNext ? <ArrowRight className="size-3.5" aria-hidden /> : null}
         </p>
         <h3 className="mt-1 text-[length:var(--text-display-2xs)] leading-[1.3] text-[var(--text)]">
