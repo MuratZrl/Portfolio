@@ -11,12 +11,14 @@ import React from "react";
 import { useMessages, useTranslations } from "next-intl";
 
 import { whatsappHref } from "@/lib/site";
+import type { Project } from "@/constants/projects";
 import type { ValueItem } from "@/features/home/types/value-props";
+import { EXAMPLE_SITES } from "@/features/local/data/examples";
 
 import Hero from "@/features/home/sections/Hero";
 import ValueProps from "@/features/home/sections/ValueProps";
+import FeaturedProjects from "@/features/home/sections/Projects";
 import FinalCta from "@/features/home/sections/FinalCTA";
-import Examples from "@/features/local/sections/Examples";
 import ContactSection from "@/features/local/sections/ContactSection";
 
 /** Service key -> the example site that demonstrates it. */
@@ -48,6 +50,25 @@ export default function HomeTr(): React.JSX.Element {
     checkNewTabNote: tCommon("opensInNewTab"),
   }));
 
+  // The examples in the exact shape the English featured cards render from,
+  // so they go through FeaturedProjects and ProjectCard unchanged. `slug` is
+  // only a React key here: `titleHrefs` sends the title to the live site.
+  const examples: Project[] = EXAMPLE_SITES.map((site) => ({
+    slug: `/examples/${site.key}`,
+    title: t(`examples.items.${site.key}.title`),
+    summary: t(`examples.items.${site.key}.summary`),
+    tags: values(messages.home.examples.items[site.key].tags),
+    category: "Business site",
+    sector: site.sector,
+    sectorLabel: t(`examples.items.${site.key}.sector`),
+    badge: { label: t(`examples.items.${site.key}.sector`), variant: "muted" },
+    image: { src: site.image, alt: t(`examples.items.${site.key}.imageAlt`) },
+    links: { demo: { href: site.href, label: t("examples.visit") } },
+  }));
+  const exampleHrefs = Object.fromEntries(
+    EXAMPLE_SITES.map((site) => [`/examples/${site.key}`, site.href]),
+  );
+
   return (
     <>
       <Hero
@@ -66,7 +87,14 @@ export default function HomeTr(): React.JSX.Element {
         checkPrefix={t("services.examplePrefix")}
         items={services}
       />
-      <Examples id="ornekler" />
+      <FeaturedProjects
+        id="ornekler"
+        projects={examples}
+        heading={t("examples.heading")}
+        subheading={t("examples.subheading")}
+        allLink={null}
+        titleHrefs={exampleHrefs}
+      />
       <FinalCta
         id="nasil-calisir"
         badge={t("howItWorks.badge")}

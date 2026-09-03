@@ -193,26 +193,39 @@
       "heading": "Örnekler",
       "subheading": "İkisi demo, biri yayında. Tıklayıp gezin.",
       "visit": "Siteye git",
-      "live": "Yayında",
-      "demo": "Demo",
       "items": {
         "yenigun": {
           "title": "Yenigün Emlak",
           "sector": "Emlak ofisi",
-          "summary": "Sakarya'da bir emlak ofisi. Arayüzünü ben yaptım, 150+ ilan yayında. Harita üzerinden arama, filtreler ve ofisin kendi ilan paneli.",
-          "imageAlt": "Yenigün Emlak ilan listesi ve harita araması"
+          "summary": "Sakarya'da bir emlak ofisi. Arayüzünü ben yaptım, 150+ ilan yayında. İlan filtreleri ve ofisin kendi ilan paneli.",
+          "imageAlt": "Yenigün Emlak ilan listesi",
+          "tags": {
+            "1": "İlan paneli",
+            "2": "Filtreli arama",
+            "3": "WhatsApp"
+          }
         },
         "ritim": {
           "title": "Ritim Fitness",
           "sector": "Spor salonu",
           "summary": "Mahalle spor salonu için tek sayfa: üyelik fiyatları, haftalık ders programı, çalışma saatleri ve WhatsApp'tan üyelik talebi.",
-          "imageAlt": "Ritim Fitness ana sayfası, üyelik fiyatları ve haftalık program"
+          "imageAlt": "Ritim Fitness ana sayfası, üyelik fiyatları ve haftalık program",
+          "tags": {
+            "1": "Tek sayfa",
+            "2": "Ders programı",
+            "3": "WhatsApp üyelik"
+          }
         },
         "salon": {
           "title": "Aura Güzellik Stüdyosu",
           "sector": "Kuaför ve güzellik salonu",
           "summary": "Tek sayfa salon sitesi. Randevu düğmesi WhatsApp'a bağlı, üç renk seçeneği, telefonda ekranın altında sabit randevu çubuğu.",
-          "imageAlt": "Aura Güzellik Stüdyosu ana sayfası, başlıkta TR/EN seçici ve üç tema noktası"
+          "imageAlt": "Aura Güzellik Stüdyosu ana sayfası, başlıkta TR/EN seçici ve üç tema noktası",
+          "tags": {
+            "1": "Tek sayfa",
+            "2": "WhatsApp randevu",
+            "3": "3 renk teması"
+          }
         }
       }
     },

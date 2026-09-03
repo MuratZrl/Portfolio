@@ -25,6 +25,12 @@ type ProjectCardProps = {
    * On `/projects` the page h1 is the only ancestor, so they are h2.
    */
   headingLevel: 2 | 3;
+  /**
+   * Optional. When set, the stretched title link goes to this absolute URL
+   * in a new tab instead of to the project's detail page. The Turkish
+   * examples use it: they are live sites with no case study behind them.
+   */
+  titleHref?: string;
 };
 
 /**
@@ -37,7 +43,7 @@ type ProjectCardProps = {
  * The project content (title, summary, tags, sector label) is English data
  * from constants/projects; the card's own labels come from messages.
  */
-export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.JSX.Element {
+export function ProjectCard({ project, headingLevel, titleHref }: ProjectCardProps): React.JSX.Element {
   const t = useTranslations("projectCard");
   const tCommon = useTranslations("common");
   const Heading = (headingLevel === 2 ? "h2" : "h3") as "h2" | "h3";
@@ -106,13 +112,26 @@ export function ProjectCard({ project, headingLevel }: ProjectCardProps): React.
         </div>
 
         <Heading className="text-[length:var(--text-display-xs)] font-bold leading-[1.2] text-[var(--text)]">
-          <Link
-            href={project.slug}
-            draggable={false}
-            className="after:absolute after:inset-0 after:content-[''] group-focus-within:underline group-hover:underline"
-          >
-            {project.title}
-          </Link>
+          {titleHref ? (
+            <a
+              href={titleHref}
+              target="_blank"
+              rel="noreferrer noopener"
+              draggable={false}
+              className="after:absolute after:inset-0 after:content-[''] group-focus-within:underline group-hover:underline"
+            >
+              {project.title}
+              {newTab}
+            </a>
+          ) : (
+            <Link
+              href={project.slug}
+              draggable={false}
+              className="after:absolute after:inset-0 after:content-[''] group-focus-within:underline group-hover:underline"
+            >
+              {project.title}
+            </Link>
+          )}
         </Heading>
 
         <p className="text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--text-muted)]">

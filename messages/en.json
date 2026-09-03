@@ -193,26 +193,39 @@
       "heading": "Examples",
       "subheading": "Two demos and one live site. Click through them.",
       "visit": "Visit the site",
-      "live": "Live",
-      "demo": "Demo",
       "items": {
         "yenigun": {
           "title": "Yenigün Emlak",
           "sector": "Real estate agency",
-          "summary": "A real estate agency in Sakarya. I built the interface; 150+ listings are live. Map search, filters and the agency's own listing panel.",
-          "imageAlt": "Yenigün Emlak property listings with map search"
+          "summary": "A real estate agency in Sakarya. I built the interface; 150+ listings are live. Listing filters and the agency's own listing panel.",
+          "imageAlt": "Yenigün Emlak property listings",
+          "tags": {
+            "1": "Listing panel",
+            "2": "Filtered search",
+            "3": "WhatsApp"
+          }
         },
         "ritim": {
           "title": "Ritim Fitness",
           "sector": "Gym",
           "summary": "One page for a neighbourhood gym: membership prices, the weekly class schedule, opening hours and a membership request over WhatsApp.",
-          "imageAlt": "Ritim Fitness home page with membership prices and the weekly schedule"
+          "imageAlt": "Ritim Fitness home page with membership prices and the weekly schedule",
+          "tags": {
+            "1": "One page",
+            "2": "Class schedule",
+            "3": "WhatsApp signup"
+          }
         },
         "salon": {
           "title": "Aura Beauty Studio",
           "sector": "Hair and beauty salon",
           "summary": "A one-page salon site. The booking button opens WhatsApp, three colour options, and a booking bar pinned to the bottom of the screen on phones.",
-          "imageAlt": "Aura Beauty Studio hero with the TR/EN toggle and three theme dots in the header"
+          "imageAlt": "Aura Beauty Studio hero with the TR/EN toggle and three theme dots in the header",
+          "tags": {
+            "1": "One page",
+            "2": "WhatsApp booking",
+            "3": "3 colour themes"
+          }
         }
       }
     },
