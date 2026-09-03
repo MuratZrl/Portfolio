@@ -28,8 +28,9 @@ export default function HeroShot({ className }: { className?: string }): React.J
       <div className="min-w-0 rounded-[var(--radius-sm)] border border-[var(--edge-soft)] bg-[var(--surface)] p-4">
         {/* Phone width, not column width: a 390px screenshot stretched to a
             600px column is a blur. The box is cropped to roughly the plate's
-            height so the two columns read as one row; object-top keeps the
-            search card and the city chips in view. */}
+            height so the two columns read as one row; the capture is scrolled
+            to the featured listings, so object-top keeps the heading and the
+            listing cards in view. */}
         <div className="relative mx-auto aspect-[39/70] w-full max-w-[280px] overflow-hidden rounded-[var(--radius-sm)] border border-[var(--edge-soft)] bg-[var(--ground)]">
           <Image
             src={SHOT.src}

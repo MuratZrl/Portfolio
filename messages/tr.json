@@ -62,10 +62,10 @@
       "primary": "WhatsApp'tan yazın",
       "secondary": "Örnekleri görün",
       "secondaryAria": "Örnek sitelere git",
-      "availability": "İstanbul · Türkiye'nin her yerine · Hafta içi akşam · Cumartesi",
+      "availability": "İstanbul · Türkiye'nin her yerine · Hafta içi akşam · Hafta sonu",
       "codeCaption": "PulseChat · Socket.io ölçekleme",
       "shotCaption": "Yenigün Emlak · ilan listesi",
-      "shotAlt": "Yenigün Emlak ana sayfası, telefon görünümü: arama kutusu ve popüler şehirler"
+      "shotAlt": "Yenigün Emlak ana sayfası, telefon görünümü: öne çıkan ilan kartları"
     },
     "howIBuild": {
       "heading": "Nasıl yapıyorum",
@@ -427,7 +427,7 @@
       "locationValue": "İstanbul, Türkiye",
       "timezone": "TRT (UTC+3)",
       "responseWindow": "Çalışma saatleri",
-      "responseWindowValue": "Hafta içi, 10:00–18:00",
+      "responseWindowValue": "Hafta içi akşam · Hafta sonu",
       "elsewhere": "Diğer kanallar",
       "whatsappHandle": "Yazın ya da arayın"
     }
