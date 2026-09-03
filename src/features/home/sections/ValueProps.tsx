@@ -3,11 +3,12 @@
 import React from "react";
 
 import { cn } from "@/lib/utils";
-import { DEFAULT_ITEMS } from "@/features/home/data/value-props";
 import type { ValuePropsProps } from "@/features/home/types/value-props";
 
 /**
- * "How I build" — one plate, three rows separated by a rule.
+ * One plate, three rows separated by a rule. "How I build" on the portfolio,
+ * "Ne yapıyorum" on the small-business site: same silhouette, different
+ * items, both handed in by the page from its locale's messages.
  *
  * Not three cards: three chamfered plates in a row compete with the hero
  * coupon for attention, and a rule reads better than a box when the content
@@ -15,16 +16,18 @@ import type { ValuePropsProps } from "@/features/home/types/value-props";
  *
  * Server component — nothing here is interactive.
  */
-export default function HowIBuild({
-  items = DEFAULT_ITEMS,
-  heading = "How I build",
-  subheading = "Three claims. You can check all three without leaving this page.",
+export default function ValueProps({
+  id,
+  items,
+  heading,
+  subheading,
+  checkPrefix,
   className,
 }: ValuePropsProps): React.JSX.Element {
   const headingId = React.useId();
 
   return (
-    <section className={cn("w-full py-10 sm:py-12", className)} aria-labelledby={headingId}>
+    <section id={id} className={cn("w-full py-10 sm:py-12", className)} aria-labelledby={headingId}>
       <h2
         id={headingId}
         className="text-[length:var(--text-display-md)] font-bold leading-[1.05] text-[var(--text)]"
@@ -47,25 +50,29 @@ export default function HowIBuild({
                 {/* A check that names a destination is actionable; one that
                     names an action ("press Tab") stays text, because there
                     is nothing for a link to navigate to. */}
-                <p className="mt-3 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--accent)]">
-                  {item.checkHref ? (
-                    <>
-                      Check it:{" "}
-                      <a
-                        href={item.checkHref}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        draggable={false}
-                        className="link-soft text-[var(--accent)]"
-                      >
-                        {item.check}
-                        <span className="sr-only"> (opens in a new tab)</span>
-                      </a>
-                    </>
-                  ) : (
-                    item.check
-                  )}
-                </p>
+                {item.check ? (
+                  <p className="mt-3 text-[length:var(--text-body-xs)] font-medium tracking-[0.01em] text-[var(--accent)]">
+                    {item.checkHref ? (
+                      <>
+                        {checkPrefix ? `${checkPrefix} ` : null}
+                        <a
+                          href={item.checkHref}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          draggable={false}
+                          className="link-soft text-[var(--accent)]"
+                        >
+                          {item.check}
+                          {item.checkNewTabNote ? (
+                            <span className="sr-only"> ({item.checkNewTabNote})</span>
+                          ) : null}
+                        </a>
+                      </>
+                    ) : (
+                      item.check
+                    )}
+                  </p>
+                ) : null}
               </div>
 
               <div>

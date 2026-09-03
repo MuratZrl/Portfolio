@@ -1,5 +1,3 @@
 // src/features/home/data/index.ts
-export * from "./final-cta.presets";
-export * from "./value-props";
+// Copy lives in messages/*.json; only proper-noun data remains here.
 export * from "./tech-stack";
-export * from "./final-cta";
