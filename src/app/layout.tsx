@@ -6,7 +6,7 @@ import React from "react";
 import type { Metadata } from "next";
 
 import { Darker_Grotesque, Instrument_Sans } from "next/font/google";
-import { GeistMono } from "geist/font/mono";
+import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
 
 import { Container } from "@/components/layout/Container";
@@ -38,6 +38,42 @@ const sansFont = Instrument_Sans({
   preload: true,
   variable: "--font-sans-face",
   adjustFontFallback: true,
+});
+
+/**
+ * Declared here rather than imported from `geist/font/mono` for one reason:
+ * `preload`. The package calls next/font/local without that key, so it defaults
+ * to true and every page preloads 71,004 bytes at High priority. The only thing
+ * on the site that renders in this face is the code sample in CodePanel, which
+ * sits inside `hidden lg:block` — so on a phone those bytes buy zero painted
+ * glyphs while contending with the render-blocking stylesheet. next/font bakes
+ * its options at compile time and the package exports a plain
+ * `{ className, variable, style }`, so there is nothing to override from the
+ * import side; re-declaring is the only way to reach the flag.
+ *
+ * Everything else matches geist/dist/mono.js exactly, including
+ * `adjustFontFallback: false` and the fallback stack, so the emitted @font-face
+ * is unchanged apart from the missing preload. With `preload: false` the file
+ * is still fetched by any viewport that actually paints a `.font-mono` element,
+ * because @font-face files load lazily on first match — desktop is unaffected.
+ */
+const monoFont = localFont({
+  src: "./fonts/GeistMono-Variable.woff2",
+  variable: "--font-geist-mono",
+  adjustFontFallback: false,
+  preload: false,
+  fallback: [
+    "ui-monospace",
+    "SFMono-Regular",
+    "Roboto Mono",
+    "Menlo",
+    "Monaco",
+    "Liberation Mono",
+    "DejaVu Sans Mono",
+    "Courier New",
+    "monospace",
+  ],
+  weight: "100 900",
 });
 
 export const metadata: Metadata = {
@@ -79,7 +115,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${displayFont.variable} ${sansFont.variable} ${GeistMono.variable}`}
+      className={`${displayFont.variable} ${sansFont.variable} ${monoFont.variable}`}
     >
       <body className="min-h-svh flex flex-col antialiased">
         {/* 2.4.1 Bypass Blocks. The site claims this in its own copy, so it
