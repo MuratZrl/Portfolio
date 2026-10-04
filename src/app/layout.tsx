@@ -11,6 +11,8 @@ import { Analytics } from "@vercel/analytics/next";
 
 import { Container } from "@/components/layout/Container";
 
+import { SITE_URL } from "@/constants/site";
+
 import { ThemeProvider } from "@/theme/theme-provider";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -77,7 +79,11 @@ const monoFont = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://muratzorlu.dev"),
+  // Relative `alternates.canonical` and `openGraph.url` values on every page
+  // resolve against this, so it is the single thing standing between the site
+  // and a *.vercel.app canonical. See the note on SITE_URL: it is a constant,
+  // not an environment variable, so a preview host cannot leak into it.
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Murat Zorlu | Portfolio",
     template: "Murat Zorlu | %s",

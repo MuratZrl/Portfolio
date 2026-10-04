@@ -11,6 +11,21 @@ export const metadata: Metadata = {
   title: "Projects",
   description:
     "Eight projects: two live demo sites for small businesses, three private client builds, three personal projects. What each one does and what it runs on.",
+  alternates: { canonical: "/projects" },
+  /**
+   * The openGraph block exists for `url`. Without one here the page inherited
+   * the root layout's wholesale, so the listing advertised og:url "/" and the
+   * site-wide title: a share of /projects previewed as the home page.
+   */
+  openGraph: {
+    type: "website",
+    url: "/projects",
+    siteName: "Murat Zorlu",
+    locale: "en_US",
+    title: "Projects",
+    description:
+      "Small business demo sites, private client builds and personal projects. What each one does and what it runs on.",
+  },
 };
 
 /**

@@ -17,6 +17,15 @@ export const metadata: Metadata = {
   title: { absolute: "Murat Zorlu | Fullstack developer, Istanbul" },
   description:
     "Admin panels, dashboards and sync engines running in production. Next.js, NestJS, Go and PostgreSQL. Open to full-time and contract work.",
+  /**
+   * Resolves against `metadataBase` to https://muratzorlu.dev/. Declared here
+   * rather than in the root layout even though every page needs one: Next.js
+   * inherits `alternates` down the tree, so a layout-level "/" would quietly
+   * make the home page canonical for any future route that forgets its own.
+   * A missing canonical lets Google infer the URL; a wrong one tells it to
+   * throw the page away.
+   */
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     url: "/",

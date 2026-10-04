@@ -53,13 +53,38 @@ export function generateStaticParams(): Array<{ slug: string }> {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const hit = resolveProject(slug);
+  // No canonical on the miss branch, deliberately. An unresolved slug is a 404
+  // (the component calls notFound() on the same condition), and a 404 that
+  // names a canonical URL asks to be indexed under it.
   if (!hit) return { title: "Project Not Found" };
 
+  const { project } = hit;
+
   return {
-    title: hit.project.title,
+    title: project.title,
     // `summary` runs past the SERP limit on the longer entries, so the type
     // carries an optional truncation-safe override for exactly this slot.
-    description: hit.project.metaDescription ?? hit.project.summary,
+    description: project.metaDescription ?? project.summary,
+    /**
+     * `slug` is authored as the full internal href ("/projects/salon-aura"),
+     * so it is already the canonical path and resolves against `metadataBase`
+     * to https://muratzorlu.dev/projects/salon-aura. Same field the sitemap
+     * builds its entry from, so the two cannot drift.
+     */
+    alternates: { canonical: project.slug },
+    /**
+     * Also for `url`: without a block here each of the eight detail pages
+     * inherited the root layout's openGraph and declared og:url "/", so every
+     * shared case study previewed as the home page.
+     */
+    openGraph: {
+      type: "article",
+      url: project.slug,
+      siteName: "Murat Zorlu",
+      locale: "en_US",
+      title: project.title,
+      description: project.metaDescription ?? project.summary,
+    },
   };
 }
 
