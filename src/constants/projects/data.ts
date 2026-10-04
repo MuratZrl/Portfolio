@@ -5,12 +5,15 @@ import type { Project } from "./types";
  * Listing order is client-acquisition order, not chronology. The two demo
  * sites for small businesses lead (order 1-2): the primary audience of
  * /projects is a business owner who wants a website, and the first thing they
- * see should look like the thing they came for. Client dashboards follow
- * (3-5), then personal builds (6-8). Recruiters scroll.
+ * see should look like the thing they came for. The paid business site a real
+ * agency is running follows directly (3), since it is the same artefact as the
+ * demos with an invoice behind it. Client dashboards come next (4-6), then
+ * personal builds (7-9). Recruiters scroll.
  *
  * The demos carry `featured: false`, which is the flag the home page strip
- * reads via getFeaturedProjects(). Drop the flag to put them on `/` as well;
- * that page's copy still describes the client trio and would need rewriting.
+ * reads via getFeaturedProjects(). Drop the flag to put them on `/` as well.
+ * The copy around that strip no longer needs editing when this array changes:
+ * every count in it is derived from these entries through getProjectStats().
  */
 export const PROJECTS: readonly Project[] = [
   {
@@ -81,6 +84,30 @@ export const PROJECTS: readonly Project[] = [
     createdAt: "2026-08-16",
   },
   {
+    slug: "/projects/yurtsever-emlak",
+    title: "Yurtsever Emlak",
+    summary:
+      "Brand site for a real estate agency running five offices across Tuzla and Maltepe in Istanbul. Every office has its own page carrying the address, the phone numbers, opening hours and an embedded map, and each of those fields is nullable in the data model: an office whose address has not been verified renders no address block and no map rather than a placeholder standing in for one. The home page pulls featured videos from the agency's own YouTube channel. Listings are not duplicated here. They stay in the agency's sahibinden store, which the site links out to. The contact form takes KVKK consent before it will send and posts through Resend, behind a signed opening timestamp and a honeypot, so a submission that arrives within three seconds or fills the hidden field never reaches the mail API. A floating WhatsApp button appears once the hero's own button scrolls out of view, because that is where this agency already answers. Live since September 2026 and indexed in Search Console.",
+    cardSummary:
+      "Brand site for a real estate agency with five offices in Tuzla and Maltepe: office pages with maps, team and about pages, featured YouTube videos, and a KVKK-gated contact form that sends through Resend.",
+    metaDescription:
+      "Brand site for a real estate agency with five offices in Tuzla and Maltepe. Office pages with maps, YouTube videos and a KVKK-gated contact form via Resend.",
+    tags: ["Next.js 16", "React 19", "TypeScript", "Tailwind CSS", "Resend", "Vercel"],
+    category: "Business site",
+    sector: "property",
+    sectorLabel: "Real estate",
+    caption: "The whole site is public. The screenshot is the live home page.",
+    badge: { label: "Client work", variant: "accent" },
+    image: { src: "/images/projects/yurtsever-emlak.png", alt: "Yurtsever Emlak home page: the Tuzla headline and WhatsApp button beside office photographs, with the five office names along the foot" },
+    links: {
+      demo: { href: "https://yurtseveremlak.com", label: "Live" },
+      repo: { href: "#", label: "Private repo", isPrivate: true },
+    },
+    featured: true,
+    order: 3,
+    createdAt: "2026-09-05",
+  },
+  {
     slug: "/projects/szmetal-admin-panel",
     title: "SZMetal Admin Panel",
     summary:
@@ -102,7 +129,7 @@ export const PROJECTS: readonly Project[] = [
       repo: { href: "#", label: "Private repo", isPrivate: true },
     },
     featured: true,
-    order: 3,
+    order: 4,
     createdAt: "2025-07-22",
   },
   {
@@ -127,7 +154,7 @@ export const PROJECTS: readonly Project[] = [
       repo: { href: "#", label: "Private repo", isPrivate: true },
     },
     featured: true,
-    order: 4,
+    order: 5,
     createdAt: "2025-11-26",
   },
   {
@@ -148,7 +175,7 @@ export const PROJECTS: readonly Project[] = [
       repo: { href: "#", label: "Private repo", isPrivate: true },
     },
     featured: true,
-    order: 5,
+    order: 6,
     createdAt: "2026-03-30",
   },
   {
@@ -167,7 +194,7 @@ export const PROJECTS: readonly Project[] = [
       repo: { href: "https://github.com/MuratZrl/teamboard", label: "Repo" },
     },
     featured: true,
-    order: 6,
+    order: 7,
     createdAt: "2026-02-01",
   },
   {
@@ -186,7 +213,7 @@ export const PROJECTS: readonly Project[] = [
       repo: { href: "https://github.com/MuratZrl/pulsechat", label: "Repo" },
     },
     featured: true,
-    order: 7,
+    order: 8,
     createdAt: "2026-02-01",
   },
   {
@@ -226,7 +253,7 @@ export const PROJECTS: readonly Project[] = [
       },
     ],
     featured: true,
-    order: 8,
+    order: 9,
     createdAt: "2026-03-26",
   },
 ] as const;

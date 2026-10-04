@@ -22,4 +22,7 @@ export {
   findProjectBySlug,
   getAllTags,
   getAllCategories,
+  getProjectStats,
 } from "./helpers";
+
+export type { ProjectStats } from "./helpers";

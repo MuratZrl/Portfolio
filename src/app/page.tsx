@@ -3,11 +3,24 @@ import type { Metadata } from "next";
 
 import { Page } from "@/components/layout/Page";
 
+import { numberWord } from "@/lib/number-words";
+import { getProjectStats } from "@/constants/projects";
+
 import Hero from "@/features/home/sections/Hero";
 import HowIBuild from "@/features/home/sections/ValueProps";
 import FeaturedProjects from "@/features/home/sections/Projects";
 import TechStack from "@/features/home/sections/TechStack";
 import FinalCta from "@/features/home/sections/FinalCTA";
+
+const stats = getProjectStats();
+
+/**
+ * Shared by the Open Graph and Twitter descriptions, which carried the same
+ * hand-typed "Three client systems in daily production use."
+ */
+const SOCIAL_DESCRIPTION =
+  `I build the internal tools companies run on. Next.js, NestJS, Go and PostgreSQL. ` +
+  `${numberWord(stats.client, { capitalize: true })} client systems in daily production use.`;
 
 export const metadata: Metadata = {
   /**
@@ -32,14 +45,12 @@ export const metadata: Metadata = {
     siteName: "Murat Zorlu",
     locale: "en_US",
     title: "Murat Zorlu | Fullstack developer, Istanbul",
-    description:
-      "I build the internal tools companies run on. Next.js, NestJS, Go and PostgreSQL. Three client systems in daily production use.",
+    description: SOCIAL_DESCRIPTION,
   },
   twitter: {
     card: "summary_large_image",
     title: "Murat Zorlu | Fullstack developer, Istanbul",
-    description:
-      "I build the internal tools companies run on. Next.js, NestJS, Go and PostgreSQL. Three client systems in daily production use.",
+    description: SOCIAL_DESCRIPTION,
   },
 };
 
@@ -48,7 +59,14 @@ export default function HomePage(): React.JSX.Element {
     <Page>
       <Hero
         title="I build the internal tools companies run on"
-        subtitle="Next.js, NestJS, Go and PostgreSQL. Three of these systems are in daily use: a metal manufacturer, a real estate agency, an e-commerce operation."
+        /* The count is derived; the sectors after the colon are written by
+           hand, because "two real estate agencies" is a noun the data does not
+           carry. Adding a client in a new sector means editing this list. */
+        subtitle={
+          `Next.js, NestJS, Go and PostgreSQL. ` +
+          `${numberWord(stats.client, { capitalize: true })} of these systems are in daily use: ` +
+          `a metal manufacturer, two real estate agencies, an e-commerce operation.`
+        }
         primary={{ href: "/projects", label: "See the projects" }}
         secondary={{
           href: "/cv/Murat_Zorlu_CV.pdf",

@@ -4,8 +4,21 @@ import React from "react";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
-import { getFeaturedProjects, type Project } from "@/constants/projects";
+import { numberWord } from "@/lib/number-words";
+import { getFeaturedProjects, getProjectStats, type Project } from "@/constants/projects";
 import { ProjectCard } from "@/components/ProjectCard";
+
+/**
+ * Counts read off PROJECTS, not typed in. The subheading and the link used to
+ * say "Three built for paying clients" and "All eight projects" in literal
+ * text, so adding a project made both of them wrong with nothing to catch it.
+ */
+const stats = getProjectStats();
+
+const DEFAULT_SUBHEADING =
+  `${numberWord(stats.client, { capitalize: true })} built for paying clients, ` +
+  `${numberWord(stats.personal)} built for me, plus ${numberWord(stats.demo)} demo sites ` +
+  `for small businesses. The client ones are in daily use.`;
 
 type FeaturedProjectsProps = {
   heading?: string;
@@ -21,7 +34,7 @@ const HARD_CAP = 3;
 /** Server component — nothing here is interactive. */
 export default function FeaturedProjects({
   heading = "Projects",
-  subheading = "Three built for paying clients, three built for me, plus two demo sites for small businesses. The client ones are in daily use.",
+  subheading = DEFAULT_SUBHEADING,
   projects,
   className,
   maxVisible = HARD_CAP,
@@ -48,7 +61,7 @@ export default function FeaturedProjects({
           className="link-soft text-[length:var(--text-body-sm)] font-medium text-[var(--accent)]"
               draggable={false}
             >
-          All eight projects
+          All {numberWord(stats.total)} projects
         </Link>
       </div>
 

@@ -1,6 +1,15 @@
 // src/features/home/data/value-props.ts
 import type { ValueItem } from "@/features/home/types/value-props";
 
+import { numberWord } from "@/lib/number-words";
+import { getProjectStats } from "@/constants/projects";
+
+// Both numbers in the "Open where it can be" claim come from the project
+// data: how many entries carry a public repo link, and how many entries
+// there are. Typed out by hand, the claim went stale the moment either
+// changed, on the one card that invites the reader to go and check it.
+const stats = getProjectStats();
+
 /**
  * "How I build" — three claims, each verifiable by the reader in under thirty
  * seconds without leaving the site. The old `stat` slot is gone: "A11y score
@@ -35,7 +44,11 @@ export const DEFAULT_ITEMS = [
   {
     title: "Open where it can be",
     description:
-      "TypeScript strict in every TypeScript project, and no ts-ignore anywhere in the public repos. Three of the eight projects have public repos. Read the source instead of taking my word for it. The client work is private, and the project cards say exactly what is being held back and why.",
+      `TypeScript strict in every TypeScript project, and no ts-ignore anywhere in the ` +
+      `public repos. ${numberWord(stats.publicRepos, { capitalize: true })} of the ` +
+      `${numberWord(stats.total)} projects have public repos. Read the source instead of ` +
+      `taking my word for it. The client work is private, and the project cards say exactly ` +
+      `what is being held back and why.`,
     highlights: [
       "strict: true in every tsconfig",
       "Zero @ts-ignore in public repos",

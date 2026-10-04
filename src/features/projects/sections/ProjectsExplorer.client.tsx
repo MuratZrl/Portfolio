@@ -6,9 +6,9 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-/* Three full rows on the lg grid. Eight projects fit on one page, so the
-   pager below stays dormant, as it was when there were six. It wakes up
-   again at ten. */
+/* Three full rows on the lg grid, and the count the pager compares against.
+   It stays dormant while the list fits on one page, as it has at six, at
+   eight and now at nine. It wakes up at ten. */
 const PER_PAGE = 9;
 
 /**
@@ -18,8 +18,8 @@ const PER_PAGE = 9;
  * This shape is the whole point of the file. The previous version was a
  * client component that called getAllProjects() directly, which pulled
  * constants/projects/data.ts into the browser bundle: every summary, every
- * gallery entry, every technicalDecisions body, for all five projects,
- * whether or not the page ever rendered them. It also dragged ProjectCard
+ * gallery entry, every technicalDecisions body, for every project, whether
+ * or not the page ever rendered them. It also dragged ProjectCard
  * across the server boundary with it, which quietly broke the promise in
  * that component's own docstring - the withheld slab is only honest while
  * nothing serialises the project objects.

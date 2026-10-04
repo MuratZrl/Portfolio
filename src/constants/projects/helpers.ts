@@ -32,6 +32,47 @@ export function getAllTags(): readonly string[] {
 }
 
 /**
+ * The counts the site's copy quotes, read off PROJECTS rather than typed into
+ * a sentence. Several pages used to spell these out by hand ("Three built for
+ * paying clients", "All eight projects", "Three of the eight projects have
+ * public repos"), which meant every entry added here silently falsified copy
+ * on three other pages until someone noticed.
+ *
+ * Provenance comes from `sector`, the field that already encodes paid against
+ * unpaid, so a project cannot be counted as client work without also being
+ * labelled as client work on its own card.
+ */
+export type ProjectStats = {
+  /** Every entry, whatever its provenance. */
+  total: number;
+  /** Paid work: every sector except the two unpaid ones. */
+  client: number;
+  /** Unpaid, built for myself. */
+  personal: number;
+  /** Unpaid, built to show a prospective client what they would get. */
+  demo: number;
+  /** Client builds with no public URL a visitor can open for themselves. */
+  clientPrivate: number;
+  /** Projects whose repo link is public rather than withheld. */
+  publicRepos: number;
+};
+
+function isClientWork(p: Project): boolean {
+  return p.sector !== "personal" && p.sector !== "demo";
+}
+
+export function getProjectStats(): ProjectStats {
+  return {
+    total: PROJECTS.length,
+    client: PROJECTS.filter(isClientWork).length,
+    personal: PROJECTS.filter(p => p.sector === "personal").length,
+    demo: PROJECTS.filter(p => p.sector === "demo").length,
+    clientPrivate: PROJECTS.filter(p => isClientWork(p) && !p.links?.demo).length,
+    publicRepos: PROJECTS.filter(p => p.links?.repo && !p.links.repo.isPrivate).length,
+  };
+}
+
+/**
  * Categories that at least one project carries, in CATEGORY_ORDER rather
  * than alphabetically: the filter row opens with the small business entry
  * point, and alphabetical order would bury it behind "Frontend build".

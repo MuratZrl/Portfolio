@@ -3,6 +3,9 @@ import React from "react";
 import type { Metadata } from "next";
 import { Page } from "@/components/layout/Page";
 
+import { numberWord } from "@/lib/number-words";
+import { getProjectStats } from "@/constants/projects";
+
 import AboutIntro from "@/features/about/sections/AboutIntro.client";
 import ExperienceTimeline from "@/features/about/sections/Experience.client";
 import CvSection from "@/features/about/sections/CV.client";
@@ -10,7 +13,8 @@ import CvSection from "@/features/about/sections/CV.client";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Experience, stack and CV. Fullstack developer in Istanbul. Next.js, NestJS, Go and PostgreSQL, with three client systems in production.",
+    `Experience, stack and CV. Fullstack developer in Istanbul. Next.js, NestJS, Go and ` +
+    `PostgreSQL, with ${numberWord(getProjectStats().client)} client systems in production.`,
   alternates: { canonical: "/about" },
   openGraph: {
     type: "profile",

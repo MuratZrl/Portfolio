@@ -4,13 +4,25 @@ import type { Metadata } from "next";
 
 import { Page } from "@/components/layout/Page";
 import { ProjectCard } from "@/components/ProjectCard";
-import { getAllCategories, getAllProjects } from "@/constants/projects";
+import { numberWord } from "@/lib/number-words";
+import { getAllCategories, getAllProjects, getProjectStats } from "@/constants/projects";
 import ProjectsExplorer from "@/features/projects/sections/ProjectsExplorer.client";
+
+/**
+ * Both strings below counted the projects by hand, and one of them had already
+ * drifted: it called every client build private while one of them had a live
+ * public site. Reading the numbers off the data fixes the drift and keeps it
+ * fixed.
+ */
+const stats = getProjectStats();
 
 export const metadata: Metadata = {
   title: "Projects",
   description:
-    "Eight projects: two live demo sites for small businesses, three private client builds, three personal projects. What each one does and what it runs on.",
+    `${numberWord(stats.total, { capitalize: true })} projects: ` +
+    `${numberWord(stats.client)} built for paying clients, ${numberWord(stats.personal)} personal, ` +
+    `${numberWord(stats.demo)} demo sites for small businesses. ` +
+    `What each one does and what it runs on.`,
   alternates: { canonical: "/projects" },
   /**
    * The openGraph block exists for `url`. Without one here the page inherited
@@ -58,7 +70,12 @@ export default function ProjectsPage(): React.JSX.Element {
   return (
     <Page
       title="Projects"
-      description="Small business websites first, then client work and personal projects. The two demo sites are live: click through them. The client builds are private; each card says why."
+      description={
+        `Small business websites first, then client work and personal projects. ` +
+        `The ${numberWord(stats.demo)} demo sites are live: click through them. ` +
+        `${numberWord(stats.clientPrivate, { capitalize: true })} of the client builds are private, ` +
+        `and each card says why.`
+      }
     >
       <ProjectsExplorer items={items} categories={categories} />
     </Page>
