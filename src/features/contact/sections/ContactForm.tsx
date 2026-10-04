@@ -5,6 +5,8 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ContactSchema, type ContactInput } from "@/features/contact/schema";
+import { contactFormAction } from "@/features/contact/actions";
+import { CONTACT_FORM_INITIAL_STATE } from "@/features/contact/form-state";
 import { cn } from "@/lib/utils";
 import {
   Form,
@@ -57,6 +59,30 @@ export default function ContactForm(): React.JSX.Element {
   const [status, setStatus] = React.useState<SubmitStatus>("idle");
   const [errorMsg, setErrorMsg] = React.useState("");
   const [messageLen, setMessageLen] = React.useState(0);
+
+  /**
+   * The no-JS path, and nothing else. React skips a form action when the
+   * submit handler has already called preventDefault, which handleSubmit does
+   * on every submit, so with JS this stays at its initial state for the
+   * lifetime of the page and the fetch path below owns the result.
+   *
+   * Without JS the browser POSTs the form natively to the action, and the
+   * response is this page re-rendered with the outcome in `actionState`. That
+   * replaces the old arrangement, where the native POST went to
+   * /api/contact and came back as a 303 to /contact?sent=1 for the page to
+   * read server-side. No redirect, no query parameter, so /contact no longer
+   * has a reason to render dynamically.
+   */
+  const [actionState, formAction] = React.useActionState(
+    contactFormAction,
+    CONTACT_FORM_INITIAL_STATE,
+  );
+
+  // One result slot for both paths. Whichever path ran is the one that is not
+  // "idle"; they cannot both be, since each excludes the other by construction.
+  const resolvedStatus: SubmitStatus = status !== "idle" ? status : actionState.status;
+  const resolvedError =
+    status === "error" ? errorMsg : actionState.status === "error" ? actionState.message : "";
 
   const formStartedAtRef = React.useRef<number>(Date.now());
   const minSubmitDelayMs = 1200;
@@ -178,17 +204,16 @@ export default function ContactForm(): React.JSX.Element {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit, onInvalid)}
-          /* No-JS / pre-hydration fallback, and a real one now. The native
-             submission POSTs urlencoded to the same route the fetch path uses;
-             it answers a form-encoded request with a 303 back to
-             /contact?sent=1 (or ?error=<code>) instead of JSON. POST rather
-             than the default GET keeps the visitor's message out of the URL,
-             browser history and server logs.
+          /* No-JS / pre-hydration fallback, and a real one. A Server Action
+             rather than the old action="/api/contact": React posts the form
+             natively to it, the action returns state, and the response is this
+             page re-rendered with the result in place. POST either way, so the
+             visitor's message still stays out of the URL, browser history and
+             server logs, and a reload does not resubmit it.
 
-             With JS, handleSubmit calls preventDefault, so action/method are
-             never exercised and the fetch path is unchanged. */
-          action="/api/contact"
-          method="post"
+             With JS, handleSubmit calls preventDefault, which makes React skip
+             the action entirely, so the fetch path below is unchanged. */
+          action={formAction}
           className="flex flex-1 flex-col gap-5"
           noValidate
           aria-busy={isSubmitting}
@@ -357,8 +382,11 @@ export default function ContactForm(): React.JSX.Element {
             )}
           />
 
-          {/* Status messages */}
-          {status === "success" && (
+          {/* Status messages. Driven by the resolved pair above, so the same
+              slot serves the fetch result and the Server Action result: the
+              no-JS banner that used to sit above the form on /contact now
+              lands here, with its wording unchanged. */}
+          {resolvedStatus === "success" && (
             <div
               role="status"
               className="flex items-center gap-2 rounded-xl border border-green-600/20 bg-green-600/10 px-4 py-3 text-sm text-green-700 dark:text-green-300"
@@ -368,14 +396,14 @@ export default function ContactForm(): React.JSX.Element {
               Your message has been sent. I&apos;ll get back to you soon.
             </div>
           )}
-          {status === "error" && (
+          {resolvedStatus === "error" && (
             <div
               role="alert"
               className="flex items-center gap-2 rounded-xl border border-red-600/20 bg-red-600/10 px-4 py-3 text-sm text-red-700 dark:text-red-300"
               aria-live="assertive"
             >
               <AlertCircle className="h-4 w-4 shrink-0" aria-hidden />
-              {errorMsg}
+              {resolvedError}
             </div>
           )}
 

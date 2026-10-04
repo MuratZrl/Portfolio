@@ -21,51 +21,25 @@ export const metadata: Metadata = {
 };
 
 /**
- * Result copy for the no-JS path. /api/contact answers a native form POST with
- * a 303 to ?sent=1 or ?error=<code>; the codes are short so the URL stays
- * clean and the wording stays here. The JS path never redirects, so it never
- * hits any of this: it renders its own status inside the form.
+ * Statically rendered, and the only reason it was not is gone.
+ *
+ * The page used to take `searchParams` and await it, purely to turn the
+ * ?sent=1 / ?error=<code> that /api/contact redirected the no-JS path to into
+ * a banner above the form. Reading searchParams opts a route out of static
+ * rendering, so the whole page was server-rendered on every request to carry
+ * a result that only a visitor without JavaScript could ever arrive with.
+ *
+ * The no-JS submit is a Server Action now (src/features/contact/actions.ts).
+ * Its result renders inside the form through useActionState, in the same slot
+ * the JS path already used for its own status, so the banner and this
+ * component's async-ness both went away together and the copy moved intact.
  */
-const ERROR_COPY: Record<string, string> = {
-  rate: "Too many messages from this connection. Wait a minute, then try again.",
-  badrequest: "That submission could not be read. Please try again.",
-  invalid:
-    "Some fields need another look. Every field is required, and the message needs at least 12 characters.",
-  spam: "That submission was flagged as automated.",
-  send: "The message could not be sent. You can email me directly at me@muratzorlu.dev.",
-};
-
-type Props = {
-  searchParams: Promise<{ sent?: string; error?: string }>;
-};
-
-export default async function ContactPage({ searchParams }: Props): Promise<React.JSX.Element> {
-  const { sent, error } = await searchParams;
-  const errorMessage = error ? (ERROR_COPY[error] ?? ERROR_COPY.badrequest) : null;
-
+export default function ContactPage(): React.JSX.Element {
   return (
     <Page
       title="Contact"
       description="Project work, contract work, or a role. Every message gets a reply."
     >
-      {sent === "1" && !errorMessage ? (
-        <div
-          role="status"
-          className="plate mb-6 border-l-4 border-l-[var(--accent)] p-4 text-[length:var(--text-body-base)] text-[color:var(--text)]"
-        >
-          Message sent. You will get a reply.
-        </div>
-      ) : null}
-
-      {errorMessage ? (
-        <div
-          role="alert"
-          className="plate mb-6 border-l-4 border-l-[var(--danger)] p-4 text-[length:var(--text-body-base)] text-[color:var(--text)]"
-        >
-          {errorMessage}
-        </div>
-      ) : null}
-
       <section className="grid w-full items-start gap-6 lg:grid-cols-[1fr_340px]">
         <ContactForm />
         <ContactDetails />
