@@ -17,6 +17,7 @@ const NAV_LINKS = [
   { label: "About", href: "/about", lang: undefined },
   { label: "Projects", href: "/projects", lang: undefined },
   { label: "Örnekler", href: "/ornekler", lang: "tr" },
+  { label: "Paketler", href: "/paketler", lang: "tr" },
   { label: "Contact", href: "/contact", lang: undefined },
 ] as const;
 
