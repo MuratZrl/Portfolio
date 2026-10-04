@@ -53,6 +53,22 @@ const nextConfig: NextConfig = {
     root: __dirname,
   },
   devIndicators: false,
+  /**
+   * The two demo sites moved off /projects and onto /ornekler, where they are
+   * described in Turkish for the audience they were built for. Both URLs were
+   * in the sitemap and are indexed, so they redirect rather than 404.
+   *
+   * `permanent: true` emits 308, which keeps the method and body intact and
+   * tells a crawler to carry the old URL's history across. They are not
+   * pointed at per-sample anchors because /ornekler has no per-item route to
+   * land on; the card for each one is on the page they arrive at.
+   */
+  async redirects() {
+    return [
+      { source: "/projects/salon-aura", destination: "/ornekler", permanent: true },
+      { source: "/projects/cafe-kavella", destination: "/ornekler", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

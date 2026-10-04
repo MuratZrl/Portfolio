@@ -8,10 +8,16 @@ import { Github, Linkedin, Briefcase, Mail, Heart } from "lucide-react";
 
 /* ────────────────────────────── Data ────────────────────────────── */
 
+/**
+ * `lang` is set per item because the labels are not all in one language. The
+ * document is lang="en", so the Turkish entry has to say so or a screen
+ * reader pronounces "Örnekler" with English phonetics.
+ */
 const NAV_LINKS = [
-  { label: "About", href: "/about" },
-  { label: "Projects", href: "/projects" },
-  { label: "Contact", href: "/contact" },
+  { label: "About", href: "/about", lang: undefined },
+  { label: "Projects", href: "/projects", lang: undefined },
+  { label: "Örnekler", href: "/ornekler", lang: "tr" },
+  { label: "Contact", href: "/contact", lang: undefined },
 ] as const;
 
 const SOCIAL_LINKS = [
@@ -78,6 +84,7 @@ export default function Footer(): React.JSX.Element {
                 <Link
                   key={link.href}
                   href={link.href}
+                  lang={link.lang}
                   draggable={false}
                   className="inline-flex min-h-6 select-none items-center text-sm text-muted-foreground interactive hover:text-primary"
                 >

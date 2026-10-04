@@ -12,13 +12,17 @@ import { ProjectCard } from "@/components/ProjectCard";
  * Counts read off PROJECTS, not typed in. The subheading and the link used to
  * say "Three built for paying clients" and "All eight projects" in literal
  * text, so adding a project made both of them wrong with nothing to catch it.
+ *
+ * The demo clause that used to close this sentence is gone with the demo
+ * sites themselves: they are sample sites rather than projects and now live
+ * on /ornekler, so stats.demo is zero and the sentence would have read "plus
+ * zero demo sites".
  */
 const stats = getProjectStats();
 
 const DEFAULT_SUBHEADING =
   `${numberWord(stats.client, { capitalize: true })} built for paying clients, ` +
-  `${numberWord(stats.personal)} built for me, plus ${numberWord(stats.demo)} demo sites ` +
-  `for small businesses. The client ones are in daily use.`;
+  `${numberWord(stats.personal)} built for me. The client ones are in daily use.`;
 
 type FeaturedProjectsProps = {
   heading?: string;

@@ -13,6 +13,10 @@ import ProjectsExplorer from "@/features/projects/sections/ProjectsExplorer.clie
  * drifted: it called every client build private while one of them had a live
  * public site. Reading the numbers off the data fixes the drift and keeps it
  * fixed.
+ *
+ * Neither mentions demo sites any more. They are sample sites rather than
+ * projects and moved to /ornekler, so this page is client work and personal
+ * work only.
  */
 const stats = getProjectStats();
 
@@ -20,8 +24,7 @@ export const metadata: Metadata = {
   title: "Projects",
   description:
     `${numberWord(stats.total, { capitalize: true })} projects: ` +
-    `${numberWord(stats.client)} built for paying clients, ${numberWord(stats.personal)} personal, ` +
-    `${numberWord(stats.demo)} demo sites for small businesses. ` +
+    `${numberWord(stats.client)} built for paying clients, ${numberWord(stats.personal)} personal. ` +
     `What each one does and what it runs on.`,
   alternates: { canonical: "/projects" },
   /**
@@ -71,8 +74,7 @@ export default function ProjectsPage(): React.JSX.Element {
     <Page
       title="Projects"
       description={
-        `Small business websites first, then client work and personal projects. ` +
-        `The ${numberWord(stats.demo)} demo sites are live: click through them. ` +
+        `Client work first, then personal projects. ` +
         `${numberWord(stats.clientPrivate, { capitalize: true })} of the client builds are private, ` +
         `and each card says why.`
       }

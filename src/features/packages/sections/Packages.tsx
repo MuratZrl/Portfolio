@@ -1,24 +1,17 @@
 // src/features/packages/sections/Packages.tsx
 
 import React from "react";
-import { Check, Phone } from "lucide-react";
+import Link from "next/link";
+import { Check, Phone, ArrowRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { CONTACT_PHONE, whatsappHref, NEW_TAB_NOTE } from "@/constants/contact";
 
 /* ────────────────────────────── Data ────────────────────────────── */
 
-/**
- * Every CTA on this section is built from `e164`: the three wa.me links and
- * the tel: link on the third card. `display` is the printed form of that same
- * number and the only thing a reader ever sees.
- *
- * `e164` is digits only, country code first, no plus and no spaces, which is
- * the form wa.me expects in the URL path.
- */
-export const CONTACT_PHONE = {
-  e164: "905416577925",
-  display: "+90 541 657 79 25",
-} as const;
+// CONTACT_PHONE, whatsappHref and NEW_TAB_NOTE moved to @/constants/contact
+// when /ornekler needed the same number and the same closing CTA. Every CTA
+// on this section still builds from that one `e164`.
 
 type PackageItem = {
   id: string;
@@ -117,16 +110,13 @@ const HEADING = "Paketler";
 const SUBHEADING =
   "Ne yaptırmak istediğinize göre üç ana çalışma biçimi var. Aradığınız tam olarak bunlardan biri değilse yazın, birlikte netleştirelim.";
 const FOOTNOTE = "Kapsam ve teslim süresi görüşmede netleştirilir.";
-const NEW_TAB_NOTE = "yeni sekmede açılır";
-
 /** A module constant, not useId: this section stays a server component. */
 const HEADING_ID = "packages-heading";
 
-/* ────────────────────────────── Helpers ────────────────────────────── */
+/* ────────────────────────────── Samples link ────────────────────────────── */
 
-function whatsappHref(message: string): string {
-  return `https://wa.me/${CONTACT_PHONE.e164}?text=${encodeURIComponent(message)}`;
-}
+const SAMPLES_NOTE = "Bu paketlerle yapılmış siteleri görmek isterseniz:";
+const SAMPLES_LABEL = "Canlı örnekleri inceleyin";
 
 /* ────────────────────────────── Component ────────────────────────────── */
 
@@ -172,6 +162,18 @@ export default function Packages({
       </Heading>
       <p className="mt-2 max-w-[68ch] text-[length:var(--text-body-lead)] leading-[1.55] text-[var(--text-muted)]">
         {SUBHEADING}
+      </p>
+
+      <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[length:var(--text-body-base)] text-[var(--text-muted)]">
+        {SAMPLES_NOTE}
+        <Link
+          href="/ornekler"
+          draggable={false}
+          className="link-soft inline-flex min-h-6 items-center gap-1.5 font-medium text-[var(--accent)]"
+        >
+          {SAMPLES_LABEL}
+          <ArrowRight className="size-4" aria-hidden />
+        </Link>
       </p>
 
       <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

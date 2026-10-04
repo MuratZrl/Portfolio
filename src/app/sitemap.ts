@@ -20,8 +20,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/about`, lastModified, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_URL}/projects`, lastModified, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_URL}/paketler`, lastModified, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/ornekler`, lastModified, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_URL}/contact`, lastModified, changeFrequency: "monthly", priority: 0.8 },
   ];
+
+  // /projects/salon-aura and /projects/cafe-kavella are deliberately absent.
+  // They left PROJECTS when the demo sites moved to /ornekler, so they drop
+  // out of the loop below on their own, and next.config.ts 308s both URLs. A
+  // sitemap that still listed them would be advertising two redirects.
 
   // Every project detail page, from the same getAllProjects() the /projects
   // listing renders and the same array generateStaticParams prerenders from.

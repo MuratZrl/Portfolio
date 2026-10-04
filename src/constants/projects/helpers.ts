@@ -49,7 +49,11 @@ export type ProjectStats = {
   client: number;
   /** Unpaid, built for myself. */
   personal: number;
-  /** Unpaid, built to show a prospective client what they would get. */
+  /**
+   * Unpaid, built to show a prospective client what they would get. Zero
+   * today: the sample sites moved to /ornekler, which reads its own data.
+   * The field stays because the sector it counts still exists on the type.
+   */
   demo: number;
   /** Client builds with no public URL a visitor can open for themselves. */
   clientPrivate: number;
